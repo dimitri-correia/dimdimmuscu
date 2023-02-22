@@ -1,5 +1,6 @@
-import Icon from "@mdi/react";
-import { mdiScale, mdiScaleBathroom } from "@mdi/js";
+import React from "react";
+import { Image } from "react-native";
+import HomeScreenStyles from "../styles/HomeScreenStyles";
 
 export class ScreenItem {
   name: string;
@@ -17,11 +18,21 @@ export default [
   new ScreenItem(
     "Weight Tracker",
     "WeightTracker",
-    <Icon path={mdiScaleBathroom} size={1} />
+    (
+      <Image
+        source={require("../assets/ScreenIcons/WeightTracker.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
   ),
   new ScreenItem(
     "Calories Tracker",
     "CaloriesTracker",
-    <Icon path={mdiScale} size={1} />
+    (
+      <Image
+        source={require("../assets/ScreenIcons/CaloriesTracker.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
   ),
 ];
