@@ -5,12 +5,14 @@ import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import CommonStyles from "../styles/CommonStyles";
 import ScreenList, { ScreenItem } from "./ScreenList";
 import HomeScreenStyles from "../styles/HomeScreenStyles";
+import { createWeightTable } from "../database/WeightTrackerDB";
 
 interface homeScreenProps {
   navigation: NavigationProp<ParamListBase>;
 }
 
 export const HomeScreen: React.FC<homeScreenProps> = ({ navigation }) => {
+  createAllTables();
   return <View style={CommonStyles.container}>{ItemsGrid(navigation)}</View>;
 };
 
@@ -48,3 +50,7 @@ const ListItem = ({ navigation, screenItem }: ListItemProps) => {
     </TouchableOpacity>
   );
 };
+
+function createAllTables() {
+  createWeightTable();
+}
