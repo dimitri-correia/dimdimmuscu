@@ -13,8 +13,7 @@ export const averageXdays = (
     .filter(
       (entry) =>
         entry.date <= date &&
-        entry.date >
-          new Date(new Date().setDate(new Date().getDate() - numberOfDays))
+        entry.date > new Date(new Date().setDate(date.getDate() - numberOfDays))
     )
     .map((entry) => entry.weight);
   return (
