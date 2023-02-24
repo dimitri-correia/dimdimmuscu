@@ -40,13 +40,13 @@ interface ListItemProps {
 }
 
 const ListItem = ({ navigation, screenItem }: ListItemProps) => {
-  const { screenName, icon } = screenItem;
+  const { name, screenName, icon } = screenItem;
   const onPress = () => navigation.navigate(screenName);
 
   return (
     <TouchableOpacity style={HomeScreenStyles.item} onPress={onPress}>
       {icon}
-      <Text style={HomeScreenStyles.itemText}>{screenName}</Text>
+      <Text style={HomeScreenStyles.itemText}>{name}</Text>
     </TouchableOpacity>
   );
 };
