@@ -1,13 +1,18 @@
 import CommonDB from "./CommonDB";
 import { WeightEntry } from "../logic/WeightTrackerLogic";
 
+const weightEntries: string = "weight_entries";
+const colId: string = "id";
+const colDate: string = "date";
+const colWeight: string = "weight";
+
 export const createWeightTable = () => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS weight_entries (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      date DATE NOT NULL UNIQUE,
-      weight REAL NOT NULL);`
+      `CREATE TABLE IF NOT EXISTS ${weightEntries} (
+      ${colId} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${colDate} DATE NOT NULL UNIQUE,
+      ${colWeight} REAL NOT NULL);`
     );
   });
 };
@@ -16,7 +21,7 @@ export const getWeightEntries = (): Promise<WeightEntry[]> => {
   return new Promise<WeightEntry[]>((resolve, _) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
-        "SELECT * FROM weight_entries ORDER BY date DESC;",
+        `SELECT * FROM ${weightEntries} ORDER BY date DESC;`,
         [],
         (_, result) => {
           const weightEntries: WeightEntry[] = [];
@@ -35,24 +40,26 @@ export const getWeightEntries = (): Promise<WeightEntry[]> => {
   });
 };
 
-export const addWeightEntry = (date: Date, weight: number) => {
+export const addWeightEntry = (date: string, weight: number) => {
   CommonDB.transaction((tx) => {
-    tx.executeSql("INSERT INTO weight_entries (date, weight) VALUES (?, ?);", [
-      date.toISOString().split("T")[0], //YYYY-MM-DDTHH:mm:ss - > YYYY-MM-DD
-      weight,
-    ]);
+    tx.executeSql(
+      `INSERT INTO ${weightEntries} (${colDate}, ${colWeight}) VALUES (?, ?);`,
+      [date, weight]
+    );
   });
 };
+
 export const editWeightEntry = (id: number, weight: number) => {
   CommonDB.transaction((tx) => {
-    tx.executeSql("UPDATE weight_entries SET weight = ? WHERE id = ?;", [
-      weight,
-      id,
-    ]);
+    tx.executeSql(
+      `UPDATE ${weightEntries} SET ${colWeight} = ? WHERE ${colId} = ?;`,
+      [weight, id]
+    );
   });
 };
+
 export const deleteWeightEntry = (id: number) => {
   CommonDB.transaction((tx) => {
-    tx.executeSql("DELETE FROM weight_entries WHERE id = ?;", [id]);
+    tx.executeSql(`DELETE FROM ${weightEntries} WHERE ${colId} = ?;`, [id]);
   });
 };

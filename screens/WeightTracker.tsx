@@ -202,7 +202,7 @@ function addWeight(weightEntries: WeightEntry[], newWeight: string) {
       alert(TextWT.invalidWeight);
       return;
     }
-    addWeightEntry(new Date(), parsedWeight);
+    addWeightEntry(today, parsedWeight);
   };
 }
 
