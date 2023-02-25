@@ -187,8 +187,6 @@ function deleteEntry(
 function addWeight(weightEntries: WeightEntry[], newWeight: string) {
   return () => {
     const today: string = new Date().toISOString().split("T")[0];
-    console.log(today);
-    weightEntries.forEach((we) => console.log(we));
     const hasEntryForToday: boolean = weightEntries.some(
       (entry: WeightEntry) => entry.date.toISOString().split("T")[0] === today
     );
