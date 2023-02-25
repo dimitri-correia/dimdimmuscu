@@ -28,9 +28,9 @@ export const getWeightEntries = (): Promise<WeightEntry[]> => {
           for (let i = 0; i < result.rows.length; i++) {
             const row = result.rows.item(i);
             weightEntries.push({
-              id: row.id,
-              date: new Date(row.date),
-              weight: row.weight,
+              id: row[colId],
+              date: new Date(row[colDate]),
+              weight: row[colWeight],
             });
           }
           resolve(weightEntries);
