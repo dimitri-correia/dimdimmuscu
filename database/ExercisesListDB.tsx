@@ -14,6 +14,11 @@ const muscleMuscleGroupName: string = "muscle_group_name";
 export const createExercisesTableS = () => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS ${muscleGroupEntriesDBName} (
+      ${muscleId} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${muscleMuscleGroupName} TEXT NOT NULL UNIQUE);`
+    );
+    tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${exercisesEntriesDBName} (
       ${exId} INTEGER PRIMARY KEY AUTOINCREMENT,
       ${exExerciseName} TEXT NOT NULL UNIQUE,
@@ -23,11 +28,6 @@ export const createExercisesTableS = () => {
       FOREIGN KEY (${exSecondaryMuscleGroup}) REFERENCES ${muscleGroupEntriesDBName}(${muscleId})
   );`
     );
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS ${muscleGroupEntriesDBName} (
-      ${muscleId} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${muscleMuscleGroupName} TEXT NOT NULL UNIQUE);`
-    );
   });
 };
 
@@ -35,13 +35,13 @@ export const getMuscleGroupEntries = (): Promise<Map<number, string>> => {
   return new Promise<Map<number, string>>((resolve, _) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
-        `SELECT * FROM ${exercisesEntriesDBName};`,
+        `SELECT * FROM ${muscleGroupEntriesDBName};`,
         [],
         (_, result) => {
-          const muscleGroupEntries: Map<number, string> = new Map();
+          const muscleGroupEntries = new Map<number, string>();
           for (let i = 0; i < result.rows.length; i++) {
             const row = result.rows.item(i);
-            muscleGroupEntries.set(row.id, row.name);
+            muscleGroupEntries.set(row[muscleId], row[muscleMuscleGroupName]);
           }
           resolve(muscleGroupEntries);
         }
@@ -61,10 +61,10 @@ export const getExerciseEntries = (): Promise<ExercisesEntry[]> => {
           for (let i = 0; i < result.rows.length; i++) {
             const row = result.rows.item(i);
             exercisesEntries.push({
-              id: row.id,
-              name: row.name,
-              primaryMuscleGroupId: row.primaryMuscleGroupId,
-              secondaryMuscleGroupId: row.secondaryMuscleGroupId,
+              id: row[exId],
+              name: row[exExerciseName],
+              primaryMuscleGroupId: row[exPrimaryMuscleGroup],
+              secondaryMuscleGroupId: row[exSecondaryMuscleGroup],
             });
           }
           resolve(exercisesEntries);
@@ -77,11 +77,10 @@ export const getExerciseEntries = (): Promise<ExercisesEntry[]> => {
 export const addMuscleGroupEntry = (name: string) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `INSERT INTO ${muscleGroupEntriesDBName} ${muscleMuscleGroupName} VALUES ?;`,
+      `INSERT INTO ${muscleGroupEntriesDBName} (${muscleMuscleGroupName}) VALUES (?);`,
       [name]
     );
   });
-  console.log(name);
 };
 
 export const addExerciseEntry = (
