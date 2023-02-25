@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Alert,
   Button,
   Modal,
   Text,
@@ -22,6 +21,7 @@ import {
   pageStyles,
 } from "../styles/WeightTrackerStyles";
 import * as TextWT from "../assets/texts/WeightTracker";
+import { confirmationChanges } from "../components/commons/ValidateChanges";
 
 export const WeightTracker: React.FC = () => {
   const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
@@ -202,19 +202,4 @@ function addWeight(weightEntries: WeightEntry[], newWeight: string) {
     }
     addWeightEntry(today, parsedWeight);
   };
-}
-
-function confirmationChanges(onPress: () => void) {
-  Alert.alert(TextWT.confirm, TextWT.confirmChanges, [
-    {
-      text: TextWT.cancel,
-      style: "cancel",
-    },
-    {
-      text: "OK",
-      onPress: () => {
-        onPress();
-      },
-    },
-  ]);
 }
