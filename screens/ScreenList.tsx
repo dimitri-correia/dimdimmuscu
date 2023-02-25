@@ -35,4 +35,14 @@ export default [
       />
     )
   ),
+  new ScreenItem(
+    "Exercises List",
+    "ExercisesList",
+    (
+      <Image
+        source={require("../assets/ScreenIcons/ExercisesList.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
+  ),
 ];
