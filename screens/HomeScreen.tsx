@@ -12,7 +12,7 @@ interface homeScreenProps {
 }
 
 export const HomeScreen: React.FC<homeScreenProps> = ({ navigation }) => {
-  createAllTables();
+  createAllTables(); // call only once when app start
   return <View style={CommonStyles.container}>{ItemsGrid(navigation)}</View>;
 };
 

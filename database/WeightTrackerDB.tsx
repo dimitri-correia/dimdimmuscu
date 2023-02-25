@@ -21,7 +21,7 @@ export const getWeightEntries = (): Promise<WeightEntry[]> => {
   return new Promise<WeightEntry[]>((resolve, _) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
-        `SELECT * FROM ${weightEntries} ORDER BY date DESC;`,
+        `SELECT * FROM ${weightEntries} ORDER BY ${colId} ASC;`,
         [],
         (_, result) => {
           const weightEntries: WeightEntry[] = [];
