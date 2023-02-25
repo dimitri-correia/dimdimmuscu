@@ -14,12 +14,8 @@ import {
   editWeightEntry,
   getWeightEntries,
 } from "../database/WeightTrackerDB";
-import CommonStyles from "../styles/CommonStyles";
-import {
-  addWeightStyles,
-  editWeightStyles,
-  pageStyles,
-} from "../styles/WeightTrackerStyles";
+import CommonStyles, { editWeightStyles } from "../styles/CommonStyles";
+import { addWeightStyles, pageStyles } from "../styles/WeightTrackerStyles";
 import * as TextWT from "../assets/texts/WeightTracker";
 import { confirmationChanges } from "../components/commons/ValidateChanges";
 
@@ -52,7 +48,7 @@ export const WeightTracker: React.FC = () => {
           keyboardType="numeric"
           onChangeText={(text) => setNewWeight(text)}
         />
-        <Button title="Add" onPress={handleAddWeight} />
+        <Button title={TextWT.add} onPress={handleAddWeight} />
       </View>
       <Row
         date={TextWT.date}
@@ -129,13 +125,13 @@ const ModalEditWeight = ({
           </View>
           <View style={editWeightStyles.line}>
             <TouchableOpacity
-              style={[editWeightStyles.button, { backgroundColor: "#007AFF" }]}
+              style={[editWeightStyles.button, editWeightStyles.buttonOK]}
               onPress={handleEditWeight}
             >
               <Text style={editWeightStyles.buttonText}>Save</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[editWeightStyles.button, { backgroundColor: "#FF3B30" }]}
+              style={[editWeightStyles.button, editWeightStyles.buttonKO]}
               onPress={handleDeleteWeight}
             >
               <Text style={editWeightStyles.buttonText}>Delete</Text>
