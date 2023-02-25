@@ -25,7 +25,6 @@ import { confirmationChanges } from "../components/commons/ValidateChanges";
 
 export const WeightTracker: React.FC = () => {
   const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
-  initWeightEntries(setWeightEntries); // fetch database
 
   const [newWeight, setNewWeight] = useState<string>("");
   const handleAddWeight = addWeight(weightEntries, newWeight);
@@ -33,6 +32,10 @@ export const WeightTracker: React.FC = () => {
   const [editId, setEditId] = useState<number>(-1); // if -1 modal invisible
   const handleEditWeight = editEntry(newWeight, editId, setEditId);
   const handleDeleteWeight = deleteEntry(editId, setEditId);
+
+  useEffect(() => {
+    refreshWeightEntries(setWeightEntries); // fetch database once
+  }, [editId, handleAddWeight]);
 
   return (
     <View style={CommonStyles.container}>
@@ -144,7 +147,7 @@ const ModalEditWeight = ({
   );
 };
 
-function initWeightEntries(
+function refreshWeightEntries(
   setWeightEntries: (
     value: ((prevState: WeightEntry[]) => WeightEntry[]) | WeightEntry[]
   ) => void
