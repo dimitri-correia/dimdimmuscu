@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { HomeScreen } from "./screens/HomeScreen";
 import { WeightTracker } from "./screens/WeightTracker";
+import { ExercisesList } from "./screens/ExercisesList";
 
 const NativeStackNavigator = createNativeStackNavigator();
 
@@ -19,6 +20,10 @@ export default function App() {
         <NativeStackNavigator.Screen
           name="WeightTracker"
           component={WeightTracker}
+        />
+        <NativeStackNavigator.Screen
+          name="ExercisesList"
+          component={ExercisesList}
         />
       </NativeStackNavigator.Navigator>
     </NavigationContainer>
