@@ -7,6 +7,7 @@ import ScreenList, { ScreenItem } from "./ScreenList";
 import HomeScreenStyles from "../styles/HomeScreenStyles";
 import { createWeightTable } from "../database/WeightTrackerDB";
 import { createExercisesTableS } from "../database/ExercisesListDB";
+import { createPRTable } from "../database/PersonalRecordDB";
 
 interface homeScreenProps {
   navigation: NavigationProp<ParamListBase>;
@@ -55,4 +56,5 @@ const ListItem = ({ navigation, screenItem }: ListItemProps) => {
 function createAllTables() {
   createWeightTable();
   createExercisesTableS();
+  createPRTable();
 }
