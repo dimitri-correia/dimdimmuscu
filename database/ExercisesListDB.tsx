@@ -28,6 +28,10 @@ export const createExercisesTableS = () => {
       FOREIGN KEY (${exSecondaryMuscleGroup}) REFERENCES ${muscleGroupEntriesDBName}(${muscleId})
   );`
     );
+    tx.executeSql(
+      `INSERT OR IGNORE INTO ${muscleGroupEntriesDBName} (${muscleId}, ${muscleMuscleGroupName}) 
+       VALUES (0, ".");`
+    );
   });
 };
 
@@ -35,7 +39,7 @@ export const getMuscleGroupEntries = (): Promise<Map<number, string>> => {
   return new Promise<Map<number, string>>((resolve, _) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
-        `SELECT * FROM ${muscleGroupEntriesDBName};`,
+        `SELECT * FROM ${muscleGroupEntriesDBName} ORDER BY LOWER(${muscleMuscleGroupName});`,
         [],
         (_, result) => {
           const muscleGroupEntries = new Map<number, string>();
@@ -54,7 +58,9 @@ export const getExerciseEntries = (): Promise<ExercisesEntry[]> => {
   return new Promise<ExercisesEntry[]>((resolve, _) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
-        `SELECT * FROM ${exercisesEntriesDBName};`,
+        `SELECT * FROM ${exercisesEntriesDBName}
+        ORDER BY LOWER(${exPrimaryMuscleGroup}), LOWER(${exSecondaryMuscleGroup}),
+        LOWER(${exExerciseName});`,
         [],
         (_, result) => {
           const exercisesEntries: ExercisesEntry[] = [];
