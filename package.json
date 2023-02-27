@@ -14,7 +14,7 @@
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
     "expo": "~47.0.12",
-    "expo-sqlite": "^11.0.0",
+    "expo-sqlite": "^11.1.1",
     "expo-status-bar": "~1.4.2",
     "jest": "^26.6.3",
     "jest-expo": "^47.0.1",
