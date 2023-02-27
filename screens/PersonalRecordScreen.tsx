@@ -12,14 +12,19 @@ export const PersonalRecordScreen: React.FC = () => {
     refreshPREntries(setPersonalRecordEntries);
   }, []);
 
-  const exIds = Array.from(
-    new Set(personalRecordEntries.map((entry) => entry.exId))
-  );
+  const entriesByExercise = personalRecordEntries.reduce((acc, entry) => {
+    const exId = entry.exId;
+    if (!acc[exId]) {
+      acc[exId] = [];
+    }
+    acc[exId].push(entry);
+    return acc;
+  }, {} as Record<number, PersonalRecordEntry[]>);
 
   return (
     <View>
-      {exIds.map((exId) => (
-        <ExerciseTable key={exId} exId={exId} entries={personalRecordEntries} />
+      {Object.entries(entriesByExercise).map(([exId, entries]) => (
+        <ExerciseTable key={exId} exId={Number(exId)} entries={entries} />
       ))}
     </View>
   );
@@ -32,7 +37,7 @@ interface ExerciseTableProps {
 
 const ExerciseTable = ({ exId, entries }: ExerciseTableProps) => {
   return (
-    <View>
+    <View key={exId}>
       <Text>{`Exercise ${exId}`}</Text>
       <View>
         <View style={{ flexDirection: "row" }}>
@@ -40,15 +45,13 @@ const ExerciseTable = ({ exId, entries }: ExerciseTableProps) => {
           <Text style={{ flex: 1 }}>Weight</Text>
           <Text style={{ flex: 1 }}>Improvement</Text>
         </View>
-        {entries
-          .filter((entry) => entry.exId === exId)
-          .map((entry) => (
-            <View key={entry.id} style={{ flexDirection: "row" }}>
-              <Text style={{ flex: 1 }}>{entry.date.toDateString()}</Text>
-              <Text style={{ flex: 1 }}>{entry.weightLifted}</Text>
-              <Text style={{ flex: 1 }}>{0}</Text>
-            </View>
-          ))}
+        {entries.map((entry) => (
+          <View key={entry.id} style={{ flexDirection: "row" }}>
+            <Text style={{ flex: 1 }}>{entry.date.toDateString()}</Text>
+            <Text style={{ flex: 1 }}>{entry.weightLifted}</Text>
+            <Text style={{ flex: 1 }}>{0}</Text>
+          </View>
+        ))}
       </View>
     </View>
   );
