@@ -22,7 +22,7 @@ export const editWeightStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: "5%",
-    marginHorizontal: "15%",
+    marginHorizontal: "25%",
   },
   title: {
     fontSize: 20,
