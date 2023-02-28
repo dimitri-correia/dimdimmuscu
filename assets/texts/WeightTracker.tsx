@@ -7,3 +7,4 @@ export const weightInKg = "Weight (kg)";
 export const average7 = "7 days average";
 export const average31 = "31 days average";
 export const add = "Add";
+export const editWeightEntry = "Edit Weight Entry";

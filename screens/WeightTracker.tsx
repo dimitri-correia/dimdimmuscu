@@ -36,7 +36,7 @@ export const WeightTracker: React.FC = () => {
   return (
     <View style={CommonStyles.container}>
       <ModalEditWeight
-        editId={editId}
+        entry={weightEntries.find((we) => we.id == editId)}
         setNewWeight={setNewWeight}
         handleEditWeight={handleEditWeight}
         handleDeleteWeight={handleDeleteWeight}
@@ -96,49 +96,64 @@ const Row = ({ date, todayWeight, average7days, average31days }: RowItem) => {
 };
 
 interface ModalEditProps {
-  editId: number;
+  entry: WeightEntry | undefined;
   setNewWeight: any;
   handleEditWeight: any;
   handleDeleteWeight: any;
 }
 
 const ModalEditWeight = ({
-  editId,
+  entry,
   setNewWeight,
   handleEditWeight,
   handleDeleteWeight,
 }: ModalEditProps) => {
+  console.log(entry);
   return (
-    <Modal animationType="slide" transparent={true} visible={editId != -1}>
-      <View style={editWeightStyles.modal}>
-        <View style={editWeightStyles.background}>
-          <View style={editWeightStyles.line}>
-            <Text style={editWeightStyles.title}>Edit Weight Entry</Text>
-          </View>
-          <View style={editWeightStyles.line}>
-            <Text style={editWeightStyles.label}>{TextWT.enterWeight}</Text>
-            <TextInput
-              style={editWeightStyles.input}
-              keyboardType="numeric"
-              onChangeText={(text) => setNewWeight(text)}
-            />
-          </View>
-          <View style={editWeightStyles.line}>
-            <TouchableOpacity
-              style={[editWeightStyles.button, editWeightStyles.buttonOK]}
-              onPress={handleEditWeight}
-            >
-              <Text style={editWeightStyles.buttonText}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[editWeightStyles.button, editWeightStyles.buttonKO]}
-              onPress={handleDeleteWeight}
-            >
-              <Text style={editWeightStyles.buttonText}>Delete</Text>
-            </TouchableOpacity>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={entry != undefined}
+    >
+      {entry != undefined && (
+        <View style={editWeightStyles.modal}>
+          <View style={editWeightStyles.background}>
+            <View style={editWeightStyles.line}>
+              <Text style={editWeightStyles.title}>
+                {TextWT.editWeightEntry}
+              </Text>
+            </View>
+            <View style={editWeightStyles.line}>
+              <Text style={editWeightStyles.label}>
+                {`${entry.date.toDateString()}`}
+              </Text>
+              <Text style={editWeightStyles.label}>{`${entry.weight}kg`}</Text>
+            </View>
+            <View style={editWeightStyles.line}>
+              <Text style={editWeightStyles.label}>{TextWT.enterWeight}</Text>
+              <TextInput
+                style={editWeightStyles.input}
+                keyboardType="numeric"
+                onChangeText={(text) => setNewWeight(text)}
+              />
+            </View>
+            <View style={editWeightStyles.line}>
+              <TouchableOpacity
+                style={[editWeightStyles.button, editWeightStyles.buttonOK]}
+                onPress={handleEditWeight}
+              >
+                <Text style={editWeightStyles.buttonText}>Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[editWeightStyles.button, editWeightStyles.buttonKO]}
+                onPress={handleDeleteWeight}
+              >
+                <Text style={editWeightStyles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      )}
     </Modal>
   );
 };
