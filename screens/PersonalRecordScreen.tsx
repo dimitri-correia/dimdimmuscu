@@ -8,6 +8,8 @@ export const PersonalRecordScreen: React.FC = () => {
     PersonalRecordEntry[]
   >([]);
 
+  const [modalShow, setModalShow] = useState<boolean>(false);
+
   useEffect(() => {
     refreshPREntries(setPersonalRecordEntries);
   }, []);
@@ -22,7 +24,10 @@ export const PersonalRecordScreen: React.FC = () => {
   }, {} as Record<number, PersonalRecordEntry[]>);
 
   return (
-    <View>
+    <View style={CommonStyles.container}>
+      <ModalAddPR modalShow={modalShow} setModalShow={setModalShow} />
+
+      <Button title={TextEL.addExercise} onPress={() => setModalShow(true)} />
       {Object.entries(entriesByExercise).map(([exId, entries]) => (
         <ExerciseTable key={exId} exId={Number(exId)} entries={entries} />
       ))}
@@ -37,19 +42,30 @@ interface ExerciseTableProps {
 
 const ExerciseTable = ({ exId, entries }: ExerciseTableProps) => {
   return (
-    <View key={exId}>
-      <Text>{`Exercise ${exId}`}</Text>
+    <View key={exId} style={PersonalRecordStyles.exTable}>
+      <Text style={PersonalRecordStyles.tableName}>{`Exercise ${exId}`}</Text>
       <View>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={{ flex: 1 }}>Date</Text>
-          <Text style={{ flex: 1 }}>Weight</Text>
-          <Text style={{ flex: 1 }}>Improvement</Text>
+        <View style={PersonalRecordStyles.tableLines}>
+          <Text style={PersonalRecordStyles.tableItem}>{TextPR.date}</Text>
+          <Text style={PersonalRecordStyles.tableItem}>{TextPR.weight}</Text>
+          <Text style={PersonalRecordStyles.tableItem}>
+            {TextPR.improvement}
+          </Text>
         </View>
-        {entries.map((entry) => (
-          <View key={entry.id} style={{ flexDirection: "row" }}>
-            <Text style={{ flex: 1 }}>{entry.date.toDateString()}</Text>
-            <Text style={{ flex: 1 }}>{entry.weightLifted}</Text>
-            <Text style={{ flex: 1 }}>{0}</Text>
+        {entries.map((entry, p) => (
+          <View key={entry.id} style={PersonalRecordStyles.tableLines}>
+            <Text style={PersonalRecordStyles.tableItem}>
+              {entry.date.toDateString()}
+            </Text>
+            <Text style={PersonalRecordStyles.tableItem}>
+              {entry.weightLifted}
+            </Text>
+            <Text style={PersonalRecordStyles.tableItem}>
+              {getImprovementString(
+                entry.weightLifted,
+                entries.at(p - 1).weightLifted
+              )}
+            </Text>
           </View>
         ))}
       </View>
