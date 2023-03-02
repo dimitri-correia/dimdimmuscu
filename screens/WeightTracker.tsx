@@ -7,17 +7,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { averageXdays, WeightEntry } from "../logic/WeightTrackerLogic";
 import {
-  addWeightEntry,
-  deleteWeightEntry,
-  editWeightEntry,
-  getWeightEntries,
-} from "../database/WeightTrackerDB";
+  addWeight,
+  averageXdays,
+  deleteEntry,
+  editEntry,
+  refreshWeightEntries,
+  WeightEntry,
+} from "../logic/WeightTrackerLogic";
 import CommonStyles, { editWeightStyles } from "../styles/CommonStyles";
 import { addWeightStyles, pageStyles } from "../styles/WeightTrackerStyles";
 import * as TextWT from "../assets/texts/WeightTracker";
-import { confirmationChanges } from "../components/commons/ValidateChanges";
+import * as TextCommon from "../assets/texts/Common";
 
 export const WeightTracker: React.FC = () => {
   const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
@@ -108,7 +109,6 @@ const ModalEditWeight = ({
   handleEditWeight,
   handleDeleteWeight,
 }: ModalEditProps) => {
-  console.log(entry);
   return (
     <Modal
       animationType="slide"
@@ -142,13 +142,17 @@ const ModalEditWeight = ({
                 style={[editWeightStyles.button, editWeightStyles.buttonOK]}
                 onPress={handleEditWeight}
               >
-                <Text style={editWeightStyles.buttonText}>Save</Text>
+                <Text style={editWeightStyles.buttonText}>
+                  {TextCommon.save}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[editWeightStyles.button, editWeightStyles.buttonKO]}
                 onPress={handleDeleteWeight}
               >
-                <Text style={editWeightStyles.buttonText}>Delete</Text>
+                <Text style={editWeightStyles.buttonText}>
+                  {TextCommon.toDelete}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -157,63 +161,3 @@ const ModalEditWeight = ({
     </Modal>
   );
 };
-
-function refreshWeightEntries(
-  setWeightEntries: (
-    value: ((prevState: WeightEntry[]) => WeightEntry[]) | WeightEntry[]
-  ) => void
-) {
-  getWeightEntries().then((we: WeightEntry[]) => {
-    setWeightEntries(we);
-  });
-}
-
-function editEntry(
-  modifiedWeight: string,
-  editId: number,
-  setEditId: (value: ((prevState: number) => number) | number) => void
-) {
-  return () => {
-    const parsedWeight = parseFloat(modifiedWeight);
-    if (isNaN(parsedWeight)) {
-      alert(TextWT.invalidWeight);
-      return;
-    }
-    confirmationChanges(() => {
-      editWeightEntry(editId, parsedWeight);
-      setEditId(-1);
-    });
-  };
-}
-
-function deleteEntry(
-  editId: number,
-  setEditId: (value: ((prevState: number) => number) | number) => void
-) {
-  return () => {
-    confirmationChanges(() => {
-      deleteWeightEntry(editId);
-      setEditId(-1);
-    });
-  };
-}
-
-function addWeight(weightEntries: WeightEntry[], newWeight: string) {
-  return () => {
-    const today: string = new Date().toISOString().split("T")[0];
-    const hasEntryForToday: boolean = weightEntries.some(
-      (entry: WeightEntry) => entry.date.toISOString().split("T")[0] === today
-    );
-
-    if (hasEntryForToday) {
-      alert(TextWT.alreadyExistingWeight);
-    }
-
-    const parsedWeight = parseFloat(newWeight);
-    if (isNaN(parsedWeight)) {
-      alert(TextWT.invalidWeight);
-      return;
-    }
-    addWeightEntry(today, parsedWeight);
-  };
-}
