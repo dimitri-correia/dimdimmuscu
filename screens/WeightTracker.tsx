@@ -108,7 +108,6 @@ const ModalEditWeight = ({
   handleEditWeight,
   handleDeleteWeight,
 }: ModalEditProps) => {
-  console.log(entry);
   return (
     <Modal
       animationType="slide"
