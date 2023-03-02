@@ -145,10 +145,10 @@ const ModalAddMuscleGroup = ({
       <View style={editWeightStyles.modal}>
         <View style={editWeightStyles.background}>
           <View style={editWeightStyles.line}>
-            <Text style={editWeightStyles.title}>New Muscle Group Name</Text>
+            <Text style={editWeightStyles.title}>{TextEL.addMuscleGroup}</Text>
           </View>
           <View style={editWeightStyles.line}>
-            <Text style={editWeightStyles.label}>{TextEL.addMuscleGroup}</Text>
+            <Text style={editWeightStyles.label}>{TextEL.muscleGroupName}</Text>
             <TextInput
               style={editWeightStyles.input}
               onChangeText={(text) => setModalGMName(text)}
@@ -204,10 +204,10 @@ const ModalAddExercise = ({
       <View style={editWeightStyles.modal}>
         <View style={editWeightStyles.background}>
           <View style={editWeightStyles.line}>
-            <Text style={editWeightStyles.title}>Edit Weight Entry</Text>
+            <Text style={editWeightStyles.title}>{TextEL.addExercise}</Text>
           </View>
           <View style={editWeightStyles.line}>
-            <Text style={editWeightStyles.label}>{TextEL.addExercise}</Text>
+            <Text style={editWeightStyles.label}>{TextEL.exerciseName}</Text>
             <TextInput
               style={editWeightStyles.input}
               onChangeText={(text) => setModalExName(text)}
