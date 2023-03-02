@@ -1,3 +1,12 @@
+import {
+  addWeightEntry,
+  deleteWeightEntry,
+  editWeightEntry,
+  getWeightEntries,
+} from "../database/WeightTrackerDB";
+import * as TextWT from "../assets/texts/WeightTracker";
+import { confirmationChanges } from "../components/commons/ValidateChanges";
+
 export interface WeightEntry {
   id: number;
   date: Date;
@@ -22,3 +31,63 @@ export const averageXdays = (
     entriesInLastXDays.length
   );
 };
+
+export function refreshWeightEntries(
+  setWeightEntries: (
+    value: ((prevState: WeightEntry[]) => WeightEntry[]) | WeightEntry[]
+  ) => void
+) {
+  getWeightEntries().then((we: WeightEntry[]) => {
+    setWeightEntries(we);
+  });
+}
+
+export function editEntry(
+  modifiedWeight: string,
+  editId: number,
+  setEditId: (value: ((prevState: number) => number) | number) => void
+) {
+  return () => {
+    const parsedWeight = parseFloat(modifiedWeight);
+    if (isNaN(parsedWeight)) {
+      alert(TextWT.invalidWeight);
+      return;
+    }
+    confirmationChanges(() => {
+      editWeightEntry(editId, parsedWeight);
+      setEditId(-1);
+    });
+  };
+}
+
+export function deleteEntry(
+  editId: number,
+  setEditId: (value: ((prevState: number) => number) | number) => void
+) {
+  return () => {
+    confirmationChanges(() => {
+      deleteWeightEntry(editId);
+      setEditId(-1);
+    });
+  };
+}
+
+export function addWeight(weightEntries: WeightEntry[], newWeight: string) {
+  return () => {
+    const today: string = new Date().toISOString().split("T")[0];
+    const hasEntryForToday: boolean = weightEntries.some(
+      (entry: WeightEntry) => entry.date.toISOString().split("T")[0] === today
+    );
+
+    if (hasEntryForToday) {
+      alert(TextWT.alreadyExistingWeight);
+    }
+
+    const parsedWeight = parseFloat(newWeight);
+    if (isNaN(parsedWeight)) {
+      alert(TextWT.invalidWeight);
+      return;
+    }
+    addWeightEntry(today, parsedWeight);
+  };
+}
