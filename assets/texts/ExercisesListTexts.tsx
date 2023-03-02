@@ -4,6 +4,7 @@ export const primaryMuscleGroup = "Primary Muscle Group";
 export const secondaryMuscleGroup = "Secondary Muscle Group";
 
 export const addMuscleGroup = "Add Muscle Group";
+export const muscleGroupName = "Muscle Group Name";
 
 export const incorrectName = "Incorrect name, please retry";
 export const primarySecondaryCannotBeTheSame =
