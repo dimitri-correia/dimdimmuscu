@@ -18,6 +18,7 @@ import {
 import CommonStyles, { editWeightStyles } from "../styles/CommonStyles";
 import { addWeightStyles, pageStyles } from "../styles/WeightTrackerStyles";
 import * as TextWT from "../assets/texts/WeightTracker";
+import * as TextCommon from "../assets/texts/Common";
 
 export const WeightTracker: React.FC = () => {
   const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
@@ -141,13 +142,17 @@ const ModalEditWeight = ({
                 style={[editWeightStyles.button, editWeightStyles.buttonOK]}
                 onPress={handleEditWeight}
               >
-                <Text style={editWeightStyles.buttonText}>Save</Text>
+                <Text style={editWeightStyles.buttonText}>
+                  {TextCommon.save}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[editWeightStyles.button, editWeightStyles.buttonKO]}
                 onPress={handleDeleteWeight}
               >
-                <Text style={editWeightStyles.buttonText}>Delete</Text>
+                <Text style={editWeightStyles.buttonText}>
+                  {TextCommon.toDelete}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
