@@ -28,16 +28,16 @@ export const WeightTracker: React.FC = () => {
   const [editId, setEditId] = useState<number>(-1); // if -1 modal invisible
 
   useEffect(() => {
-    refreshWeightEntries(setWeightEntries); // fetch database once
-  }, [editId, addWeight]);
+    refreshWeightEntries(setWeightEntries);
+  }, [editId]);
 
   return (
     <View style={CommonStyles.container}>
       <ModalEditWeight
         entry={weightEntries.find((we) => we.id == editId)}
         setNewWeight={setNewWeight}
-        handleEditWeight={editEntry(newWeight, editId, setEditId)}
-        handleDeleteWeight={deleteEntry(editId, setEditId)}
+        handleEditWeight={() => editEntry(newWeight, editId, setEditId)}
+        handleDeleteWeight={() => deleteEntry(editId, setEditId)}
       />
       <View style={addWeightStyles.addWeightContainer}>
         <Text style={addWeightStyles.addWeightLabel}>{TextWT.enterWeight}</Text>
@@ -48,7 +48,10 @@ export const WeightTracker: React.FC = () => {
         />
         <Button
           title={TextWT.add}
-          onPress={addWeight(weightEntries, newWeight)}
+          onPress={() => {
+            addWeight(weightEntries, newWeight);
+            refreshWeightEntries(setWeightEntries);
+          }}
         />
       </View>
       <Row

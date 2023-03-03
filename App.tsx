@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomeScreen } from "./screens/HomeScreen";
 import { WeightTracker } from "./screens/WeightTracker";
 import { ExercisesList } from "./screens/ExercisesList";
+import { PersonalRecordScreen } from "./screens/PersonalRecordScreen";
 
 const NativeStackNavigator = createNativeStackNavigator();
 
@@ -24,6 +25,10 @@ export default function App() {
         <NativeStackNavigator.Screen
           name="ExercisesList"
           component={ExercisesList}
+        />
+        <NativeStackNavigator.Screen
+          name="PersonalRecord"
+          component={PersonalRecordScreen}
         />
       </NativeStackNavigator.Navigator>
     </NavigationContainer>

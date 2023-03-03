@@ -45,4 +45,14 @@ export default [
       />
     )
   ),
+  new ScreenItem(
+    "Personal Record",
+    "PersonalRecord",
+    (
+      <Image
+        source={require("../assets/ScreenIcons/PersonalRecord.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
+  ),
 ];

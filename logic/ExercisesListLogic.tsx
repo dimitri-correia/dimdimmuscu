@@ -41,23 +41,21 @@ export function addExercise(
   modalExSecondary: number,
   exerciseEntry: ExercisesEntry[]
 ) {
-  return () => {
-    if (
-      !modalExName ||
-      exerciseEntry.map((ex) => ex.name).includes(modalExName)
-    ) {
-      alert(TextEL.incorrectName);
-      return;
-    }
-    if (modalExPrimary == modalExSecondary) {
-      alert(TextEL.primarySecondaryCannotBeTheSame);
-      return;
-    }
-    confirmationChanges(() => {
-      addExerciseEntry(modalExName, modalExPrimary, modalExSecondary);
-      setModalEx(false);
-    });
-  };
+  if (
+    !modalExName ||
+    exerciseEntry.map((ex) => ex.name).includes(modalExName)
+  ) {
+    alert(TextEL.incorrectName);
+    return;
+  }
+  if (modalExPrimary == modalExSecondary) {
+    alert(TextEL.primarySecondaryCannotBeTheSame);
+    return;
+  }
+  confirmationChanges(() => {
+    addExerciseEntry(modalExName, modalExPrimary, modalExSecondary);
+    setModalEx(false);
+  });
 }
 
 export function addMuscleGroup(
@@ -65,17 +63,15 @@ export function addMuscleGroup(
   modalGMName: string,
   muscleGroupEntries: Map<number, string>
 ) {
-  return () => {
-    if (
-      !modalGMName ||
-      Array.from(muscleGroupEntries.values()).includes(modalGMName)
-    ) {
-      alert(TextEL.incorrectName);
-      return;
-    }
-    confirmationChanges(() => {
-      addMuscleGroupEntry(modalGMName);
-      setModalGM(false);
-    });
-  };
+  if (
+    !modalGMName ||
+    Array.from(muscleGroupEntries.values()).includes(modalGMName)
+  ) {
+    alert(TextEL.incorrectName);
+    return;
+  }
+  confirmationChanges(() => {
+    addMuscleGroupEntry(modalGMName);
+    setModalGM(false);
+  });
 }
