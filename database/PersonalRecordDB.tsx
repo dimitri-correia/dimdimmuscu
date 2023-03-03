@@ -46,7 +46,7 @@ export const getPREntries = (): Promise<PersonalRecordEntry[]> => {
 export const addPREntry = (date: string, exoID: number, weight: number) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `INSERT INTO ${personalRecordDBName} (${colDate}, ${colEx} ${colWeightLifted}) VALUES (?, ?, ?);`,
+      `INSERT INTO ${personalRecordDBName} (${colDate}, ${colEx}, ${colWeightLifted}) VALUES (?, ?, ?);`,
       [date, exoID, weight]
     );
   });
