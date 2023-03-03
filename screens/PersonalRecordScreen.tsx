@@ -40,14 +40,6 @@ export const PersonalRecordScreen: React.FC = () => {
   const [modalWeightToSet, setModalWeightToSet] = useState<number>(0);
   const [modalDate, setModalDate] = useState<Date>(new Date());
 
-  const handleAddPR = () =>
-    addPR(
-      modalDate.toISOString().split("T")[0],
-      modalExToSet,
-      modalWeightToSet,
-      setModalShow
-    );
-
   useEffect(() => {
     refreshPREntries(setPersonalRecordEntries);
     setEntriesByExercise(
@@ -74,7 +66,14 @@ export const PersonalRecordScreen: React.FC = () => {
         modalShow={modalShow}
         setModalShow={setModalShow}
         exerciseList={exerciseEntries}
-        handleAddPR={handleAddPR}
+        handleAddPR={() =>
+          addPR(
+            modalDate.toISOString().split("T")[0],
+            modalExToSet,
+            modalWeightToSet,
+            setModalShow
+          )
+        }
         modalExToSet={modalExToSet}
         setModalExToSet={setModalExToSet}
         setModalWeightToSet={setModalWeightToSet}
@@ -233,16 +232,15 @@ function refreshPREntries(
 ) {
   getPREntries().then((pr) => {
     setPersonalRecordEntries(pr);
+    console.log(pr);
   });
 }
 
 function addPR(date: string, exoID: number, weight: number, setModal: any) {
+  // todo check param
   console.log(date, exoID, weight);
-  return () => {
-    // todo check param
-    confirmationChanges(() => {
-      addPREntry(date, exoID, weight);
-      setModal(false);
-    });
-  };
+  confirmationChanges(() => {
+    addPREntry(date, exoID, weight);
+    setModal(false);
+  });
 }
