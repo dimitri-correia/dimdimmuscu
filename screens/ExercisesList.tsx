@@ -44,11 +44,9 @@ export const ExercisesList: React.FC = () => {
         modalGM={modalGM}
         setModalGM={setModalGM}
         setModalGMName={setModalGMName}
-        handleAddMuscleGroup={addMuscleGroup(
-          setModalGM,
-          modalGMName,
-          muscleGroupEntries
-        )}
+        handleAddMuscleGroup={() =>
+          addMuscleGroup(setModalGM, modalGMName, muscleGroupEntries)
+        }
       />
       <ModalAddExercise
         modalEx={modalEx}
@@ -59,13 +57,15 @@ export const ExercisesList: React.FC = () => {
         modalExSecondary={modalExSecondary}
         setModalExSecondary={setModalExSecondary}
         muscleGroupEntries={muscleGroupEntries}
-        handleAddExercise={addExercise(
-          setModalEx,
-          modalExName,
-          modalExPrimary,
-          modalExSecondary,
-          exerciseEntries
-        )}
+        handleAddExercise={() =>
+          addExercise(
+            setModalEx,
+            modalExName,
+            modalExPrimary,
+            modalExSecondary,
+            exerciseEntries
+          )
+        }
       />
       <Button title={TextEL.addExercise} onPress={() => setModalEx(true)} />
       <ScrollView>
