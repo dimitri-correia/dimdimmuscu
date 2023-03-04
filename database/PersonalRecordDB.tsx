@@ -23,7 +23,7 @@ export const getPREntries = (): Promise<PersonalRecordEntry[]> => {
   return new Promise<PersonalRecordEntry[]>((resolve, _) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
-        `SELECT * FROM ${personalRecordDBName} ORDER BY ${colEx}, ${colDate};`,
+        `SELECT * FROM ${personalRecordDBName} ORDER BY ${colEx}, ${colDate} DESC;`,
         [],
         (_, result) => {
           const personalRecordEntries: PersonalRecordEntry[] = [];
