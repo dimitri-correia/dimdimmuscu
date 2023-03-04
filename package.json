@@ -26,7 +26,8 @@
     "react-native": "0.71.3",
     "react-native-pager-view": "6.1.2",
     "react-native-tab-view": "^3.5.1",
-    "react-native-web": "~0.18.9"
+    "react-native-web": "~0.18.9",
+    "@react-native-community/datetimepicker": "6.7.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
