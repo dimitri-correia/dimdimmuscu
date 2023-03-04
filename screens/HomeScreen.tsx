@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
@@ -14,7 +14,9 @@ interface homeScreenProps {
 }
 
 export const HomeScreen: React.FC<homeScreenProps> = ({ navigation }) => {
-  createAllTables(); // call only once when app start
+  useEffect(() => {
+    createAllTables(); // call only once when app start
+  }, []);
   return <View style={CommonStyles.container}>{ItemsGrid(navigation)}</View>;
 };
 
