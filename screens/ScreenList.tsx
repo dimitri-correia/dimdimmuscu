@@ -55,4 +55,14 @@ export default [
       />
     )
   ),
+  new ScreenItem(
+    "Calculators",
+    "Calculators",
+    (
+      <Image
+        source={require("../assets/ScreenIcons/Calculators.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
+  ),
 ];
