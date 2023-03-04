@@ -6,7 +6,11 @@ export interface PersonalRecordEntry {
 }
 
 export function getImprovementString(newWeight: number, oldWeight: number) {
-  console.log(newWeight);
-  console.log(oldWeight);
-  return `${newWeight - oldWeight} (${(newWeight - oldWeight) / newWeight}%)`;
+  if (!oldWeight) {
+    return "";
+  }
+  const improvement = (newWeight - oldWeight).toFixed(1);
+  const percentage = ((100 * (newWeight - oldWeight)) / oldWeight).toFixed(0);
+
+  return `+ ${improvement} (${percentage}%)`;
 }
