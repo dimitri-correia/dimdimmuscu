@@ -6,7 +6,7 @@ import { HomeScreen } from "./screens/HomeScreen";
 import { WeightTracker } from "./screens/WeightTracker";
 import { ExercisesList } from "./screens/ExercisesList";
 import { PersonalRecordScreen } from "./screens/PersonalRecordScreen";
-import { CalculatorsScreen } from "./screens/CalculatorsScreen";
+import { CalculatorsScreen } from "./screens/CalucatorsScreens/CalculatorsScreen";
 
 const NativeStackNavigator = createNativeStackNavigator();
 
