@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { OneRMCalculator } from "./OneRMCalculator";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -11,10 +12,6 @@ export const CalculatorsScreen: React.FC = () => {
       <Tab.Screen name="WarmUpMaxAttempt" component={WarmUpMaxAttempt} />
     </Tab.Navigator>
   );
-};
-
-const OneRMCalculator: React.FC = () => {
-  return <View />;
 };
 const WarmUpMaxAttempt: React.FC = () => {
   return <View />;
