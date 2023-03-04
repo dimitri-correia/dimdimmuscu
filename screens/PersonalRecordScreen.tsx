@@ -24,17 +24,13 @@ import { confirmationChanges } from "../components/commons/ValidateChanges";
 import { addWeightStyles } from "../styles/WeightTrackerStyles";
 
 export const PersonalRecordScreen: React.FC = () => {
-  const [personalRecordEntries, setPersonalRecordEntries] = useState<
-    PersonalRecordEntry[]
-  >([]);
+  const [personalRecordEntries, setPersonalRecordEntries] = useState<{
+    [key: number]: PersonalRecordEntry[];
+  }>({});
 
   const [modalShow, setModalShow] = useState<boolean>(false);
 
-  const [exerciseEntries, setExerciseEntries] = useState<ExercisesEntry[]>();
-
-  const [entriesByExercise, setEntriesByExercise] = useState<
-    Record<number, PersonalRecordEntry[]>
-  >({});
+  const [exerciseEntries, setExerciseEntries] = useState<ExercisesEntry[]>([]);
 
   const [modalExToSet, setModalExToSet] = useState<number>(1);
   const [modalWeightToSet, setModalWeightToSet] = useState<number>(0);
@@ -42,16 +38,6 @@ export const PersonalRecordScreen: React.FC = () => {
 
   useEffect(() => {
     refreshPREntries(setPersonalRecordEntries);
-    setEntriesByExercise(
-      personalRecordEntries.reduce((acc, entry) => {
-        const exId = entry.exId;
-        if (!acc[exId]) {
-          acc[exId] = [];
-        }
-        acc[exId].push(entry);
-        return acc;
-      }, {} as Record<number, PersonalRecordEntry[]>)
-    );
   }, [modalShow]);
 
   useEffect(() => {
@@ -82,8 +68,13 @@ export const PersonalRecordScreen: React.FC = () => {
       />
 
       <Button title={"Add a new PR"} onPress={() => setModalShow(true)} />
-      {Object.entries(entriesByExercise).map(([exId, entries]) => (
-        <ExerciseTable key={exId} exId={Number(exId)} entries={entries} />
+      {Object.entries(personalRecordEntries).map(([exerciseId, entries]) => (
+        <ExerciseTable
+          exName={
+            exerciseEntries.find((ex) => ex.id == Number(exerciseId))?.name
+          }
+          entries={entries}
+        />
       ))}
     </View>
   );
@@ -124,9 +115,6 @@ const ModalAddPR = ({
             <Text style={editWeightStyles.title}>Add a new PR</Text>
           </View>
           <View style={editWeightStyles.line}>
-            <Text style={{ flex: 1 }}>Set Date</Text>
-          </View>
-          <View style={editWeightStyles.line}>
             <Button
               title={modalDate.toDateString()}
               onPress={(_) => setEditDate(true)}
@@ -135,15 +123,17 @@ const ModalAddPR = ({
               <DateTimePicker
                 value={modalDate}
                 onChange={(_, date: Date | undefined) => {
-                  setModalDate(date);
                   setEditDate(false);
+                  setModalDate(date);
                 }}
               ></DateTimePicker>
             )}
           </View>
 
           <View style={editWeightStyles.line}>
-            <Text style={{ flex: 1 }}>Set exercise</Text>
+            <Text style={{ flex: 1 }}>
+              {exerciseList.find((ex) => ex.id == modalExToSet)?.name}
+            </Text>
             <Picker
               style={{ flex: 1 }}
               selectedValue={modalExToSet}
@@ -159,6 +149,7 @@ const ModalAddPR = ({
             <TextInput
               style={addWeightStyles.addWeightInput}
               keyboardType="numeric"
+              placeholder={"weigth"}
               onChangeText={(text) => setModalWeightToSet(text)}
             />
           </View>
@@ -186,14 +177,16 @@ const ModalAddPR = ({
 };
 
 interface ExerciseTableProps {
-  exId: number;
+  exName: string | undefined;
   entries: PersonalRecordEntry[];
 }
 
-const ExerciseTable = ({ exId, entries }: ExerciseTableProps) => {
+const ExerciseTable = ({ exName, entries }: ExerciseTableProps) => {
   return (
-    <View key={exId} style={PersonalRecordStyles.exTable}>
-      <Text style={PersonalRecordStyles.tableName}>{`Exercise ${exId}`}</Text>
+    <View key={exName} style={PersonalRecordStyles.exTable}>
+      <Text
+        style={PersonalRecordStyles.tableName}
+      >{`Exercise: ${exName}`}</Text>
       <View>
         <View style={PersonalRecordStyles.tableLines}>
           <Text style={PersonalRecordStyles.tableItem}>{TextPR.date}</Text>
@@ -208,12 +201,12 @@ const ExerciseTable = ({ exId, entries }: ExerciseTableProps) => {
               {entry.date.toDateString()}
             </Text>
             <Text style={PersonalRecordStyles.tableItem}>
-              {entry.weightLifted}
+              {entry.weightLifted} kg
             </Text>
             <Text style={PersonalRecordStyles.tableItem}>
               {getImprovementString(
                 entry.weightLifted,
-                entries[index - 1].weightLifted
+                entries[index + 1]?.weightLifted
               )}
             </Text>
           </View>
@@ -226,19 +219,27 @@ const ExerciseTable = ({ exId, entries }: ExerciseTableProps) => {
 function refreshPREntries(
   setPersonalRecordEntries: (
     value:
-      | ((prevState: PersonalRecordEntry[]) => PersonalRecordEntry[])
-      | PersonalRecordEntry[]
+      | ((prevState: { [p: string]: PersonalRecordEntry[] }) => {
+          [p: string]: PersonalRecordEntry[];
+        })
+      | { [p: string]: PersonalRecordEntry[] }
   ) => void
 ) {
   getPREntries().then((pr) => {
-    setPersonalRecordEntries(pr);
-    console.log(pr);
+    const exercises: { [key: number]: PersonalRecordEntry[] } = {};
+    // group the entries by exercise name
+    pr.forEach((entry: PersonalRecordEntry) => {
+      if (!exercises[entry.exId]) {
+        exercises[entry.exId] = [];
+      }
+      exercises[entry.exId].push(entry);
+    });
+    setPersonalRecordEntries(exercises);
   });
 }
 
 function addPR(date: string, exoID: number, weight: number, setModal: any) {
   // todo check param
-  console.log(date, exoID, weight);
   confirmationChanges(() => {
     addPREntry(date, exoID, weight);
     setModal(false);
