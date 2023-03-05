@@ -5,13 +5,16 @@ export default StyleSheet.create({
     paddingTop: 20,
   },
   tableName: {
+    textAlign: "center",
     fontWeight: "bold",
   },
   tableLines: {
     flexDirection: "row",
-    paddingTop: 5,
+    textAlign: "center",
+    paddingBottom: 3,
   },
   tableItem: {
     flex: 1,
+    textAlign: "center"
   },
 });
