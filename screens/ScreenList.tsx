@@ -65,4 +65,14 @@ export default [
       />
     )
   ),
+  new ScreenItem(
+    "Infos",
+    "Infos",
+    (
+      <Image
+        source={require("../assets/ScreenIcons/Infos.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
+  ),
 ];
