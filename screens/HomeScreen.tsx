@@ -8,6 +8,7 @@ import HomeScreenStyles from "../styles/HomeScreenStyles";
 import { createWeightTable } from "../database/WeightTrackerDB";
 import { createExercisesTableS } from "../database/ExercisesListDB";
 import { createPRTable } from "../database/PersonalRecordDB";
+import { createInfosTable } from "../database/InfosDB";
 
 interface homeScreenProps {
   navigation: NavigationProp<ParamListBase>;
@@ -59,4 +60,5 @@ function createAllTables() {
   createWeightTable();
   createExercisesTableS();
   createPRTable();
+  createInfosTable();
 }
