@@ -3,7 +3,7 @@ import { InfoEntry } from "../logic/InfosLogic";
 
 const infoEntries = "info_entries";
 const colId = "id";
-const colFieldName = "field_name";
+const colFieldName = "field_name"; // only useful when looking directly in the db
 const colFieldValue = "field_value";
 
 export const createInfosTable = () => {
@@ -32,5 +32,14 @@ export const getInfoEntries = (): Promise<Map<number, InfoEntry>> => {
         resolve(infoEntries);
       });
     });
+  });
+};
+
+export const editInfosEntry = (id: number, value: string) => {
+  CommonDB.transaction((tx) => {
+    tx.executeSql(
+      `UPDATE ${infoEntries} SET ${colFieldValue} = ? WHERE ${colId} = ?;`,
+      [value, id]
+    );
   });
 };
