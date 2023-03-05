@@ -7,6 +7,7 @@ import { WeightTracker } from "./screens/WeightTracker";
 import { ExercisesList } from "./screens/ExercisesList";
 import { PersonalRecordScreen } from "./screens/PersonalRecordScreen";
 import { CalculatorsScreen } from "./screens/CalucatorsScreens/CalculatorsScreen";
+import { InfosScreen } from "./screens/InfosScreen";
 
 const NativeStackNavigator = createNativeStackNavigator();
 
@@ -35,6 +36,7 @@ export default function App() {
           name="Calculators"
           component={CalculatorsScreen}
         />
+        <NativeStackNavigator.Screen name="Infos" component={InfosScreen} />
       </NativeStackNavigator.Navigator>
     </NavigationContainer>
   );
