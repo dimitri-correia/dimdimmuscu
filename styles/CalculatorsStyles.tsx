@@ -2,10 +2,8 @@ import { StyleSheet } from "react-native";
 
 export const OneRmStyles = StyleSheet.create({
   container: {
+    padding: 16,
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
   },
   label: {
     fontWeight: "bold",
@@ -31,6 +29,12 @@ export const OneRmStyles = StyleSheet.create({
   },
   result: {
     marginTop: 10,
+  },
+  rowContainer: {
+    flexDirection: "row",
+  },
+  rowItem: {
+    flex: 1,
   },
 });
 
