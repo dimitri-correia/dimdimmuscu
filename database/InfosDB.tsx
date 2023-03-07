@@ -44,11 +44,9 @@ export const createInfosTable = () => {
 };
 
 export const getInfoEntries = (): Promise<Map<number, InfoEntry>> => {
-  console.log("h");
   return new Promise<Map<number, InfoEntry>>((resolve, _) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(`SELECT * FROM ${infoEntries};`, [], (_, result) => {
-        console.log("r", result);
         const infoEntries: Map<number, InfoEntry> = new Map();
         for (let i = 0; i < result.rows.length; i++) {
           const row = result.rows.item(i);
@@ -58,6 +56,7 @@ export const getInfoEntries = (): Promise<Map<number, InfoEntry>> => {
           });
         }
         resolve(infoEntries);
+        console.log(infoEntries);
       });
     });
   });
