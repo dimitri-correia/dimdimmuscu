@@ -12,14 +12,14 @@ So far:
 - home page
 - weight tracker page
 - exercise list page
+- PR (personal record) page
+- Info page 
 
 Will have:
-- PR (personal record) page
 - Calorie tracker page
 - Workout session page (gym)
 - Picture of evolution (once a month to track evolution)
 - Home workout
-- Info page 
 - BMI calculator
 - Daily calorie need calculator
 - Cardio tracker page
