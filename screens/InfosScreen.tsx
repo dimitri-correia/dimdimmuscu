@@ -10,23 +10,33 @@ export const InfosScreen: React.FC = () => {
     new Map()
   );
 
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState<string>();
+  const [height, setHeight] = useState<string>();
   const [date, setDate] = useState<Date>(new Date());
-  const [editDate, setEditDate] = useState<boolean>(false);
 
   useEffect(() => {
-    getInfoEntries().then((entries) => setInfoEntries(entries));
+    getInfoEntries().then((entries) => {
+      setInfoEntries(entries);
+      setName(entries.get(1)?.fieldValue);
+      const dateOfBirth = entries.get(2)?.fieldValue;
+      if (dateOfBirth) {
+        setDate(new Date(dateOfBirth));
+      }
+      setHeight(entries.get(3)?.fieldValue);
+    });
   }, []);
 
+  const [editDate, setEditDate] = useState<boolean>(false);
+
+  console.log(name);
   return (
     <View style={maxAttemptStyles.container}>
       <Text style={maxAttemptStyles.title}>{"Name"}:</Text>
       <TextInput
         style={maxAttemptStyles.input}
-        keyboardType="numeric"
-        value={infoEntries.get(1)?.fieldValue}
-        onChangeText={(text) => console.log(text)}
-        onSubmitEditing={() => handleEditing(1, "")}
+        value={name}
+        onChangeText={(text) => setName(text)}
+        onSubmitEditing={() => handleEditing(1, name)}
       />
 
       <Text style={maxAttemptStyles.title}>{"Date of Birth"}:</Text>
@@ -37,9 +47,12 @@ export const InfosScreen: React.FC = () => {
       {editDate && (
         <DateTimePicker
           value={date}
-          onChange={(_, date: Date | undefined) => {
-            setEditDate(false);
-            handleEditing(2, date?.toISOString().split("T")[0]);
+          onChange={(_, dateChange: Date | undefined) => {
+            if (dateChange) {
+              setEditDate(false);
+              setDate(dateChange);
+              handleEditing(2, dateChange?.toISOString().split("T")[0]);
+            }
           }}
         ></DateTimePicker>
       )}
@@ -48,17 +61,17 @@ export const InfosScreen: React.FC = () => {
       <TextInput
         style={maxAttemptStyles.input}
         keyboardType="numeric"
-        value={infoEntries.get(3)?.fieldValue}
-        onChangeText={(text) => console.log(text)}
-        onSubmitEditing={() => handleEditing(3, "")}
+        value={height}
+        onChangeText={(text) => setHeight(text)}
+        onSubmitEditing={() => handleEditing(3, height)}
       />
     </View>
   );
 };
 
-function handleEditing(id: number, value: string | undefined) {
+const handleEditing = (id: number, value: string | undefined) => {
   if (!value) {
     return;
   }
   editInfosEntry(id, value);
-}
+};
