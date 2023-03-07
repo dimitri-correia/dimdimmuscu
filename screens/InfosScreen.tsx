@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { editInfosEntry, getInfoEntries } from "../database/InfosDB";
-import { InfoEntry } from "../logic/InfosLogic";
 import { maxAttemptStyles } from "../styles/CalculatorsStyles";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 export const InfosScreen: React.FC = () => {
-
   const [name, setName] = useState<string>();
   const [height, setHeight] = useState<string>();
   const [date, setDate] = useState<Date>(new Date());
@@ -24,7 +22,6 @@ export const InfosScreen: React.FC = () => {
 
   const [editDate, setEditDate] = useState<boolean>(false);
 
-  console.log(name);
   return (
     <View style={maxAttemptStyles.container}>
       <Text style={maxAttemptStyles.title}>{"Name"}:</Text>

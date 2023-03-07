@@ -56,7 +56,6 @@ export const getInfoEntries = (): Promise<Map<number, InfoEntry>> => {
           });
         }
         resolve(infoEntries);
-        console.log(infoEntries);
       });
     });
   });
