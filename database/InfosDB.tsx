@@ -12,16 +12,33 @@ export const createInfosTable = () => {
       `CREATE TABLE IF NOT EXISTS ${infoEntries} (
         ${colId} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${colFieldName} TEXT NOT NULL UNIQUE,
-        ${colFieldValue} TEXT NOT NULL);
-      INSERT INTO ${infoEntries} (${colId}, ${colFieldName}, ${colFieldValue}) 
-      SELECT 1, 'name', 'dim' 
-      WHERE NOT EXISTS (SELECT 1 FROM ${infoEntries} WHERE ${colId} = 1);
-      INSERT INTO ${infoEntries} (${colId}, ${colFieldName}, ${colFieldValue}) 
-      SELECT 2, 'birthdate', '05-05-1999' 
-      WHERE NOT EXISTS (SELECT 1 FROM ${infoEntries} WHERE ${colId} = 2);
-      INSERT INTO ${infoEntries} (${colId}, ${colFieldName}, ${colFieldValue}) 
-      SELECT 3, 'height', '180' 
-      WHERE NOT EXISTS (SELECT 1 FROM ${infoEntries} WHERE ${colId} = 3);`
+        ${colFieldValue} TEXT NOT NULL);`,
+      [],
+      () => {
+        // Insert default values if they don't already exist
+        tx.executeSql(
+          `INSERT INTO ${infoEntries} (${colId}, ${colFieldName}, ${colFieldValue}) 
+          SELECT 1, 'name', 'dim' 
+          WHERE NOT EXISTS (SELECT 1 FROM ${infoEntries} WHERE ${colId} = 1);`,
+          [],
+          () => {
+            tx.executeSql(
+              `INSERT INTO ${infoEntries} (${colId}, ${colFieldName}, ${colFieldValue}) 
+              SELECT 2, 'birthdate', '05-05-1999' 
+              WHERE NOT EXISTS (SELECT 1 FROM ${infoEntries} WHERE ${colId} = 2);`,
+              [],
+              () => {
+                tx.executeSql(
+                  `INSERT INTO ${infoEntries} (${colId}, ${colFieldName}, ${colFieldValue}) 
+                  SELECT 3, 'height', '180' 
+                  WHERE NOT EXISTS (SELECT 1 FROM ${infoEntries} WHERE ${colId} = 3);`,
+                  []
+                );
+              }
+            );
+          }
+        );
+      }
     );
   });
 };
