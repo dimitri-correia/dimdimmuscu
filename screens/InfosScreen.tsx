@@ -6,9 +6,6 @@ import { maxAttemptStyles } from "../styles/CalculatorsStyles";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 export const InfosScreen: React.FC = () => {
-  const [infoEntries, setInfoEntries] = useState<Map<number, InfoEntry>>(
-    new Map()
-  );
 
   const [name, setName] = useState<string>();
   const [height, setHeight] = useState<string>();
@@ -16,7 +13,6 @@ export const InfosScreen: React.FC = () => {
 
   useEffect(() => {
     getInfoEntries().then((entries) => {
-      setInfoEntries(entries);
       setName(entries.get(1)?.fieldValue);
       const dateOfBirth = entries.get(2)?.fieldValue;
       if (dateOfBirth) {
