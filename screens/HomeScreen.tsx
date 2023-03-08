@@ -9,6 +9,7 @@ import { createWeightTable } from "../database/WeightTrackerDB";
 import { createExercisesTableS } from "../database/ExercisesListDB";
 import { createPRTable } from "../database/PersonalRecordDB";
 import { createInfosTable } from "../database/InfosDB";
+import { createImageTable } from "../database/PictureEvolutionDB";
 
 interface homeScreenProps {
   navigation: NavigationProp<ParamListBase>;
@@ -61,4 +62,5 @@ function createAllTables() {
   createExercisesTableS();
   createPRTable();
   createInfosTable();
+  createImageTable();
 }

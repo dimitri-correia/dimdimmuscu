@@ -75,4 +75,14 @@ export default [
       />
     )
   ),
+  new ScreenItem(
+    "Picture Evolution",
+    "PictureEvolution",
+    (
+      <Image
+        source={require("../assets/ScreenIcons/PictureEvolution.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
+  ),
 ];

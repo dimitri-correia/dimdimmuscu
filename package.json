@@ -10,7 +10,7 @@
     "test": "jest --env=node"
   },
   "dependencies": {
-    "@react-native-community/datetimepicker": "6.7.3",
+    "@react-native-community/datetimepicker": "6.7.5",
     "@react-native-picker/picker": "^2.4.8",
     "@react-navigation/material-top-tabs": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
@@ -27,7 +27,7 @@
     "react-native-pager-view": "6.1.4",
     "react-native-tab-view": "^3.5.1",
     "react-native-web": "~0.18.9",
-    "@react-native-community/datetimepicker": "6.7.5"
+    "expo-image-picker": "~14.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
