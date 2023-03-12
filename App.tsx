@@ -9,6 +9,7 @@ import { PersonalRecordScreen } from "./screens/PersonalRecordScreen";
 import { CalculatorsScreen } from "./screens/CalucatorsScreens/CalculatorsScreen";
 import { InfosScreen } from "./screens/InfosScreen";
 import { PictureEvolutionScreen } from "./screens/PictureEvolutionScreen";
+import { CaloriesTrackerHomeScreen } from "./screens/CaloriestrackerScreens/CaloreisTrackerHomeScreen";
 
 const NativeStackNavigator = createNativeStackNavigator();
 
@@ -26,6 +27,10 @@ export default function App() {
           component={WeightTracker}
         />
         <NativeStackNavigator.Screen
+          name={"CaloriesTracker"}
+          component={CaloriesTrackerHomeScreen}
+        />
+        <NativeStackNavigator.Screen
           name="ExercisesList"
           component={ExercisesList}
         />
@@ -38,8 +43,10 @@ export default function App() {
           component={CalculatorsScreen}
         />
         <NativeStackNavigator.Screen name="Infos" component={InfosScreen} />
-        <NativeStackNavigator.Screen name="PictureEvolution" component={PictureEvolutionScreen} />
-
+        <NativeStackNavigator.Screen
+          name="PictureEvolution"
+          component={PictureEvolutionScreen}
+        />
       </NativeStackNavigator.Navigator>
     </NavigationContainer>
   );
