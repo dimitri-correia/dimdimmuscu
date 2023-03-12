@@ -1,12 +1,17 @@
 # DimDimMuscu
 
-[WIP]
+## Description
 
-My first application.
-Personal project to learn more about the mobile development.
-Application using React Native and Typescript. 
+This is a personal project I developed to learn more about mobile development using React Native and Typescript.
+The application is a gym app with various features to help gym-goers achieve their fitness goals.
 
-Gym application with various features.
+## Technologies Used
+
+The app is built using React Native and Typescript, which allow me to write code that is both performant and easy to maintain. Plus, it can run on both Android and Apple devices.
+
+## Features
+
+[still wip]
 
 So far: 
 - home page
@@ -32,4 +37,4 @@ To improve:
 - language fr/en
 - charts for various pages (ex weight)
 - also track the % body fat 
--  make the overall app more "beautiful" (improving style)
+- make the overall app more "beautiful" (improving style)
