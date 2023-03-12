@@ -8,8 +8,8 @@ const Tab = createMaterialTopTabNavigator();
 export const CalculatorsScreen: React.FC = () => {
   return (
     <Tab.Navigator initialRouteName={"CalculatorsScreen"}>
-      <Tab.Screen name="1RMCalculator" component={OneRMCalculator} />
-      <Tab.Screen name="WarmUpMaxAttempt" component={WarmUpMaxAttempt} />
+      <Tab.Screen name="1RM" component={OneRMCalculator} />
+      <Tab.Screen name="Warm Up" component={WarmUpMaxAttempt} />
     </Tab.Navigator>
   );
 };
