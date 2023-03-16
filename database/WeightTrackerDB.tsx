@@ -40,6 +40,25 @@ export const getWeightEntries = (): Promise<WeightEntry[]> => {
   });
 };
 
+export const getLastWeight = (): Promise<WeightEntry> => {
+  return new Promise<WeightEntry>((resolve, _) => {
+    CommonDB.transaction((tx) => {
+      tx.executeSql(
+        `SELECT * FROM ${weightEntries} ORDER BY ${colDate} DESC LIMIT 1;`,
+        [],
+        (_, result) => {
+          const { id, date, weight } = result.rows.item(0);
+          resolve({
+            id: id,
+            date: new Date(date),
+            weight: weight,
+          });
+        }
+      );
+    });
+  });
+};
+
 export const addWeightEntry = (date: string, weight: number) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
