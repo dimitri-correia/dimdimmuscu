@@ -5,8 +5,25 @@ import { CaloriesTrackerNeedScreen } from "./CaloriesTrackerNeedScreen";
 import { CaloriesTrackerLogScreen } from "./CaloriesTrackerLogScreen";
 import { getInfoEntries } from "../../database/InfosDB";
 import { getLastWeight } from "../../database/WeightTrackerDB";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
+
+type ParamList = {
+  Need: {
+    height: number;
+    age: number;
+    isMale: boolean;
+    weight: number;
+    bodyFatPercentage: number;
+  };
+};
+
+export type NavigationPropsCaloriesTrackerPages = {
+  navigation: StackNavigationProp<ParamList, "Need">;
+  route: RouteProp<ParamList, "Need">;
+};
 
 export const CaloriesTrackerHomeScreen: React.FC = () => {
   const [height, setHeight] = useState<number>(0);
