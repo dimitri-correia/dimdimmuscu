@@ -15,6 +15,7 @@ export interface CaloEntry {
   date: Date;
   name: string;
   calo: number;
+  prot: number;
 }
 
 export function calculateWeightAndBMIStats(
