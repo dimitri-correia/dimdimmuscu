@@ -6,6 +6,7 @@ const colId = "id";
 const colDate = "date";
 const colFoodName = "food_name";
 const colFoodCalories = "food_calo";
+const colFoodProteins = "food_prot";
 
 export const createCaloriesTable = () => {
   CommonDB.transaction((tx) => {
@@ -14,7 +15,8 @@ export const createCaloriesTable = () => {
       ${colId} INTEGER PRIMARY KEY AUTOINCREMENT,
       ${colDate} DATE NOT NULL UNIQUE,
       ${colFoodName} TEXT NOT NULL,
-      ${colFoodCalories} REAL NOT NULL);`
+      ${colFoodCalories} REAL NOT NULL,
+      ${colFoodProteins} REAL NOT NULL);`
     );
   });
 };
@@ -25,12 +27,13 @@ const getCaloEntries = (sql: string): Promise<CaloEntry[]> => {
       tx.executeSql(sql, [], (_, result) => {
         const caloEntries: CaloEntry[] = [];
         for (let i = 0; i < result.rows.length; i++) {
-          const { id, date, name, calo } = result.rows.item(i);
+          const { id, date, name, calo, prot } = result.rows.item(i);
           caloEntries.push({
             id: id,
             date: new Date(date),
             name: name,
             calo: calo,
+            prot: prot,
           });
         }
         resolve(caloEntries);
@@ -52,20 +55,30 @@ export const getCaloEntriesPreciseDate = (
   );
 };
 
-export const addCaloEntry = (date: string, name: string, calo: number) => {
+export const addCaloEntry = (
+  date: string,
+  name: string,
+  calo: number,
+  prot: number
+) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `INSERT INTO ${caloEntries} (${colDate}, ${colFoodName}, ${colFoodCalories}) VALUES (?, ?, ?);`,
-      [date, name, calo]
+      `INSERT INTO ${caloEntries} (${colDate}, ${colFoodName}, ${colFoodCalories}, ${colFoodProteins}) VALUES (?, ?, ?, ?);`,
+      [date, name, calo, prot]
     );
   });
 };
 
-export const editWeightEntry = (id: number, name: string, calo: number) => {
+export const editWeightEntry = (
+  id: number,
+  name: string,
+  calo: number,
+  prot: number
+) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `UPDATE ${caloEntries} SET (${colFoodName}, ${colFoodCalories}) = (?, ?) WHERE ${colId} = ?;`,
-      [name, calo, id]
+      `UPDATE ${caloEntries} SET (${colFoodName}, ${colFoodCalories}, ${colFoodProteins}) = (?, ?, ?) WHERE ${colId} = ?;`,
+      [name, calo, prot, id]
     );
   });
 };
