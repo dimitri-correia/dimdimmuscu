@@ -10,6 +10,13 @@ export enum ActivityLevels {
   EXTREMELY_ACTIVE = 1.9,
 }
 
+export interface CaloEntry {
+  id: number;
+  date: Date;
+  name: string;
+  calo: number;
+}
+
 export function calculateWeightAndBMIStats(
   age: number,
   weight: number,
