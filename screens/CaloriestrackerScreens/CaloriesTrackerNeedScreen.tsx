@@ -7,29 +7,12 @@ import {
   calculateWaterIntake,
   calculateWeightAndBMIStats,
 } from "../../logic/CaloriesTrackerLogic";
-import { RouteProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { Picker } from "@react-native-picker/picker";
+import { NavigationPropsCaloriesTrackerPages } from "./CaloreisTrackerHomeScreen";
 
-type ParamList = {
-  Need: {
-    height: number;
-    age: number;
-    isMale: boolean;
-    weight: number;
-    bodyFatPercentage: number;
-  };
-};
-
-type NavigationProps = {
-  navigation: StackNavigationProp<ParamList, "Need">;
-  route: RouteProp<ParamList, "Need">;
-};
-
-export const CaloriesTrackerNeedScreen: React.FC<NavigationProps> = ({
-  navigation,
-  route,
-}) => {
+export const CaloriesTrackerNeedScreen: React.FC<
+  NavigationPropsCaloriesTrackerPages
+> = ({ navigation, route }) => {
   const {
     height: height,
     age: age,

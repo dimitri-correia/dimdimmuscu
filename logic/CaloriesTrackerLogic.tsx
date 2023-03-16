@@ -10,6 +10,18 @@ export enum ActivityLevels {
   EXTREMELY_ACTIVE = 1.9,
 }
 
+export interface CaloEntry {
+  id: number;
+  date: Date;
+  name: string;
+  calo: number;
+  prot: number;
+}
+
+export const calculatePercentage = (value: number, goal: number) => {
+  return ((value / goal) * 100).toFixed(2);
+};
+
 export function calculateWeightAndBMIStats(
   age: number,
   weight: number,
