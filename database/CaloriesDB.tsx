@@ -1,5 +1,5 @@
 import CommonDB from "./CommonDB";
-import { WeightEntry } from "../logic/WeightTrackerLogic";
+import { CaloEntry } from "../logic/CaloriesTrackerLogic";
 
 const caloEntries = "calories_entries";
 const colId = "id";
@@ -19,68 +19,59 @@ export const createCaloriesTable = () => {
   });
 };
 
-export const getCaloEntries = (): Promise<WeightEntry[]> => {
-  return new Promise<WeightEntry[]>((resolve, _) => {
+const getCaloEntries = (sql: string): Promise<CaloEntry[]> => {
+  return new Promise<CaloEntry[]>((resolve, _) => {
     CommonDB.transaction((tx) => {
-      tx.executeSql(
-        `SELECT * FROM ${weightEntries} ORDER BY ${colId} ASC;`,
-        [],
-        (_, result) => {
-          const weightEntries: WeightEntry[] = [];
-          for (let i = 0; i < result.rows.length; i++) {
-            const row = result.rows.item(i);
-            weightEntries.push({
-              id: row[colId],
-              date: new Date(row[colDate]),
-              weight: row[colWeight],
-            });
-          }
-          resolve(weightEntries);
-        }
-      );
-    });
-  });
-};
-
-export const getLastWeight = (): Promise<WeightEntry> => {
-  return new Promise<WeightEntry>((resolve, _) => {
-    CommonDB.transaction((tx) => {
-      tx.executeSql(
-        `SELECT * FROM ${weightEntries} ORDER BY ${colDate} DESC;`,
-        [],
-        (_, result) => {
-          const { id, date, weight } = result.rows.item(0);
-          resolve({
+      tx.executeSql(sql, [], (_, result) => {
+        const caloEntries: CaloEntry[] = [];
+        for (let i = 0; i < result.rows.length; i++) {
+          const { id, date, name, calo } = result.rows.item(i);
+          caloEntries.push({
             id: id,
             date: new Date(date),
-            weight: weight,
+            name: name,
+            calo: calo,
           });
         }
-      );
+        resolve(caloEntries);
+      });
     });
   });
 };
 
-export const addWeightEntry = (date: string, weight: number) => {
+export const getCaloEntriesAll = (): Promise<CaloEntry[]> => {
+  return getCaloEntries(
+    `SELECT * FROM ${caloEntries} ORDER BY ${colDate} ASC;`
+  );
+};
+export const getCaloEntriesPreciseDate = (
+  date: string
+): Promise<CaloEntry[]> => {
+  return getCaloEntries(
+    `SELECT * FROM ${caloEntries} WHERE ${colDate} = ${date};`
+  );
+};
+
+export const addCaloEntry = (date: string, name: string, calo: number) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `INSERT INTO ${weightEntries} (${colDate}, ${colWeight}) VALUES (?, ?);`,
-      [date, weight]
+      `INSERT INTO ${caloEntries} (${colDate}, ${colFoodName}, ${colFoodCalories}) VALUES (?, ?, ?);`,
+      [date, name, calo]
     );
   });
 };
 
-export const editWeightEntry = (id: number, weight: number) => {
+export const editWeightEntry = (id: number, name: string, calo: number) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `UPDATE ${weightEntries} SET ${colWeight} = ? WHERE ${colId} = ?;`,
-      [weight, id]
+      `UPDATE ${caloEntries} SET (${colFoodName}, ${colFoodCalories}) = (?, ?) WHERE ${colId} = ?;`,
+      [name, calo, id]
     );
   });
 };
 
 export const deleteWeightEntry = (id: number) => {
   CommonDB.transaction((tx) => {
-    tx.executeSql(`DELETE FROM ${weightEntries} WHERE ${colId} = ?;`, [id]);
+    tx.executeSql(`DELETE FROM ${caloEntries} WHERE ${colId} = ?;`, [id]);
   });
 };
