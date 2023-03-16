@@ -2,28 +2,13 @@ const MIN_HEALTHY_BMI = 18.5;
 const MAX_HEALTHY_BMI = 25;
 const WATER_INTAKE_FACTOR = 0.033;
 
-export const ActivityLevels = {
-  SEDENTARY: {
-    label: "Sedentary",
-    value: 1.2,
-  },
-  LIGHTLY_ACTIVE: {
-    label: "Lightly Active",
-    value: 1.375,
-  },
-  MODERATELY_ACTIVE: {
-    label: "Moderately Active",
-    value: 1.55,
-  },
-  VERY_ACTIVE: {
-    label: "Very Active",
-    value: 1.725,
-  },
-  EXTREMELY_ACTIVE: {
-    label: "Extremely Active",
-    value: 1.9,
-  },
-};
+export enum ActivityLevels {
+  SEDENTARY = 1.2,
+  LIGHTLY_ACTIVE = 1.375,
+  MODERATELY_ACTIVE = 1.55,
+  VERY_ACTIVE = 1.725,
+  EXTREMELY_ACTIVE = 1.9,
+}
 
 export function calculateWeightAndBMIStats(
   age: number,
@@ -80,5 +65,5 @@ export function calculateMuscularPotential(
     muscleMassAt10PercentBF,
     muscleMassAt15PercentBF,
   ].map((muscleMass) => Math.round(muscleMass + (weight - leanBodyMass))); // calculate goal weights for each body fat percentage
-  return { 5: maxMuscleMass, 10: goalWeights[1], 15: goalWeights[2] };
+  return { 5: goalWeights[0], 10: goalWeights[1], 15: goalWeights[2] };
 }
