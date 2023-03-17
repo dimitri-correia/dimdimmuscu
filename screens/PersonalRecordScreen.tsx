@@ -41,9 +41,13 @@ export const PersonalRecordScreen: React.FC = () => {
   }, [modalShow]);
 
   useEffect(() => {
-    getExerciseEntries().then((ex: ExercisesEntry[]) => {
-      setExerciseEntries(ex);
-    });
+    getExerciseEntries()
+      .then((ex: ExercisesEntry[]) => {
+        setExerciseEntries(ex);
+      })
+      .catch(() => {
+        console.debug("error fetching ex entries");
+      });
   }, []);
 
   return (
@@ -81,15 +85,17 @@ export const PersonalRecordScreen: React.FC = () => {
 };
 
 interface ModalAddPRProps {
-  modalShow: any;
-  setModalShow: any;
+  modalShow: boolean;
+  setModalShow: (value: ((prevState: boolean) => boolean) | boolean) => void;
   exerciseList: ExercisesEntry[] | undefined;
-  handleAddPR: any;
-  modalExToSet: any;
-  setModalExToSet: any;
-  setModalWeightToSet: any;
+  handleAddPR: () => void;
+  modalExToSet: number;
+  setModalExToSet: (value: ((prevState: number) => number) | number) => void;
+  setModalWeightToSet: (
+    value: ((prevState: number) => number) | number
+  ) => void;
   modalDate: Date;
-  setModalDate: any;
+  setModalDate: (value: ((prevState: Date) => Date) | Date) => void;
 }
 
 const ModalAddPR = ({
@@ -104,7 +110,7 @@ const ModalAddPR = ({
   setModalDate,
 }: ModalAddPRProps) => {
   if (exerciseList == undefined) {
-    return <View></View>;
+    return <View />;
   }
   const [editDate, setEditDate] = useState<boolean>(false);
   return (
@@ -117,14 +123,14 @@ const ModalAddPR = ({
           <View style={editWeightStyles.line}>
             <Button
               title={modalDate.toDateString()}
-              onPress={(_) => setEditDate(true)}
+              onPress={() => setEditDate(true)}
             />
             {editDate && (
               <DateTimePicker
                 value={modalDate}
                 onChange={(_, date: Date | undefined) => {
                   setEditDate(false);
-                  setModalDate(date);
+                  if (date) setModalDate(date);
                 }}
               ></DateTimePicker>
             )}
@@ -150,7 +156,7 @@ const ModalAddPR = ({
               style={addWeightStyles.addWeightInput}
               keyboardType="numeric"
               placeholder={"weigth"}
-              onChangeText={(text) => setModalWeightToSet(text)}
+              onChangeText={(text) => setModalWeightToSet(Number(text))}
             />
           </View>
 
@@ -182,6 +188,9 @@ interface ExerciseTableProps {
 }
 
 const ExerciseTable = ({ exName, entries }: ExerciseTableProps) => {
+  if (!exName) {
+    return <View />;
+  }
   return (
     <View key={exName} style={PersonalRecordStyles.exTable}>
       <Text
@@ -225,21 +234,29 @@ function refreshPREntries(
       | { [p: string]: PersonalRecordEntry[] }
   ) => void
 ) {
-  getPREntries().then((pr) => {
-    const exercises: { [key: number]: PersonalRecordEntry[] } = {};
-    // group the entries by exercise name
-    pr.forEach((entry: PersonalRecordEntry) => {
-      if (!exercises[entry.exId]) {
-        exercises[entry.exId] = [];
-      }
-      exercises[entry.exId].push(entry);
+  getPREntries()
+    .then((pr) => {
+      const exercises: { [key: number]: PersonalRecordEntry[] } = {};
+      // group the entries by exercise name
+      pr.forEach((entry: PersonalRecordEntry) => {
+        if (!exercises[entry.exId]) {
+          exercises[entry.exId] = [];
+        }
+        exercises[entry.exId].push(entry);
+      });
+      setPersonalRecordEntries(exercises);
+    })
+    .catch(() => {
+      console.debug("error fetching pr entries");
     });
-    setPersonalRecordEntries(exercises);
-  });
 }
 
-function addPR(date: string, exoID: number, weight: number, setModal: any) {
-  // todo check param
+function addPR(
+  date: string,
+  exoID: number,
+  weight: number,
+  setModal: (value: ((prevState: boolean) => boolean) | boolean) => void
+) {
   confirmationChanges(() => {
     addPREntry(date, exoID, weight);
     setModal(false);

@@ -42,7 +42,7 @@ const pickImage = async () => {
   }
 };
 
-const ImageItem = ({ id, image, date }: ImageEntry) => (
+const ImageItem = ({ image, date }: ImageEntry) => (
   <View style={PictureEvolutionStyles.itemContainer}>
     <Image source={{ uri: image }} style={PictureEvolutionStyles.itemImage} />
     <Text style={PictureEvolutionStyles.itemDate}>{date.toDateString()}</Text>
