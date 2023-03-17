@@ -7,6 +7,13 @@ const colDate = "date";
 const colEx = "exo";
 const colWeightLifted = "weight";
 
+interface tableEntry {
+  id: number;
+  date: string;
+  ex: number;
+  weight: number;
+}
+
 export const createPRTable = () => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
@@ -20,7 +27,7 @@ export const createPRTable = () => {
 };
 
 export const getPREntries = (): Promise<PersonalRecordEntry[]> => {
-  return new Promise<PersonalRecordEntry[]>((resolve, _) => {
+  return new Promise<PersonalRecordEntry[]>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${personalRecordDBName} ORDER BY ${colEx}, ${colDate} DESC;`,
@@ -28,12 +35,12 @@ export const getPREntries = (): Promise<PersonalRecordEntry[]> => {
         (_, result) => {
           const personalRecordEntries: PersonalRecordEntry[] = [];
           for (let i = 0; i < result.rows.length; i++) {
-            const row = result.rows.item(i);
+            const { id, date, ex, weight } = result.rows.item(i) as tableEntry;
             personalRecordEntries.push({
-              id: row[colId],
-              date: new Date(row[colDate]),
-              exId: row[colEx],
-              weightLifted: row[colWeightLifted],
+              id: id,
+              date: new Date(date),
+              exId: ex,
+              weightLifted: weight,
             });
           }
           resolve(personalRecordEntries);

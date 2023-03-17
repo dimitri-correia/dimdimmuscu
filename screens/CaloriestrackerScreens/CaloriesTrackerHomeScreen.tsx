@@ -33,17 +33,23 @@ export const CaloriesTrackerHomeScreen: React.FC = () => {
   const [bodyFatPercentage, setBodyFatPercentage] = useState<number>(0);
 
   useEffect(() => {
-    getInfoEntries().then((entries) => {
-      const dateOfBirth = entries.get(2)?.fieldValue;
-      if (dateOfBirth) {
-        setAge(new Date().getFullYear() - new Date(dateOfBirth).getFullYear());
-      }
-      //setHeight(Number(entries.get(3)?.fieldValue));
-      //set sex
-    });
-    getLastWeight().then((weight) => {
-      setWeight(weight.weight);
-    });
+    getInfoEntries()
+      .then((entries) => {
+        const dateOfBirth = entries.get(2)?.fieldValue;
+        if (dateOfBirth) {
+          setAge(
+            new Date().getFullYear() - new Date(dateOfBirth).getFullYear()
+          );
+        }
+        //setHeight(Number(entries.get(3)?.fieldValue));
+        //set sex
+      })
+      .catch(() => console.debug("error fetching info entries"));
+    getLastWeight()
+      .then((weight) => {
+        setWeight(weight.weight);
+      })
+      .catch(() => console.debug("error fetching last weight"));
     // getLastBF
     console.log(height);
   }, []);

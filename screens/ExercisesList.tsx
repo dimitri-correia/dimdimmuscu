@@ -126,9 +126,9 @@ export const ExercisesList: React.FC = () => {
 
 interface ModalAddMuscleGroupProps {
   modalGM: boolean;
-  setModalGM: any;
-  setModalGMName: any;
-  handleAddMuscleGroup: any;
+  setModalGM: (value: ((prevState: boolean) => boolean) | boolean) => void;
+  setModalGMName: (value: ((prevState: string) => string) | string) => void;
+  handleAddMuscleGroup: () => void;
 }
 
 const ModalAddMuscleGroup = ({
@@ -174,15 +174,17 @@ const ModalAddMuscleGroup = ({
 };
 
 interface ModalAddExerciseProps {
-  handleAddExercise: any;
-  modalEx: any;
+  handleAddExercise: () => void;
+  modalEx: boolean;
   modalExPrimary: number;
-  modalExSecondary: any;
+  modalExSecondary: number;
   muscleGroupEntries: Map<number, string>;
-  setModalEx: any;
-  setModalExName: any;
-  setModalExPrimary: any;
-  setModalExSecondary: any;
+  setModalEx: (value: ((prevState: boolean) => boolean) | boolean) => void;
+  setModalExName: (value: ((prevState: string) => string) | string) => void;
+  setModalExPrimary: (value: ((prevState: number) => number) | number) => void;
+  setModalExSecondary: (
+    value: ((prevState: number) => number) | number
+  ) => void;
 }
 
 const ModalAddExercise = ({

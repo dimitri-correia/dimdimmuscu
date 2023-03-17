@@ -37,9 +37,11 @@ export function refreshWeightEntries(
     value: ((prevState: WeightEntry[]) => WeightEntry[]) | WeightEntry[]
   ) => void
 ) {
-  getWeightEntries().then((we: WeightEntry[]) => {
-    setWeightEntries(we);
-  });
+  getWeightEntries()
+    .then((we: WeightEntry[]) => {
+      setWeightEntries(we);
+    })
+    .catch(() => console.debug("error fetching weight entries"));
 }
 
 export function editEntry(

@@ -10,14 +10,18 @@ export const InfosScreen: React.FC = () => {
   const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
-    getInfoEntries().then((entries) => {
-      setName(entries.get(1)?.fieldValue);
-      const dateOfBirth = entries.get(2)?.fieldValue;
-      if (dateOfBirth) {
-        setDate(new Date(dateOfBirth));
-      }
-      setHeight(entries.get(3)?.fieldValue);
-    });
+    getInfoEntries()
+      .then((entries) => {
+        setName(entries.get(1)?.fieldValue);
+        const dateOfBirth = entries.get(2)?.fieldValue;
+        if (dateOfBirth) {
+          setDate(new Date(dateOfBirth));
+        }
+        setHeight(entries.get(3)?.fieldValue);
+      })
+      .catch(() => {
+        console.debug("error fetching info entries");
+      });
   }, []);
 
   const [editDate, setEditDate] = useState<boolean>(false);

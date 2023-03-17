@@ -9,7 +9,7 @@ import { PersonalRecordScreen } from "./screens/PersonalRecordScreen";
 import { CalculatorsScreen } from "./screens/CalucatorsScreens/CalculatorsScreen";
 import { InfosScreen } from "./screens/InfosScreen";
 import { PictureEvolutionScreen } from "./screens/PictureEvolutionScreen";
-import { CaloriesTrackerHomeScreen } from "./screens/CaloriestrackerScreens/CaloreisTrackerHomeScreen";
+import { CaloriesTrackerHomeScreen } from "./screens/CaloriestrackerScreens/CaloriesTrackerHomeScreen";
 
 const NativeStackNavigator = createNativeStackNavigator();
 

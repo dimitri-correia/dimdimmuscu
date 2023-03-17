@@ -29,20 +29,20 @@ export const PictureEvolutionScreen: React.FC = () => {
     </>
   );
 };
-const pickImage = async () => {
-  let result = await ImagePicker.launchImageLibraryAsync({
+const pickImage = () => {
+  ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: true,
     aspect: [9, 16],
     quality: 1,
-  });
-
-  if (!result.canceled) {
-    addImage(result.assets[0].uri);
-  }
+  })
+    .then((result) => {
+      if (result.assets) addImage(result.assets[0].uri);
+    })
+    .catch(() => console.debug("error with image"));
 };
 
-const ImageItem = ({ id, image, date }: ImageEntry) => (
+const ImageItem = ({ image, date }: ImageEntry) => (
   <View style={PictureEvolutionStyles.itemContainer}>
     <Image source={{ uri: image }} style={PictureEvolutionStyles.itemImage} />
     <Text style={PictureEvolutionStyles.itemDate}>{date.toDateString()}</Text>

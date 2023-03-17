@@ -22,7 +22,7 @@ export const HomeScreen: React.FC<homeScreenProps> = ({ navigation }) => {
   return <View style={CommonStyles.container}>{ItemsGrid(navigation)}</View>;
 };
 
-const ItemsGrid = (navigation: any) => {
+const ItemsGrid = (navigation: NavigationProp<ParamListBase>) => {
   const rows = [];
   for (let i = 0; i < ScreenList.length; i += 2) {
     const item1: ScreenItem = ScreenList[i];
