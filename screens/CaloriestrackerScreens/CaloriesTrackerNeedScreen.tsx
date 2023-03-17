@@ -8,7 +8,7 @@ import {
   calculateWeightAndBMIStats,
 } from "../../logic/CaloriesTrackerLogic";
 import { Picker } from "@react-native-picker/picker";
-import { NavigationPropsCaloriesTrackerPages } from "./CaloreisTrackerHomeScreen";
+import { NavigationPropsCaloriesTrackerPages } from "./CaloriesTrackerHomeScreen";
 
 export const CaloriesTrackerNeedScreen: React.FC<
   NavigationPropsCaloriesTrackerPages
