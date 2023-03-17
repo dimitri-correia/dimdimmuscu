@@ -13,14 +13,18 @@ The app is built using React Native and Typescript, which allow me to write code
 
 [still wip]
 
-So far: 
 - home page
 - weight tracker page
 - exercise list page
 - PR (personal record) page
 - Info page 
 
-Will have:
+## Screenshots
+
+[soon]
+
+## Next features
+
 - Calorie tracker page
 - Workout session page (gym)
 - Picture of evolution (once a month to track evolution)
@@ -33,6 +37,7 @@ Will have:
 - Calendar
 
 To improve:
+- more tests
 - light/dark mode
 - language fr/en
 - charts for various pages (ex weight)
