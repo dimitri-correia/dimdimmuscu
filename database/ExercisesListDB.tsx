@@ -1,15 +1,27 @@
 import CommonDB from "./CommonDB";
 import { ExercisesEntry } from "../logic/ExercisesListLogic";
 
-const exercisesEntriesDBName: string = "exercises_entries";
-const exId: string = "id";
-const exExerciseName: string = "exercise_name";
-const exPrimaryMuscleGroup: string = "primary_muscle";
-const exSecondaryMuscleGroup: string = "secondary_muscle";
+const exercisesEntriesDBName = "exercises_entries";
+const exId = "id";
+const exExerciseName = "exercise_name";
+const exPrimaryMuscleGroup = "primary_muscle";
+const exSecondaryMuscleGroup = "secondary_muscle";
 
-const muscleGroupEntriesDBName: string = "muscle_group_entries";
-const muscleId: string = "id";
-const muscleMuscleGroupName: string = "muscle_group_name";
+const muscleGroupEntriesDBName = "muscle_group_entries";
+const muscleId = "id";
+const muscleMuscleGroupName = "muscle_group_name";
+
+interface tableEntryEx {
+  id: number;
+  name: string;
+  primary: number;
+  secondary: number;
+}
+
+interface tableEntryMG {
+  id: number;
+  name: string;
+}
 
 export const createExercisesTableS = () => {
   CommonDB.transaction((tx) => {
@@ -36,7 +48,7 @@ export const createExercisesTableS = () => {
 };
 
 export const getMuscleGroupEntries = (): Promise<Map<number, string>> => {
-  return new Promise<Map<number, string>>((resolve, _) => {
+  return new Promise<Map<number, string>>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${muscleGroupEntriesDBName} ORDER BY LOWER(${muscleMuscleGroupName});`,
@@ -44,8 +56,8 @@ export const getMuscleGroupEntries = (): Promise<Map<number, string>> => {
         (_, result) => {
           const muscleGroupEntries = new Map<number, string>();
           for (let i = 0; i < result.rows.length; i++) {
-            const row = result.rows.item(i);
-            muscleGroupEntries.set(row[muscleId], row[muscleMuscleGroupName]);
+            const { id, name } = result.rows.item(i) as tableEntryMG;
+            muscleGroupEntries.set(id, name);
           }
           resolve(muscleGroupEntries);
         }
@@ -55,7 +67,7 @@ export const getMuscleGroupEntries = (): Promise<Map<number, string>> => {
 };
 
 export const getExerciseEntries = (): Promise<ExercisesEntry[]> => {
-  return new Promise<ExercisesEntry[]>((resolve, _) => {
+  return new Promise<ExercisesEntry[]>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${exercisesEntriesDBName}
@@ -65,12 +77,14 @@ export const getExerciseEntries = (): Promise<ExercisesEntry[]> => {
         (_, result) => {
           const exercisesEntries: ExercisesEntry[] = [];
           for (let i = 0; i < result.rows.length; i++) {
-            const row = result.rows.item(i);
+            const { id, name, primary, secondary } = result.rows.item(
+              i
+            ) as tableEntryEx;
             exercisesEntries.push({
-              id: row[exId],
-              name: row[exExerciseName],
-              primaryMuscleGroupId: row[exPrimaryMuscleGroup],
-              secondaryMuscleGroupId: row[exSecondaryMuscleGroup],
+              id: id,
+              name: name,
+              primaryMuscleGroupId: primary,
+              secondaryMuscleGroupId: secondary,
             });
           }
           resolve(exercisesEntries);

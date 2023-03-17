@@ -101,9 +101,9 @@ const Row = ({ date, todayWeight, average7days, average31days }: RowItem) => {
 
 interface ModalEditProps {
   entry: WeightEntry | undefined;
-  setNewWeight: any;
-  handleEditWeight: any;
-  handleDeleteWeight: any;
+  setNewWeight: (value: ((prevState: string) => string) | string) => void;
+  handleEditWeight: () => void;
+  handleDeleteWeight: () => void;
 }
 
 const ModalEditWeight = ({

@@ -1,10 +1,16 @@
 import CommonDB from "./CommonDB";
 import { ImageEntry } from "../logic/PictureEvolutionLogic";
 
-const pictureEntries: string = "picture_entries";
-const colId: string = "id";
-const colDate: string = "date";
-const colImage: string = "image";
+const pictureEntries = "picture_entries";
+const colId = "id";
+const colDate = "date";
+const colImage = "image";
+
+interface tableEntry {
+  id: number;
+  date: string;
+  image: string;
+}
 
 export const createImageTable = () => {
   CommonDB.transaction((tx) => {
@@ -18,7 +24,7 @@ export const createImageTable = () => {
 };
 
 export const getImageEntries = (): Promise<ImageEntry[]> => {
-  return new Promise<ImageEntry[]>((resolve, _) => {
+  return new Promise<ImageEntry[]>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${pictureEntries} ORDER BY ${colDate} ASC;`,
@@ -26,11 +32,11 @@ export const getImageEntries = (): Promise<ImageEntry[]> => {
         (_, result) => {
           const imageEntries: ImageEntry[] = [];
           for (let i = 0; i < result.rows.length; i++) {
-            const row = result.rows.item(i);
+            const { id, date, image } = result.rows.item(i) as tableEntry;
             imageEntries.push({
-              id: row[colId],
-              date: new Date(row[colDate]),
-              image: row[colImage],
+              id: id,
+              date: new Date(date),
+              image: image,
             });
           }
           resolve(imageEntries);

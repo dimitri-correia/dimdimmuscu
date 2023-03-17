@@ -11,9 +11,11 @@ export function refreshImageEntries(
     value: ((prevState: ImageEntry[]) => ImageEntry[]) | ImageEntry[]
   ) => void
 ) {
-  getImageEntries().then((ie: ImageEntry[]) => {
-    setImageList(ie);
-  });
+  getImageEntries()
+    .then((ie: ImageEntry[]) => {
+      setImageList(ie);
+    })
+    .catch(() => console.debug("error fetching image entries"));
 }
 
 export function addImage(uri: string) {

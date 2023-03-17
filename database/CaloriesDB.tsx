@@ -8,6 +8,14 @@ const colFoodName = "food_name";
 const colFoodCalories = "food_calo";
 const colFoodProteins = "food_prot";
 
+interface tableEntry {
+  id: number;
+  date: string;
+  name: string;
+  calo: number;
+  prot: number;
+}
+
 export const createCaloriesTable = () => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
@@ -22,12 +30,14 @@ export const createCaloriesTable = () => {
 };
 
 const getCaloEntries = (sql: string): Promise<CaloEntry[]> => {
-  return new Promise<CaloEntry[]>((resolve, _) => {
+  return new Promise<CaloEntry[]>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(sql, [], (_, result) => {
         const caloEntries: CaloEntry[] = [];
         for (let i = 0; i < result.rows.length; i++) {
-          const { id, date, name, calo, prot } = result.rows.item(i);
+          const { id, date, name, calo, prot } = result.rows.item(
+            i
+          ) as tableEntry;
           caloEntries.push({
             id: id,
             date: new Date(date),
