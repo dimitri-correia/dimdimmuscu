@@ -47,7 +47,7 @@ export const getWeightEntries = (): Promise<WeightEntry[]> => {
 };
 
 export const getLastWeight = (): Promise<WeightEntry> => {
-  return new Promise<WeightEntry>((resolve, _) => {
+  return new Promise<WeightEntry>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${weightEntries} ORDER BY ${colDate} DESC LIMIT 1;`,

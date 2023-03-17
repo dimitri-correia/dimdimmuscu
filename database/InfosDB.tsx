@@ -6,6 +6,12 @@ const colId = "id";
 const colFieldName = "field_name"; // only useful when looking directly in the db
 const colFieldValue = "field_value";
 
+interface tableEntry {
+  id: number;
+  name: string;
+  value: string;
+}
+
 export const createInfosTable = () => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
@@ -44,15 +50,15 @@ export const createInfosTable = () => {
 };
 
 export const getInfoEntries = (): Promise<Map<number, InfoEntry>> => {
-  return new Promise<Map<number, InfoEntry>>((resolve, _) => {
+  return new Promise<Map<number, InfoEntry>>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(`SELECT * FROM ${infoEntries};`, [], (_, result) => {
         const infoEntries: Map<number, InfoEntry> = new Map();
         for (let i = 0; i < result.rows.length; i++) {
-          const row = result.rows.item(i);
-          infoEntries.set(row[colId], {
-            fieldName: row[colFieldName],
-            fieldValue: row[colFieldValue],
+          const { id, name, value } = result.rows.item(i) as tableEntry;
+          infoEntries.set(id, {
+            fieldName: name,
+            fieldValue: value,
           });
         }
         resolve(infoEntries);
