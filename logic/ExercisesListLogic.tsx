@@ -26,12 +26,16 @@ export function refreshExercisesAndMuscleEntries(
       | Map<number, string>
   ) => void
 ) {
-  getExerciseEntries().then((ex: ExercisesEntry[]) => {
-    setExerciseEntries(ex);
-  });
-  getMuscleGroupEntries().then((mg: Map<number, string>) => {
-    setMuscleGroupEntries(mg);
-  });
+  getExerciseEntries()
+    .then((ex: ExercisesEntry[]) => {
+      setExerciseEntries(ex);
+    })
+    .catch(() => console.debug("error fetching exercise entries"));
+  getMuscleGroupEntries()
+    .then((mg: Map<number, string>) => {
+      setMuscleGroupEntries(mg);
+    })
+    .catch(() => console.debug("error fetching muscle group entries"));
 }
 
 export function addExercise(

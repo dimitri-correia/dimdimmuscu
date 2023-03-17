@@ -29,17 +29,17 @@ export const PictureEvolutionScreen: React.FC = () => {
     </>
   );
 };
-const pickImage = async () => {
-  const result = await ImagePicker.launchImageLibraryAsync({
+const pickImage = () => {
+  ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: true,
     aspect: [9, 16],
     quality: 1,
-  });
-
-  if (!result.canceled) {
-    addImage(result.assets[0].uri);
-  }
+  })
+    .then((result) => {
+      if (result.assets) addImage(result.assets[0].uri);
+    })
+    .catch(() => console.debug("error with image"));
 };
 
 const ImageItem = ({ image, date }: ImageEntry) => (
