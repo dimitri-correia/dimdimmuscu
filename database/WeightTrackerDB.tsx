@@ -1,10 +1,10 @@
 import CommonDB from "./CommonDB";
 import { WeightEntry } from "../logic/WeightTrackerLogic";
 
-const weightEntries: string = "weight_entries";
-const colId: string = "id";
-const colDate: string = "date";
-const colWeight: string = "weight";
+const weightEntries = "weight_entries";
+const colId = "id";
+const colDate = "date";
+const colWeight = "weight";
 
 export const createWeightTable = () => {
   CommonDB.transaction((tx) => {

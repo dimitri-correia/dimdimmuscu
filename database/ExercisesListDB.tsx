@@ -1,15 +1,15 @@
 import CommonDB from "./CommonDB";
 import { ExercisesEntry } from "../logic/ExercisesListLogic";
 
-const exercisesEntriesDBName: string = "exercises_entries";
-const exId: string = "id";
-const exExerciseName: string = "exercise_name";
-const exPrimaryMuscleGroup: string = "primary_muscle";
-const exSecondaryMuscleGroup: string = "secondary_muscle";
+const exercisesEntriesDBName = "exercises_entries";
+const exId = "id";
+const exExerciseName = "exercise_name";
+const exPrimaryMuscleGroup = "primary_muscle";
+const exSecondaryMuscleGroup = "secondary_muscle";
 
-const muscleGroupEntriesDBName: string = "muscle_group_entries";
-const muscleId: string = "id";
-const muscleMuscleGroupName: string = "muscle_group_name";
+const muscleGroupEntriesDBName = "muscle_group_entries";
+const muscleId = "id";
+const muscleMuscleGroupName = "muscle_group_name";
 
 export const createExercisesTableS = () => {
   CommonDB.transaction((tx) => {

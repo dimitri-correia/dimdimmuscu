@@ -1,10 +1,10 @@
 import CommonDB from "./CommonDB";
 import { ImageEntry } from "../logic/PictureEvolutionLogic";
 
-const pictureEntries: string = "picture_entries";
-const colId: string = "id";
-const colDate: string = "date";
-const colImage: string = "image";
+const pictureEntries = "picture_entries";
+const colId = "id";
+const colDate = "date";
+const colImage = "image";
 
 export const createImageTable = () => {
   CommonDB.transaction((tx) => {
