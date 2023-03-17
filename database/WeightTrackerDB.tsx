@@ -6,6 +6,12 @@ const colId = "id";
 const colDate = "date";
 const colWeight = "weight";
 
+interface tableEntry {
+  id: number;
+  date: string;
+  weight: number;
+}
+
 export const createWeightTable = () => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
@@ -18,7 +24,7 @@ export const createWeightTable = () => {
 };
 
 export const getWeightEntries = (): Promise<WeightEntry[]> => {
-  return new Promise<WeightEntry[]>((resolve, _) => {
+  return new Promise<WeightEntry[]>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${weightEntries} ORDER BY ${colId} ASC;`,
@@ -26,11 +32,11 @@ export const getWeightEntries = (): Promise<WeightEntry[]> => {
         (_, result) => {
           const weightEntries: WeightEntry[] = [];
           for (let i = 0; i < result.rows.length; i++) {
-            const row = result.rows.item(i);
+            const { id, date, weight } = result.rows.item(i) as tableEntry;
             weightEntries.push({
-              id: row[colId],
-              date: new Date(row[colDate]),
-              weight: row[colWeight],
+              id: id,
+              date: new Date(date),
+              weight: weight,
             });
           }
           resolve(weightEntries);
@@ -47,7 +53,7 @@ export const getLastWeight = (): Promise<WeightEntry> => {
         `SELECT * FROM ${weightEntries} ORDER BY ${colDate} DESC LIMIT 1;`,
         [],
         (_, result) => {
-          const { id, date, weight } = result.rows.item(0);
+          const { id, date, weight } = result.rows.item(0) as tableEntry;
           resolve({
             id: id,
             date: new Date(date),
