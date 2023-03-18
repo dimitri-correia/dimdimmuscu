@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Button, FlatList, Text, TextInput, View } from "react-native";
 import * as TextWT from "../../assets/texts/WeightTracker";
 import {
+  addCalo,
   calculatePercentage,
   CaloEntry,
+  refreshCaloEntries,
 } from "../../logic/CaloriesTrackerLogic";
 import CaloStyles from "../../styles/CaloStyles";
 import { addWeightStyles } from "../../styles/WeightTrackerStyles";
@@ -18,7 +20,17 @@ export const CaloriesTrackerLogScreen: React.FC = () => {
 
   return (
     <>
-      {getView(setFoodName, setFoodQuantity, setFoodCalories, setFoodProteins)}
+      <AddCalo
+        foodName={foodName}
+        setFoodName={setFoodName}
+        foodQuantity={foodQuantity}
+        setFoodQuantity={setFoodQuantity}
+        foodCalories={foodCalories}
+        setFoodCalories={setFoodCalories}
+        foodProteins={foodProteins}
+        setFoodProteins={setFoodProteins}
+        setEntries={setEntries}
+      />
       <View>
         <View style={CaloStyles.header}>
           <Text style={CaloStyles.cell}>Name</Text>
@@ -37,12 +49,29 @@ export const CaloriesTrackerLogScreen: React.FC = () => {
   );
 };
 
-function getView(
-  setFoodName: (value: ((prevState: string) => string) | string) => void,
-  setFoodQuantity: (value: ((prevState: string) => string) | string) => void,
-  setFoodCalories: (value: ((prevState: string) => string) | string) => void,
-  setFoodProteins: (value: ((prevState: string) => string) | string) => void
-) {
+const AddCalo = ({
+  foodName,
+  setFoodName,
+  foodQuantity,
+  setFoodQuantity,
+  foodCalories,
+  setFoodCalories,
+  foodProteins,
+  setFoodProteins,
+  setEntries,
+}: {
+  foodName: string;
+  setFoodName: (value: ((prevState: string) => string) | string) => void;
+  foodQuantity: string;
+  setFoodQuantity: (value: ((prevState: string) => string) | string) => void;
+  foodCalories: string;
+  setFoodCalories: (value: ((prevState: string) => string) | string) => void;
+  foodProteins: string;
+  setFoodProteins: (value: ((prevState: string) => string) | string) => void;
+  setEntries: (
+    value: ((prevState: CaloEntry[]) => CaloEntry[]) | CaloEntry[]
+  ) => void;
+}) => {
   return (
     <>
       <View style={addWeightStyles.addWeightContainer}>
@@ -74,15 +103,14 @@ function getView(
         <Button
           title={TextWT.add}
           onPress={() => {
-            console.log("cc");
-            //addWeight(weightEntries, newWeight);
-            //refreshWeightEntries(setWeightEntries);
+            addCalo(foodName, foodQuantity, foodCalories, foodProteins);
+            refreshCaloEntries(setEntries);
           }}
         />
       </View>
     </>
   );
-}
+};
 
 const renderItem = ({ item }: { item: CaloEntry }) => {
   const caloriesPercentage = calculatePercentage(item.calo, 3300);
