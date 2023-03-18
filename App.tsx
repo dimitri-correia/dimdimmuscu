@@ -10,6 +10,8 @@ import { CalculatorsScreen } from "./screens/CalucatorsScreens/CalculatorsScreen
 import { InfosScreen } from "./screens/InfosScreen";
 import { PictureEvolutionScreen } from "./screens/PictureEvolutionScreen";
 import { CaloriesTrackerHomeScreen } from "./screens/CaloriestrackerScreens/CaloriesTrackerHomeScreen";
+import { SessionTrackerScreen } from "./screens/SessionTrackerScreen";
+import { CardioTrackerScreen } from "./screens/CardioTrackerScreen";
 
 const NativeStackNavigator = createNativeStackNavigator();
 
@@ -21,6 +23,14 @@ export default function App() {
           name={"Home"}
           component={HomeScreen}
           // options={{ headerShown: false }}
+        />
+        <NativeStackNavigator.Screen
+          name="Session Tracker"
+          component={SessionTrackerScreen}
+        />
+        <NativeStackNavigator.Screen
+          name="Cardio Tracker"
+          component={CardioTrackerScreen}
         />
         <NativeStackNavigator.Screen
           name="WeightTracker"
