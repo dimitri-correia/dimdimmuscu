@@ -1,3 +1,9 @@
+import * as TextWT from "../assets/texts/WeightTracker";
+import {
+  addCaloEntry,
+  getCaloEntriesPreciseDate,
+} from "../database/CaloriesDB";
+
 const MIN_HEALTHY_BMI = 18.5;
 const MAX_HEALTHY_BMI = 25;
 const WATER_INTAKE_FACTOR = 0.033;
@@ -16,6 +22,44 @@ export interface CaloEntry {
   name: string;
   calo: number;
   prot: number;
+}
+
+export function addCalo(
+  foodName: string,
+  foodQuantity: string,
+  foodCalories: string,
+  foodProteins: string
+) {
+  const foodQuantityN = parseFloat(foodQuantity);
+  const foodCaloriesN = parseFloat(foodCalories);
+  const foodProteinsN = parseFloat(foodProteins);
+  if (
+    isNaN(foodQuantityN) ||
+    isNaN(foodCaloriesN) ||
+    isNaN(foodProteinsN) ||
+    foodName == ""
+  ) {
+    alert(TextWT.invalidWeight);
+    return;
+  }
+  addCaloEntry(
+    new Date().toISOString().split("T")[0],
+    foodName,
+    (foodCaloriesN * foodQuantityN) / 100,
+    (foodProteinsN * foodQuantityN) / 100
+  );
+}
+
+export function refreshCaloEntries(
+  setCaloEntries: (
+    value: ((prevState: CaloEntry[]) => CaloEntry[]) | CaloEntry[]
+  ) => void
+) {
+  getCaloEntriesPreciseDate(new Date().toISOString().split("T")[0]).then(
+    (ce: CaloEntry[]) => {
+      setCaloEntries(ce);
+    }
+  );
 }
 
 export const calculatePercentage = (value: number, goal: number) => {

@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import {
   ActivityLevels,
-  calculateBMR,
   calculateMuscularPotential,
   calculateWaterIntake,
   calculateWeightAndBMIStats,
@@ -19,17 +18,14 @@ export const CaloriesTrackerNeedScreen: React.FC<
     isMale: isMale,
     weight: weight,
     bodyFatPercentage: bodyFatPercentage,
+    activityLevel: activityLevel,
+    bmr: bmr,
+    caloIntake: calorieIntake,
+    setActivityLevel: setActivityLevel,
   } = route.params;
-
-  const [activityLevel, setActivityLevel] = useState<ActivityLevels>(
-    ActivityLevels.SEDENTARY
-  );
 
   const { bmi, maxHealthyWeight, minHealthyWeight } =
     calculateWeightAndBMIStats(age, weight, height);
-  const bmr: number = calculateBMR(weight, height, age, isMale).mifflinStJeor;
-  const calorieIntake: number = bmr * activityLevel;
-  console.log(activityLevel);
   const waterIntake = calculateWaterIntake(weight);
   const muscularPotential: Record<number, number> = calculateMuscularPotential(
     weight,
@@ -48,7 +44,7 @@ export const CaloriesTrackerNeedScreen: React.FC<
       </View>
       <View style={styles.header}>
         <Text style={styles.label}>Maintenance Calories:</Text>
-        <Text style={styles.value}>{`${Math.round(
+        <Text style={styles.value}>{`BMR: ${bmr} => ${Math.round(
           calorieIntake
         )} daily => ${Math.round(calorieIntake * 7)} weekly`}</Text>
       </View>
