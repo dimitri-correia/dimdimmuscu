@@ -16,6 +16,26 @@ export class ScreenItem {
 
 export default [
   new ScreenItem(
+    "Session Tracker",
+    "Session Tracker",
+    (
+      <Image
+        source={require("../assets/ScreenIcons/WeightLifter.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
+  ),
+  new ScreenItem(
+    "Cardio Tracker",
+    "Cardio Tracker",
+    (
+      <Image
+        source={require("../assets/ScreenIcons/CardioTracker.png")}
+        style={HomeScreenStyles.itemImage}
+      />
+    )
+  ),
+  new ScreenItem(
     "Weight Tracker",
     "WeightTracker",
     (

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
 import CommonStyles from "../styles/CommonStyles";
@@ -19,7 +19,11 @@ export const HomeScreen: React.FC<homeScreenProps> = ({ navigation }) => {
   useEffect(() => {
     createAllTables(); // call only once when app start
   }, []);
-  return <View style={CommonStyles.container}>{ItemsGrid(navigation)}</View>;
+  return (
+    <ScrollView>
+      <View style={CommonStyles.container}>{ItemsGrid(navigation)}</View>
+    </ScrollView>
+  );
 };
 
 const ItemsGrid = (navigation: NavigationProp<ParamListBase>) => {
