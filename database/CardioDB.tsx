@@ -1,5 +1,5 @@
 import CommonDB from "./CommonDB";
-import { WeightEntry } from "../logic/WeightTrackerLogic";
+import { CardioEntry } from "../logic/CardioLogic";
 
 const cardioEntries = "cardio_entries";
 const colId = "id";
@@ -29,68 +29,43 @@ export const createCaloTable = () => {
   });
 };
 
-export const getCardioEntries = (): Promise<WeightEntry[]> => {
-  return new Promise<WeightEntry[]>((resolve) => {
+export const getCardioEntries = (): Promise<CardioEntry[]> => {
+  return new Promise<CardioEntry[]>((resolve) => {
     CommonDB.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${cardioEntries} ORDER BY ${colId} ASC;`,
         [],
         (_, result) => {
-          const weightEntries: WeightEntry[] = [];
+          const cardioEntries: CardioEntry[] = [];
           for (let i = 0; i < result.rows.length; i++) {
-            const { id, date, weight } = result.rows.item(i) as tableEntry;
-            weightEntries.push({
+            const { id, date, name, time, calo } = result.rows.item(
+              i
+            ) as tableEntry;
+            cardioEntries.push({
               id: id,
               date: new Date(date),
-              weight: weight,
+              name: name,
+              time: time,
+              calo: calo,
             });
           }
-          resolve(weightEntries);
+          resolve(cardioEntries);
         }
       );
     });
   });
 };
 
-export const getLastWeight = (): Promise<WeightEntry> => {
-  return new Promise<WeightEntry>((resolve) => {
-    CommonDB.transaction((tx) => {
-      tx.executeSql(
-        `SELECT * FROM ${weightEntries} ORDER BY ${colDate} DESC LIMIT 1;`,
-        [],
-        (_, result) => {
-          const { id, date, weight } = result.rows.item(0) as tableEntry;
-          resolve({
-            id: id,
-            date: new Date(date),
-            weight: weight,
-          });
-        }
-      );
-    });
-  });
-};
-
-export const addWeightEntry = (date: string, weight: number) => {
+export const addCardioEntry = (
+  date: string,
+  name: string,
+  time: number,
+  calo: number
+) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `INSERT INTO ${weightEntries} (${colDate}, ${colWeight}) VALUES (?, ?);`,
-      [date, weight]
+      `INSERT INTO ${cardioEntries} (${colDate}, ${colName} ${colTime} ${colCalo}) VALUES (?, ?, ?, ?);`,
+      [date, name, time, calo]
     );
-  });
-};
-
-export const editWeightEntry = (id: number, weight: number) => {
-  CommonDB.transaction((tx) => {
-    tx.executeSql(
-      `UPDATE ${weightEntries} SET ${colWeight} = ? WHERE ${colId} = ?;`,
-      [weight, id]
-    );
-  });
-};
-
-export const deleteWeightEntry = (id: number) => {
-  CommonDB.transaction((tx) => {
-    tx.executeSql(`DELETE FROM ${weightEntries} WHERE ${colId} = ?;`, [id]);
   });
 };
