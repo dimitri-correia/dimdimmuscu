@@ -1,89 +1,26 @@
-import {
-  addWeightEntry,
-  deleteWeightEntry,
-  editWeightEntry,
-  getWeightEntries,
-} from "../database/WeightTrackerDB";
-import * as TextWT from "../assets/texts/WeightTracker";
-import { confirmationChanges } from "../components/commons/ValidateChanges";
+import { addCardioEntry, getCardioEntries } from "../database/CardioDB";
 
-export interface WeightEntry {
+export interface CardioEntry {
   id: number;
   date: Date;
-  weight: number;
+  name: string;
+  time: number;
+  calo: number;
 }
-
-export const averageXdays = (
-  entries: WeightEntry[],
-  date: Date,
-  numberOfDays: number
-): number => {
-  const entriesInLastXDays: number[] = entries
-    .filter(
-      (entry) =>
-        entry.date <= date &&
-        entry.date >
-          new Date(date.getTime() - numberOfDays * 24 * 60 * 60 * 1000)
-    )
-    .map((entry) => entry.weight);
-  return (
-    entriesInLastXDays.reduce((acc, val) => acc + val, 0) /
-    entriesInLastXDays.length
-  );
-};
 
 export function refreshWeightEntries(
-  setWeightEntries: (
-    value: ((prevState: WeightEntry[]) => WeightEntry[]) | WeightEntry[]
+  setCardioEntries: (
+    value: ((prevState: CardioEntry[]) => CardioEntry[]) | CardioEntry[]
   ) => void
 ) {
-  getWeightEntries()
-    .then((we: WeightEntry[]) => {
-      setWeightEntries(we);
+  getCardioEntries()
+    .then((ce: CardioEntry[]) => {
+      setCardioEntries(ce);
     })
-    .catch(() => console.debug("error fetching weight entries"));
+    .catch(() => console.debug("error fetching cardio entries"));
 }
 
-export function editEntry(
-  modifiedWeight: string,
-  editId: number,
-  setEditId: (value: ((prevState: number) => number) | number) => void
-) {
-  const parsedWeight = parseFloat(modifiedWeight);
-  if (isNaN(parsedWeight)) {
-    alert(TextWT.invalidWeight);
-    return;
-  }
-  confirmationChanges(() => {
-    editWeightEntry(editId, parsedWeight);
-    setEditId(-1);
-  });
-}
-
-export function deleteEntry(
-  editId: number,
-  setEditId: (value: ((prevState: number) => number) | number) => void
-) {
-  confirmationChanges(() => {
-    deleteWeightEntry(editId);
-    setEditId(-1);
-  });
-}
-
-export function addWeight(weightEntries: WeightEntry[], newWeight: string) {
+export function addWeight(name: string, time: number, calo: number) {
   const today: string = new Date().toISOString().split("T")[0];
-  const hasEntryForToday: boolean = weightEntries.some(
-    (entry: WeightEntry) => entry.date.toISOString().split("T")[0] === today
-  );
-
-  if (hasEntryForToday) {
-    alert(TextWT.alreadyExistingWeight);
-  }
-
-  const parsedWeight = parseFloat(newWeight);
-  if (isNaN(parsedWeight)) {
-    alert(TextWT.invalidWeight);
-    return;
-  }
-  addWeightEntry(today, parsedWeight);
+  addCardioEntry(today, name, time, calo);
 }
