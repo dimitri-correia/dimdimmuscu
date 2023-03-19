@@ -16,7 +16,7 @@ interface tableEntry {
   calo: number;
 }
 
-export const createCaloTable = () => {
+export const createCardioTable = () => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${cardioEntries} (
