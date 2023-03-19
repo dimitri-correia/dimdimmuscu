@@ -8,7 +8,7 @@ export interface CardioEntry {
   calo: number;
 }
 
-export function refreshWeightEntries(
+export function refreshCardioEntries(
   setCardioEntries: (
     value: ((prevState: CardioEntry[]) => CardioEntry[]) | CardioEntry[]
   ) => void
@@ -20,7 +20,9 @@ export function refreshWeightEntries(
     .catch(() => console.debug("error fetching cardio entries"));
 }
 
-export function addWeight(name: string, time: number, calo: number) {
+export function addCardio(name: string, time: string, calo: string) {
   const today: string = new Date().toISOString().split("T")[0];
-  addCardioEntry(today, name, time, calo);
+  const timeN = parseInt(time);
+  const caloN = parseInt(calo);
+  addCardioEntry(today, name, timeN, caloN);
 }
