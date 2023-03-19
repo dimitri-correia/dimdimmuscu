@@ -5,11 +5,7 @@ import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import CommonStyles from "../styles/CommonStyles";
 import ScreenList, { ScreenItem } from "./ScreenList";
 import HomeScreenStyles from "../styles/HomeScreenStyles";
-import { createWeightTable } from "../database/WeightTrackerDB";
-import { createExercisesTableS } from "../database/ExercisesListDB";
-import { createPRTable } from "../database/PersonalRecordDB";
-import { createInfosTable } from "../database/InfosDB";
-import { createImageTable } from "../database/PictureEvolutionDB";
+import { createAllTables } from "../database/CommonDB";
 
 interface homeScreenProps {
   navigation: NavigationProp<ParamListBase>;
@@ -60,11 +56,3 @@ const ListItem = ({ navigation, screenItem }: ListItemProps) => {
     </TouchableOpacity>
   );
 };
-
-function createAllTables() {
-  createWeightTable();
-  createExercisesTableS();
-  createPRTable();
-  createInfosTable();
-  createImageTable();
-}

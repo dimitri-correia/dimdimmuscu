@@ -22,7 +22,7 @@ export default function App() {
         <NativeStackNavigator.Screen
           name={"Home"}
           component={HomeScreen}
-          // options={{ headerShown: false }}
+          options={{ headerShown: false }}
         />
         <NativeStackNavigator.Screen
           name="Session Tracker"
