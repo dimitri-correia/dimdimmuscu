@@ -3,10 +3,15 @@ import {
   getSessionTrackerEntries,
 } from "../database/SessionTrackerDB";
 
-export interface SessionTrackerEntry {
+export interface SessionTrackerLiftEntry {
   id: number;
   date: Date;
   name: string;
+}
+
+export interface SessionTrackerSetEntry {
+  id: number;
+  idLift: number;
   set: number;
   rep: number;
   weight: number;
@@ -26,9 +31,15 @@ export function refreshSessionTrackerEntries(
     .catch(() => console.debug("error fetching Session Tracker entries"));
 }
 
-export function addSessionTracker(name: string, time: string, calo: string) {
+export function addSessionTracker(
+  name: string,
+  set: string,
+  rep: string,
+  weight: string
+) {
   const today: string = new Date().toISOString().split("T")[0];
-  const timeN = parseInt(time);
-  const caloN = parseInt(calo);
-  addSessionTrackerEntry(today, name, timeN, caloN);
+  const setN = parseInt(set);
+  const repN = parseInt(rep);
+  const weightN = parseInt(weight);
+  addSessionTrackerEntry(today, name, setN, repN, weightN);
 }
