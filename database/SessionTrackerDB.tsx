@@ -86,12 +86,11 @@ export const getSessionTrackerSetEntries = (
         (_, result) => {
           const sessionTrackerEntries: SessionTrackerSetEntry[] = [];
           for (let i = 0; i < result.rows.length; i++) {
-            const { id, set, rep, weight, idLift } = result.rows.item(
+            const { id, set, rep, weight } = result.rows.item(
               i
             ) as tableEntrySet;
             sessionTrackerEntries.push({
               id: id,
-              idLift: idLift,
               set: set,
               rep: rep,
               weight: weight,
