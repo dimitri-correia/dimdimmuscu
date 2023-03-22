@@ -1,6 +1,7 @@
 import {
   addSessionTrackerEntry,
-  getSessionTrackerEntries,
+  getSessionTrackerLiftEntries,
+  getSessionTrackerSetEntries,
 } from "../database/SessionTrackerDB";
 
 export interface SessionTrackerLiftEntry {
@@ -11,24 +12,38 @@ export interface SessionTrackerLiftEntry {
 
 export interface SessionTrackerSetEntry {
   id: number;
-  idLift: number;
   set: number;
   rep: number;
   weight: number;
 }
 
-export function refreshSessionTrackerEntries(
-  setCardioEntries: (
+export function refreshSessionTrackerLiftEntries(
+  setLiftEntries: (
     value:
-      | ((prevState: SessionTrackerEntry[]) => SessionTrackerEntry[])
-      | SessionTrackerEntry[]
+      | ((prevState: SessionTrackerLiftEntry[]) => SessionTrackerLiftEntry[])
+      | SessionTrackerLiftEntry[]
   ) => void
 ) {
-  getSessionTrackerEntries()
-    .then((ce: SessionTrackerEntry[]) => {
-      setCardioEntries(ce);
+  getSessionTrackerLiftEntries()
+    .then((ce: SessionTrackerLiftEntry[]) => {
+      setLiftEntries(ce);
     })
-    .catch(() => console.debug("error fetching Session Tracker entries"));
+    .catch(() => console.debug("error fetching Session Tracker lift entries"));
+}
+
+export function refreshSessionTrackerSetEntries(
+  id: number,
+  setSetEntries: (
+    value:
+      | ((prevState: SessionTrackerSetEntry[]) => SessionTrackerSetEntry[])
+      | SessionTrackerSetEntry[]
+  ) => void
+) {
+  getSessionTrackerSetEntries(id)
+    .then((ce: SessionTrackerSetEntry[]) => {
+      setSetEntries(ce);
+    })
+    .catch(() => console.debug("error fetching Session Tracker set entries")); // todo use a map idLift: list(stse)
 }
 
 export function addSessionTracker(
