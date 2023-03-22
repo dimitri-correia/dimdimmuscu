@@ -22,8 +22,8 @@ export const createCardioTable = () => {
       `CREATE TABLE IF NOT EXISTS ${cardioEntries} (
       ${colId} INTEGER PRIMARY KEY AUTOINCREMENT,
       ${colDate} DATE NOT NULL UNIQUE,
-      ${colName} TEXT NOT NULL),
-      ${colTime} REAL NOT NULL),
+      ${colName} TEXT NOT NULL,
+      ${colTime} REAL NOT NULL,
       ${colCalo} REAL NOT NULL);`
     );
   });
