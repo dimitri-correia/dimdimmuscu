@@ -1,34 +1,60 @@
 import {
   addSessionTrackerEntry,
-  getSessionTrackerEntries,
+  getSessionTrackerLiftEntries,
+  getSessionTrackerSetEntries,
 } from "../database/SessionTrackerDB";
 
-export interface SessionTrackerEntry {
+export interface SessionTrackerLiftEntry {
   id: number;
   date: Date;
   name: string;
+}
+
+export interface SessionTrackerSetEntry {
+  id: number;
   set: number;
   rep: number;
   weight: number;
 }
 
-export function refreshSessionTrackerEntries(
-  setCardioEntries: (
+export function refreshSessionTrackerLiftEntries(
+  setLiftEntries: (
     value:
-      | ((prevState: SessionTrackerEntry[]) => SessionTrackerEntry[])
-      | SessionTrackerEntry[]
+      | ((prevState: SessionTrackerLiftEntry[]) => SessionTrackerLiftEntry[])
+      | SessionTrackerLiftEntry[]
   ) => void
 ) {
-  getSessionTrackerEntries()
-    .then((ce: SessionTrackerEntry[]) => {
-      setCardioEntries(ce);
+  getSessionTrackerLiftEntries()
+    .then((ce: SessionTrackerLiftEntry[]) => {
+      setLiftEntries(ce);
     })
-    .catch(() => console.debug("error fetching Session Tracker entries"));
+    .catch(() => console.debug("error fetching Session Tracker lift entries"));
 }
 
-export function addSessionTracker(name: string, time: string, calo: string) {
+export function refreshSessionTrackerSetEntries(
+  id: number,
+  setSetEntries: (
+    value:
+      | ((prevState: SessionTrackerSetEntry[]) => SessionTrackerSetEntry[])
+      | SessionTrackerSetEntry[]
+  ) => void
+) {
+  getSessionTrackerSetEntries(id)
+    .then((ce: SessionTrackerSetEntry[]) => {
+      setSetEntries(ce);
+    })
+    .catch(() => console.debug("error fetching Session Tracker set entries")); // todo use a map idLift: list(stse)
+}
+
+export function addSessionTracker(
+  name: string,
+  set: string,
+  rep: string,
+  weight: string
+) {
   const today: string = new Date().toISOString().split("T")[0];
-  const timeN = parseInt(time);
-  const caloN = parseInt(calo);
-  addSessionTrackerEntry(today, name, timeN, caloN);
+  const setN = parseInt(set);
+  const repN = parseInt(rep);
+  const weightN = parseInt(weight);
+  addSessionTrackerEntry(today, name, setN, repN, weightN);
 }
