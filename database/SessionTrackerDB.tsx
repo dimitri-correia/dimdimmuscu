@@ -117,3 +117,17 @@ export const addSessionTrackerLiftEntry = (date: string, ex: number) => {
     );
   });
 };
+
+export const addSessionTrackerSetEntry = (
+  idLift: number,
+  set: number,
+  rep: number,
+  weight: number
+) => {
+  CommonDB.transaction((tx) => {
+    tx.executeSql(
+      `INSERT INTO ${setEntries} (${colRefLift}, ${colSet}, ${colRep}, ${colWeight}) VALUES (?, ?, ?, ?);`,
+      [idLift, set, rep, weight]
+    );
+  });
+};
