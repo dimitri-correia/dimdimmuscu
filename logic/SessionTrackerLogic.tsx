@@ -1,5 +1,6 @@
 import {
-  addSessionTrackerEntry,
+  addSessionTrackerLiftEntry,
+  addSessionTrackerSetEntry,
   getSessionTrackerLiftEntries,
   getSessionTrackerSetEntries,
 } from "../database/SessionTrackerDB";
@@ -7,7 +8,7 @@ import {
 export interface SessionTrackerLiftEntry {
   id: number;
   date: Date;
-  name: string;
+  ex: number;
 }
 
 export interface SessionTrackerSetEntry {
@@ -46,15 +47,19 @@ export function refreshSessionTrackerSetEntries(
     .catch(() => console.debug("error fetching Session Tracker set entries")); // todo use a map idLift: list(stse)
 }
 
-export function addSessionTracker(
-  name: string,
+export function addSessionTrackerLift(ex: number) {
+  const today: string = new Date().toISOString().split("T")[0];
+  addSessionTrackerLiftEntry(today, ex);
+}
+
+export function addSessionTrackerSet(
+  idLift: number,
   set: string,
   rep: string,
   weight: string
 ) {
-  const today: string = new Date().toISOString().split("T")[0];
   const setN = parseInt(set);
   const repN = parseInt(rep);
   const weightN = parseInt(weight);
-  addSessionTrackerEntry(today, name, setN, repN, weightN);
+  addSessionTrackerSetEntry(idLift, setN, repN, weightN);
 }

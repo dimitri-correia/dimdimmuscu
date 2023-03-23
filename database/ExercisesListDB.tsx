@@ -1,8 +1,8 @@
 import CommonDB from "./CommonDB";
 import { ExercisesEntry } from "../logic/ExercisesListLogic";
 
-const exercisesEntriesDBName = "exercises_entries";
-const exId = "id";
+export const exercisesEntriesDBName = "exercises_entries";
+export const colExIdExercisesEntriesDBName = "id";
 const exExerciseName = "exercise_name";
 const exPrimaryMuscleGroup = "primary_muscle";
 const exSecondaryMuscleGroup = "secondary_muscle";
@@ -32,7 +32,7 @@ export const createExercisesTableS = () => {
     );
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${exercisesEntriesDBName} (
-      ${exId} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${colExIdExercisesEntriesDBName} INTEGER PRIMARY KEY AUTOINCREMENT,
       ${exExerciseName} TEXT NOT NULL UNIQUE,
       ${exPrimaryMuscleGroup} INTEGER NOT NULL,
       ${exSecondaryMuscleGroup} INTEGER,

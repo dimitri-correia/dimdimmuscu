@@ -3,6 +3,10 @@ import {
   SessionTrackerLiftEntry,
   SessionTrackerSetEntry,
 } from "../logic/SessionTrackerLogic";
+import {
+  colExIdExercisesEntriesDBName,
+  exercisesEntriesDBName,
+} from "./ExercisesListDB";
 
 const liftEntries = "lift_entries";
 const colIdSession = "id";
@@ -19,7 +23,7 @@ const colRefLift = "liftId";
 interface tableEntryLift {
   id: number;
   date: string;
-  name: string;
+  ex: number;
 }
 
 interface tableEntrySet {
@@ -36,7 +40,8 @@ export const createSessionTrackerTable = () => {
       `CREATE TABLE IF NOT EXISTS ${liftEntries} (
       ${colIdSession} INTEGER PRIMARY KEY AUTOINCREMENT,
       ${colDate} DATE NOT NULL UNIQUE,
-      ${colEx} TEXT NOT NULL);`
+      ${colEx} INTEGER NOT NULL
+      FOREIGN KEY (${colEx}) REFERENCES ${exercisesEntriesDBName}(${colExIdExercisesEntriesDBName}));`
     );
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${setEntries} (
@@ -62,11 +67,11 @@ export const getSessionTrackerLiftEntries = (): Promise<
         (_, result) => {
           const sessionTrackerEntries: SessionTrackerLiftEntry[] = [];
           for (let i = 0; i < result.rows.length; i++) {
-            const { id, date, name } = result.rows.item(i) as tableEntryLift;
+            const { id, date, ex } = result.rows.item(i) as tableEntryLift;
             sessionTrackerEntries.push({
               id: id,
               date: new Date(date),
-              name: name,
+              ex: ex,
             });
           }
           resolve(sessionTrackerEntries);
@@ -75,6 +80,7 @@ export const getSessionTrackerLiftEntries = (): Promise<
     });
   });
 };
+
 export const getSessionTrackerSetEntries = (
   idLiftReferenced: number
 ): Promise<SessionTrackerSetEntry[]> => {
@@ -100,5 +106,28 @@ export const getSessionTrackerSetEntries = (
         }
       );
     });
+  });
+};
+
+export const addSessionTrackerLiftEntry = (date: string, ex: number) => {
+  CommonDB.transaction((tx) => {
+    tx.executeSql(
+      `INSERT INTO ${liftEntries} (${colDate}, ${colEx}) VALUES (?, ?);`,
+      [date, ex]
+    );
+  });
+};
+
+export const addSessionTrackerSetEntry = (
+  idLift: number,
+  set: number,
+  rep: number,
+  weight: number
+) => {
+  CommonDB.transaction((tx) => {
+    tx.executeSql(
+      `INSERT INTO ${setEntries} (${colRefLift}, ${colSet}, ${colRep}, ${colWeight}) VALUES (?, ?, ?, ?);`,
+      [idLift, set, rep, weight]
+    );
   });
 };
