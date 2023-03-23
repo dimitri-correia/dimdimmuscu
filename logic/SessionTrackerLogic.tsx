@@ -7,7 +7,7 @@ import {
 export interface SessionTrackerLiftEntry {
   id: number;
   date: Date;
-  name: string;
+  ex: number;
 }
 
 export interface SessionTrackerSetEntry {
