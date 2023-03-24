@@ -10,7 +10,7 @@ import { CalculatorsScreen } from "./screens/CalucatorsScreens/CalculatorsScreen
 import { InfosScreen } from "./screens/InfosScreen";
 import { PictureEvolutionScreen } from "./screens/PictureEvolutionScreen";
 import { CaloriesTrackerHomeScreen } from "./screens/CaloriestrackerScreens/CaloriesTrackerHomeScreen";
-import { SessionTrackerScreen } from "./screens/SessionTrackerScreen";
+import { SessionTrackerScreen } from "./screens/SessionTrackerScreens/SessionTrackerScreen";
 import { CardioTrackerScreen } from "./screens/CardioTrackerScreen";
 
 const NativeStackNavigator = createNativeStackNavigator();

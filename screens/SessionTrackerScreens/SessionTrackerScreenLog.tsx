@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { CardioEntry, refreshCardioEntries } from "../logic/CardioLogic";
-import CommonStyles from "../styles/CommonStyles";
-import { pageStyles } from "../styles/WeightTrackerStyles";
-import * as TextWT from "../assets/texts/WeightTracker";
+import CommonStyles from "../../styles/CommonStyles";
+import { pageStyles } from "../../styles/WeightTrackerStyles";
+import * as TextWT from "../../assets/texts/WeightTracker";
 import { Audio } from "expo-av";
 
 interface Set {
@@ -12,18 +11,11 @@ interface Set {
   weightLifted: number;
 }
 
-export const SessionTrackerScreen: React.FC = () => {
-  const [cardioEntries, setCardioEntries] = useState<CardioEntry[]>([]);
-
+export const SessionTrackerScreenLog: React.FC = () => {
   const [setList, setSetList] = useState<Set[]>([]);
 
   // table with id, ex, date
   // table with id, idExDate, set, rep, weight
-
-  useEffect(() => {
-    refreshCardioEntries(setCardioEntries);
-  }, []);
-
   return (
     <View style={CommonStyles.container}>
       <Chronometer />
@@ -33,14 +25,6 @@ export const SessionTrackerScreen: React.FC = () => {
         time={TextWT.average7}
         calo={TextWT.average31}
       />
-      {cardioEntries.map((entry) => (
-        <Row
-          date={entry.date.toDateString()}
-          name={entry.name}
-          time={entry.time.toFixed(0)}
-          calo={entry.calo.toFixed(0)}
-        />
-      ))}
     </View>
   );
 };
@@ -78,7 +62,7 @@ const Chronometer = () => {
     const soundObject = new Audio.Sound();
     try {
       soundObject
-        .loadAsync(require("../assets/Songs/30sNotif.mp3"))
+        .loadAsync(require("../../assets/Songs/30sNotif.mp3"))
         .then(() => {
           soundObject.playAsync().catch(() => {
             console.log("Error playing 30s notif");
