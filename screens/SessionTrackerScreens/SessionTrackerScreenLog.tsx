@@ -4,6 +4,7 @@ import CommonStyles from "../../styles/CommonStyles";
 import { pageStyles } from "../../styles/WeightTrackerStyles";
 import * as TextWT from "../../assets/texts/WeightTracker";
 import { Audio } from "expo-av";
+import { useKeepAwake } from "expo-keep-awake";
 
 interface Set {
   setNumber: number;
@@ -12,8 +13,7 @@ interface Set {
 }
 
 export const SessionTrackerScreenLog: React.FC = () => {
-  const [setList, setSetList] = useState<Set[]>([]);
-
+  useKeepAwake(); // prevent from sleeping
   // table with id, ex, date
   // table with id, idExDate, set, rep, weight
   return (
