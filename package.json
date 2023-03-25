@@ -11,8 +11,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@react-native-community/datetimepicker": "7.0.0",
-    "@react-native-picker/picker": "^2.4.9",
+    "@react-native-community/datetimepicker": "6.7.3",
+    "@react-native-picker/picker": "2.4.8",
     "@react-navigation/material-top-tabs": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
@@ -27,7 +27,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.71.4",
-    "react-native-pager-view": "6.1.4",
+    "react-native-pager-view": "6.1.2",
     "react-native-tab-view": "^3.5.1",
     "react-native-web": "~0.18.9",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
