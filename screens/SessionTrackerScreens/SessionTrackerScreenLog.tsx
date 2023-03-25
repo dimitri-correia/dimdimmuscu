@@ -1,24 +1,19 @@
-import React, { useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { Text, View } from "react-native";
 import CommonStyles from "../../styles/CommonStyles";
 import { pageStyles } from "../../styles/WeightTrackerStyles";
-import * as TextWT from "../../assets/texts/WeightTracker";
-import { Audio } from "expo-av";
 import { useKeepAwake } from "expo-keep-awake";
+import Chrono from "../../components/commons/Chrono";
 
-interface Set {
-  setNumber: number;
-  repDone: number;
-  weightLifted: number;
-}
-
-export const SessionTrackerScreenLog: React.FC = () => {
+export const SessionTrackerScreenLog: React.FC = (param) => {
+  console.log(param);
   useKeepAwake(); // prevent from sleeping
   // table with id, ex, date
   // table with id, idExDate, set, rep, weight
   return (
     <View style={CommonStyles.container}>
-      <Chronometer />
+      <Chrono />
+      <AddNewEx />
       <Row
         setNumber={"#"}
         repDone={"rep"}
@@ -47,67 +42,12 @@ const Row = ({ setNumber, repDone, weightLifted, previous }: RowItem) => {
   );
 };
 
-const Chronometer = () => {
-  const [time, setTime] = useState<number>(0);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [song, setSong] = useState<boolean>(true);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-  };
-
-  const playSound = (): void => {
-    const soundObject = new Audio.Sound();
-    try {
-      soundObject
-        .loadAsync(require("../../assets/Songs/30sNotif.mp3"))
-        .then(() => {
-          soundObject.playAsync().catch(() => {
-            console.log("Error playing 30s notif");
-          });
-        });
-    } catch (error) {
-      console.warn("Error playing 30s notif", error);
-    }
-  };
-
-  const startTimer = () => {
-    setIsRunning(true);
-    intervalRef.current = setInterval(() => {
-      setTime((prevTime) => {
-        if (song && (prevTime + 1) % 30 === 0) {
-          playSound();
-        }
-        return prevTime + 1;
-      });
-    }, 1000);
-  };
-
-  const stopTimer = () => {
-    setIsRunning(false);
-    clearInterval(intervalRef.current as NodeJS.Timeout);
-  };
-
-  const resetTimer = () => {
-    stopTimer();
-    setTime(0);
-  };
-
+const AddNewEx = () => {
   return (
-    <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-      <Text>{formatTime(time)}</Text>
-      <TouchableOpacity onPress={isRunning ? stopTimer : startTimer}>
-        <Text>{isRunning ? "Stop" : "Start"}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={resetTimer}>
-        <Text>Reset</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => setSong(!song)}>
-        <Text>Song</Text>
-      </TouchableOpacity>
+    <View style={pageStyles.row}>
+      <Text style={pageStyles.column}>
+        {"Add New Exercise for this session"}
+      </Text>
     </View>
   );
 };

@@ -63,7 +63,7 @@ export const CaloriesTrackerHomeScreen: React.FC = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View>
       <Tab.Navigator initialRouteName={"CaloriesTrackerHomeScreen"}>
         <Tab.Screen
           name="Need"
