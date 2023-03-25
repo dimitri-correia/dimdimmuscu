@@ -3,14 +3,22 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { SessionTrackerScreenLog } from "./SessionTrackerScreenLog";
 import { ExercisesEntry } from "../../logic/ExercisesListLogic";
 import { getExerciseEntries } from "../../database/ExercisesListDB";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
 
-export interface SessionTrackerParams {
-  ex: ExercisesEntry[];
-  id: number;
-}
+type SessionTrackerParams = {
+  Log: {
+    ex: ExercisesEntry[];
+    id: number;
+  };
+};
 
+export type NavigationPropsSessionTrackerPages = {
+  navigation: StackNavigationProp<SessionTrackerParams, "Log">;
+  route: RouteProp<SessionTrackerParams, "Log">;
+};
 export const SessionTrackerScreen: React.FC = () => {
   const [exerciseEntries, setExerciseEntries] = useState<ExercisesEntry[]>([]);
 
@@ -24,7 +32,7 @@ export const SessionTrackerScreen: React.FC = () => {
       });
   }, []);
 
-  const initialParams = { ex: exerciseEntries, id: 2 } as SessionTrackerParams;
+  const initialParams = { ex: exerciseEntries, id: 2 };
 
   return (
     <Tab.Navigator initialRouteName={"Log"}>

@@ -1,19 +1,25 @@
-import React from "react";
-import { Text, View } from "react-native";
+import React, { useState } from "react";
+import { Button, Text, View } from "react-native";
 import CommonStyles from "../../styles/CommonStyles";
 import { pageStyles } from "../../styles/WeightTrackerStyles";
 import { useKeepAwake } from "expo-keep-awake";
 import Chrono from "../../components/commons/Chrono";
+import { NavigationPropsSessionTrackerPages } from "./SessionTrackerScreen";
+import { Picker } from "@react-native-picker/picker";
+import { ExercisesEntry } from "../../logic/ExercisesListLogic";
 
-export const SessionTrackerScreenLog: React.FC = (param) => {
-  console.log(param);
+export const SessionTrackerScreenLog: React.FC<
+  NavigationPropsSessionTrackerPages
+> = (param) => {
+  console.log(param.route.params.ex);
+  const exlist: ExercisesEntry[] = param.route.params.ex;
   useKeepAwake(); // prevent from sleeping
   // table with id, ex, date
   // table with id, idExDate, set, rep, weight
   return (
     <View style={CommonStyles.container}>
       <Chrono />
-      <AddNewEx />
+      <AddNewEx exerciseList={exlist} />
       <Row
         setNumber={"#"}
         repDone={"rep"}
@@ -42,12 +48,30 @@ const Row = ({ setNumber, repDone, weightLifted, previous }: RowItem) => {
   );
 };
 
-const AddNewEx = () => {
+interface AddNewExProps {
+  exerciseList: ExercisesEntry[];
+}
+
+const AddNewEx = ({ exerciseList }: AddNewExProps) => {
+  const [ex, setEx] = useState<number>(0);
   return (
     <View style={pageStyles.row}>
       <Text style={pageStyles.column}>
         {"Add New Exercise for this session"}
       </Text>
+      <Text style={{ flex: 1 }}>
+        {exerciseList.find((ee) => ee.id == ex)?.name}
+      </Text>
+      <Picker
+        style={{ flex: 1 }}
+        selectedValue={ex}
+        onValueChange={(value: number) => setEx(value)}
+      >
+        {exerciseList.map((ex) => (
+          <Picker.Item key={ex.id} label={ex.name} value={ex.id} />
+        ))}
+      </Picker>
+      <Button title={"Add"} onPress={() => {}} />
     </View>
   );
 };
