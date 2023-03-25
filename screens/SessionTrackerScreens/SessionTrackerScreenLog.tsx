@@ -20,29 +20,29 @@ export const SessionTrackerScreenLog: React.FC = () => {
     <View style={CommonStyles.container}>
       <Chronometer />
       <Row
-        date={TextWT.date}
-        name={TextWT.weightInKg}
-        time={TextWT.average7}
-        calo={TextWT.average31}
+        setNumber={"#"}
+        repDone={"rep"}
+        weightLifted={"weight"}
+        previous={"previous"}
       />
     </View>
   );
 };
 
 interface RowItem {
-  date: string;
-  name: string;
-  time: string;
-  calo: string;
+  setNumber: string;
+  repDone: string;
+  weightLifted: string;
+  previous: string;
 }
 
-const Row = ({ date, name, time, calo }: RowItem) => {
+const Row = ({ setNumber, repDone, weightLifted, previous }: RowItem) => {
   return (
     <View style={pageStyles.row}>
-      <Text style={pageStyles.column}>{date}</Text>
-      <Text style={pageStyles.column}>{name}</Text>
-      <Text style={pageStyles.column}>{time}</Text>
-      <Text style={pageStyles.column}>{calo}</Text>
+      <Text style={pageStyles.column}>{setNumber}</Text>
+      <Text style={pageStyles.column}>{repDone}</Text>
+      <Text style={pageStyles.column}>{weightLifted}</Text>
+      <Text style={pageStyles.column}>{previous}</Text>
     </View>
   );
 };
