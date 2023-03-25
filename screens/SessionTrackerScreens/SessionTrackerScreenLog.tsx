@@ -20,12 +20,8 @@ export const SessionTrackerScreenLog: React.FC<
     <View style={CommonStyles.container}>
       <Chrono />
       <AddNewEx exerciseList={exlist} />
-      <Row
-        setNumber={"#"}
-        repDone={"rep"}
-        weightLifted={"weight"}
-        previous={"previous"}
-      />
+      <Ex />
+      <Ex />
     </View>
   );
 };
@@ -34,16 +30,31 @@ interface RowItem {
   setNumber: string;
   repDone: string;
   weightLifted: string;
+  total: string;
   previous: string;
+  improvement: string;
 }
 
-const Row = ({ setNumber, repDone, weightLifted, previous }: RowItem) => {
+const Row = ({
+  setNumber,
+  repDone,
+  weightLifted,
+  total,
+  previous,
+  improvement,
+}: RowItem) => {
   return (
-    <View style={pageStyles.row}>
-      <Text style={pageStyles.column}>{setNumber}</Text>
-      <Text style={pageStyles.column}>{repDone}</Text>
-      <Text style={pageStyles.column}>{weightLifted}</Text>
-      <Text style={pageStyles.column}>{previous}</Text>
+    <View>
+      <View style={pageStyles.row}>
+        <Text style={pageStyles.column}>{setNumber}</Text>
+        <Text style={pageStyles.column}>{repDone}</Text>
+        <Text style={pageStyles.column}>{weightLifted}</Text>
+      </View>
+      <View style={pageStyles.row}>
+        <Text style={pageStyles.column}>{total}</Text>
+        <Text style={pageStyles.column}>{previous}</Text>
+        <Text style={pageStyles.column}>{improvement}</Text>
+      </View>
     </View>
   );
 };
@@ -72,6 +83,22 @@ const AddNewEx = ({ exerciseList }: AddNewExProps) => {
         ))}
       </Picker>
       <Button title={"Add"} onPress={() => {}} />
+    </View>
+  );
+};
+
+const Ex = () => {
+  return (
+    <View>
+      <Text>{"Ex name"}</Text>
+      <Row
+        setNumber={"#"}
+        repDone={"rep"}
+        weightLifted={"weight"}
+        total={"total"}
+        previous={"previous"}
+        improvement={"improvement"}
+      />
     </View>
   );
 };
