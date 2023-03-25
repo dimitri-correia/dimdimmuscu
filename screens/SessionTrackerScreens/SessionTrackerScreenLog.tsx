@@ -50,6 +50,7 @@ const Row = ({ date, name, time, calo }: RowItem) => {
 const Chronometer = () => {
   const [time, setTime] = useState<number>(0);
   const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [song, setSong] = useState<boolean>(true);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const formatTime = (time: number) => {
@@ -77,7 +78,7 @@ const Chronometer = () => {
     setIsRunning(true);
     intervalRef.current = setInterval(() => {
       setTime((prevTime) => {
-        if ((prevTime + 1) % 30 === 0) {
+        if (song && (prevTime + 1) % 30 === 0) {
           playSound();
         }
         return prevTime + 1;
@@ -103,6 +104,9 @@ const Chronometer = () => {
       </TouchableOpacity>
       <TouchableOpacity onPress={resetTimer}>
         <Text>Reset</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setSong(!song)}>
+        <Text>Song</Text>
       </TouchableOpacity>
     </View>
   );
