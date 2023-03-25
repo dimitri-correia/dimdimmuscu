@@ -1,109 +1,104 @@
-import React, { useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Button, Text, View } from "react-native";
 import CommonStyles from "../../styles/CommonStyles";
 import { pageStyles } from "../../styles/WeightTrackerStyles";
-import * as TextWT from "../../assets/texts/WeightTracker";
-import { Audio } from "expo-av";
 import { useKeepAwake } from "expo-keep-awake";
+import Chrono from "../../components/commons/Chrono";
+import { NavigationPropsSessionTrackerPages } from "./SessionTrackerScreen";
+import { Picker } from "@react-native-picker/picker";
+import { ExercisesEntry } from "../../logic/ExercisesListLogic";
 
-interface Set {
-  setNumber: number;
-  repDone: number;
-  weightLifted: number;
-}
-
-export const SessionTrackerScreenLog: React.FC = () => {
+export const SessionTrackerScreenLog: React.FC<
+  NavigationPropsSessionTrackerPages
+> = (param) => {
+  console.log(param.route.params.ex);
+  const exlist: ExercisesEntry[] = param.route.params.ex;
   useKeepAwake(); // prevent from sleeping
   // table with id, ex, date
   // table with id, idExDate, set, rep, weight
   return (
     <View style={CommonStyles.container}>
-      <Chronometer />
-      <Row
-        date={TextWT.date}
-        name={TextWT.weightInKg}
-        time={TextWT.average7}
-        calo={TextWT.average31}
-      />
+      <Chrono />
+      <AddNewEx exerciseList={exlist} />
+      <Ex />
+      <Ex />
     </View>
   );
 };
 
 interface RowItem {
-  date: string;
-  name: string;
-  time: string;
-  calo: string;
+  setNumber: string;
+  repDone: string;
+  weightLifted: string;
+  total: string;
+  previous: string;
+  improvement: string;
 }
 
-const Row = ({ date, name, time, calo }: RowItem) => {
+const Row = ({
+  setNumber,
+  repDone,
+  weightLifted,
+  total,
+  previous,
+  improvement,
+}: RowItem) => {
   return (
-    <View style={pageStyles.row}>
-      <Text style={pageStyles.column}>{date}</Text>
-      <Text style={pageStyles.column}>{name}</Text>
-      <Text style={pageStyles.column}>{time}</Text>
-      <Text style={pageStyles.column}>{calo}</Text>
+    <View>
+      <View style={pageStyles.row}>
+        <Text style={pageStyles.column}>{setNumber}</Text>
+        <Text style={pageStyles.column}>{repDone}</Text>
+        <Text style={pageStyles.column}>{weightLifted}</Text>
+      </View>
+      <View style={pageStyles.row}>
+        <Text style={pageStyles.column}>{total}</Text>
+        <Text style={pageStyles.column}>{previous}</Text>
+        <Text style={pageStyles.column}>{improvement}</Text>
+      </View>
     </View>
   );
 };
 
-const Chronometer = () => {
-  const [time, setTime] = useState<number>(0);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+interface AddNewExProps {
+  exerciseList: ExercisesEntry[];
+}
 
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-  };
-
-  const playSound = (): void => {
-    const soundObject = new Audio.Sound();
-    try {
-      soundObject
-        .loadAsync(require("../../assets/Songs/30sNotif.mp3"))
-        .then(() => {
-          soundObject.playAsync().catch(() => {
-            console.log("Error playing 30s notif");
-          });
-        });
-    } catch (error) {
-      console.warn("Error playing 30s notif", error);
-    }
-  };
-
-  const startTimer = () => {
-    setIsRunning(true);
-    intervalRef.current = setInterval(() => {
-      setTime((prevTime) => {
-        if ((prevTime + 1) % 30 === 0) {
-          playSound();
-        }
-        return prevTime + 1;
-      });
-    }, 1000);
-  };
-
-  const stopTimer = () => {
-    setIsRunning(false);
-    clearInterval(intervalRef.current as NodeJS.Timeout);
-  };
-
-  const resetTimer = () => {
-    stopTimer();
-    setTime(0);
-  };
-
+const AddNewEx = ({ exerciseList }: AddNewExProps) => {
+  const [ex, setEx] = useState<number>(0);
   return (
-    <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-      <Text>{formatTime(time)}</Text>
-      <TouchableOpacity onPress={isRunning ? stopTimer : startTimer}>
-        <Text>{isRunning ? "Stop" : "Start"}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={resetTimer}>
-        <Text>Reset</Text>
-      </TouchableOpacity>
+    <View style={pageStyles.row}>
+      <Text style={pageStyles.column}>
+        {"Add New Exercise for this session"}
+      </Text>
+      <Text style={{ flex: 1 }}>
+        {exerciseList.find((ee) => ee.id == ex)?.name}
+      </Text>
+      <Picker
+        style={{ flex: 1 }}
+        selectedValue={ex}
+        onValueChange={(value: number) => setEx(value)}
+      >
+        {exerciseList.map((ex) => (
+          <Picker.Item key={ex.id} label={ex.name} value={ex.id} />
+        ))}
+      </Picker>
+      <Button title={"Add"} onPress={() => {}} />
+    </View>
+  );
+};
+
+const Ex = () => {
+  return (
+    <View>
+      <Text>{"Ex name"}</Text>
+      <Row
+        setNumber={"#"}
+        repDone={"rep"}
+        weightLifted={"weight"}
+        total={"total"}
+        previous={"previous"}
+        improvement={"improvement"}
+      />
     </View>
   );
 };
