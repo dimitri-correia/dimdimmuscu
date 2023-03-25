@@ -52,7 +52,14 @@ export default () => {
   };
 
   return (
-    <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-around",
+        padding: 10,
+        backgroundColor: "grey",
+      }}
+    >
       <Text>{formatTime(time)}</Text>
       <TouchableOpacity onPress={isRunning ? stopTimer : startTimer}>
         <Text>{isRunning ? "Stop" : "Start"}</Text>
@@ -61,7 +68,7 @@ export default () => {
         <Text>Reset</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => setSong(!song)}>
-        <Text>Song</Text>
+        <Text>{song ? "Mute" : "Ring"}</Text>
       </TouchableOpacity>
     </View>
   );
