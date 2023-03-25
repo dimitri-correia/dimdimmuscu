@@ -5,7 +5,7 @@ import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import CommonStyles from "../styles/CommonStyles";
 import ScreenList, { ScreenItem } from "./ScreenList";
 import HomeScreenStyles from "../styles/HomeScreenStyles";
-import { createAllTables } from "../database/CommonDB";
+import { createAllTables } from "../database/CreateTable";
 
 interface homeScreenProps {
   navigation: NavigationProp<ParamListBase>;
