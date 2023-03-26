@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, ScrollView, Text, View } from "react-native";
 import CommonStyles from "../../styles/CommonStyles";
 import { pageStyles } from "../../styles/WeightTrackerStyles";
@@ -9,9 +9,7 @@ import { Picker } from "@react-native-picker/picker";
 import { ExercisesEntry } from "../../logic/ExercisesListLogic";
 import {
   getSessionTrackerLiftLastEntry,
-  refreshSessionTrackerLiftEntries,
   refreshSessionTrackerSetEntries,
-  SessionTrackerLiftEntry,
 } from "../../logic/SessionTrackerLogic";
 
 export const SessionTrackerScreenLog: React.FC<
