@@ -1,6 +1,7 @@
 import {
   addSessionTrackerLiftEntry,
   addSessionTrackerSetEntry,
+  getSessionTrackerLastLiftEntry,
   getSessionTrackerLiftEntries,
   getSessionTrackerSetEntries,
 } from "../database/SessionTrackerDB";
@@ -45,6 +46,17 @@ export function refreshSessionTrackerSetEntries(
       setSetEntries(ce);
     })
     .catch(() => console.debug("error fetching Session Tracker set entries")); // todo use a map idLift: list(stse)
+}
+
+export function getSessionTrackerLiftLastEntry(
+  id: number
+): SessionTrackerLiftEntry | undefined {
+  getSessionTrackerLastLiftEntry(id)
+    .then((ce: SessionTrackerLiftEntry) => {
+      return ce;
+    })
+    .catch(() => console.debug("error fetching Session Tracker lift entries"));
+  return;
 }
 
 export function addSessionTrackerLift(ex: number) {
