@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Button, ScrollView, Text, View } from "react-native";
 import CommonStyles from "../../styles/CommonStyles";
 import { pageStyles } from "../../styles/WeightTrackerStyles";
 import { useKeepAwake } from "expo-keep-awake";
@@ -7,22 +7,39 @@ import Chrono from "../../components/commons/Chrono";
 import { NavigationPropsSessionTrackerPages } from "./SessionTrackerScreen";
 import { Picker } from "@react-native-picker/picker";
 import { ExercisesEntry } from "../../logic/ExercisesListLogic";
+import {
+  getSessionTrackerLiftLastEntry,
+  refreshSessionTrackerLiftEntries, refreshSessionTrackerSetEntries,
+  SessionTrackerLiftEntry
+} from "../../logic/SessionTrackerLogic";
 
 export const SessionTrackerScreenLog: React.FC<
   NavigationPropsSessionTrackerPages
 > = (param) => {
-  console.log(param.route.params.ex);
-  const exlist: ExercisesEntry[] = param.route.params.ex;
+  const exList: ExercisesEntry[] = param.route.params.ex;
   useKeepAwake(); // prevent from sleeping
+
+  const [exToShow, setExToShow] = useState<number[]>([1, 2]);
+
   // table with id, ex, date
   // table with id, idExDate, set, rep, weight
+  const [liftEntries, setLiftEntries] = useState<SessionTrackerLiftEntry[]>([]);
+  useEffect(() => {
+    refreshSessionTrackerLiftEntries(setLiftEntries);
+  }, []);
+
   return (
-    <View style={CommonStyles.container}>
+    <ScrollView style={CommonStyles.container}>
       <Chrono />
-      <AddNewEx exerciseList={exlist} />
-      <Ex />
-      <Ex />
-    </View>
+      <AddNewEx
+        exerciseList={exList}
+        exToShow={exToShow}
+        setExToShow={setExToShow}
+      />
+      {exToShow.reverse().map((ex) => (
+        <Ex exName={exList.find((e) => e.id === ex)?.name} ex={ex} />
+      ))}
+    </ScrollView>
   );
 };
 
@@ -49,8 +66,6 @@ const Row = ({
         <Text style={pageStyles.column}>{setNumber}</Text>
         <Text style={pageStyles.column}>{repDone}</Text>
         <Text style={pageStyles.column}>{weightLifted}</Text>
-      </View>
-      <View style={pageStyles.row}>
         <Text style={pageStyles.column}>{total}</Text>
         <Text style={pageStyles.column}>{previous}</Text>
         <Text style={pageStyles.column}>{improvement}</Text>
@@ -61,9 +76,11 @@ const Row = ({
 
 interface AddNewExProps {
   exerciseList: ExercisesEntry[];
+  exToShow: number[];
+  setExToShow: (value: ((prevState: number[]) => number[]) | number[]) => void;
 }
 
-const AddNewEx = ({ exerciseList }: AddNewExProps) => {
+const AddNewEx = ({ exerciseList, exToShow, setExToShow }: AddNewExProps) => {
   const [ex, setEx] = useState<number>(0);
   return (
     <View style={pageStyles.row}>
@@ -82,15 +99,30 @@ const AddNewEx = ({ exerciseList }: AddNewExProps) => {
           <Picker.Item key={ex.id} label={ex.name} value={ex.id} />
         ))}
       </Picker>
-      <Button title={"Add"} onPress={() => {}} />
+      <Button
+        title={"Add"}
+        onPress={() => {
+          exToShow.push(ex);
+          setExToShow(exToShow);
+        }}
+      />
     </View>
   );
 };
 
-const Ex = () => {
+interface ExProps {
+  exName: string | undefined;
+  ex: number;
+}
+
+const Ex = ({ exName, ex }: ExProps) => {
+  const lastLift = getSessionTrackerLiftLastEntry(ex);
+  const setList= refreshSessionTrackerSetEntries(ex);
   return (
     <View>
-      <Text>{"Ex name"}</Text>
+      <Text>{`${exName ? exName : "ex name"} - previous ${
+        lastLift ? lastLift.date.toDateString() : ""
+      }`}</Text>
       <Row
         setNumber={"#"}
         repDone={"rep"}
@@ -99,6 +131,7 @@ const Ex = () => {
         previous={"previous"}
         improvement={"improvement"}
       />
+      {}
     </View>
   );
 };
