@@ -110,6 +110,7 @@ interface ExProps {
 const Ex = ({ exName, ex }: ExProps) => {
   const lastLift = getSessionTrackerLiftLastEntry(ex);
   const setList = refreshSessionTrackerSetEntries(ex);
+
   return (
     <View>
       <Text>{`${exName ? exName : "ex name"} - previous ${
@@ -133,6 +134,12 @@ const Ex = ({ exName, ex }: ExProps) => {
           improvement={"0"}
         />
       ))}
+      <Button
+        title={"Add New Set"}
+        onPress={() => {
+          console.log("new set");
+        }}
+      />
     </View>
   );
 };
