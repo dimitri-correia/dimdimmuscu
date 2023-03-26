@@ -8,6 +8,7 @@ import { NavigationPropsSessionTrackerPages } from "./SessionTrackerScreen";
 import { Picker } from "@react-native-picker/picker";
 import { ExercisesEntry } from "../../logic/ExercisesListLogic";
 import { getSessionTrackerLiftLastEntry } from "../../logic/SessionTrackerLogic";
+import { getImprovementString } from "../../logic/PersonalRecordLogic";
 
 export const SessionTrackerScreenLog: React.FC<
   NavigationPropsSessionTrackerPages
@@ -109,11 +110,11 @@ const Ex = ({ exName, ex }: ExProps) => {
 
       <RowTitle />
       {setList?.map((set) => {
-        console.log(set);
         return (
           <RowItem
             setNumber={set.set.toFixed(0)}
-            previous={`${set.rep}*${set.weight}=${set.rep * set.weight}`}
+            previousRep={set.rep}
+            previousWeight={set.weight}
           />
         );
       })}
@@ -130,26 +131,40 @@ const Ex = ({ exName, ex }: ExProps) => {
 
 interface RowItemProp {
   setNumber: string;
-  previous: string;
+  previousRep: number;
+  previousWeight: number;
 }
 
-const RowItem = ({ setNumber, previous }: RowItemProp) => {
+const RowItem = ({ setNumber, previousRep, previousWeight }: RowItemProp) => {
   const [rep, setRep] = useState<number>(0);
   const [weight, setWeight] = useState<number>(0);
   const total = rep * weight;
+  const totalPrevious = previousWeight * previousRep;
   const improvement = total;
   return (
     <View style={pageStyles.row}>
       <Text style={pageStyles.column}>{setNumber}</Text>
-      <TextInput style={[pageStyles.column, { backgroundColor: "grey" }]}>
+      <TextInput
+        style={[pageStyles.column, { backgroundColor: "grey" }]}
+        keyboardType="numeric"
+        onChangeText={(text) => setRep(Number(text))}
+      >
         {rep}
       </TextInput>
-      <TextInput style={[pageStyles.column, { backgroundColor: "grey" }]}>
+      <TextInput
+        style={[pageStyles.column, { backgroundColor: "grey" }]}
+        keyboardType="numeric"
+        onChangeText={(text) => setWeight(Number(text))}
+      >
         {weight}
       </TextInput>
       <Text style={pageStyles.column}>{total}</Text>
-      <Text style={pageStyles.column}>{previous}</Text>
-      <Text style={pageStyles.column}>{improvement}</Text>
+      <Text
+        style={pageStyles.column}
+      >{`${previousRep}*${previousWeight}=${totalPrevious}`}</Text>
+      <Text style={pageStyles.column}>
+        {getImprovementString(total, totalPrevious)}
+      </Text>
     </View>
   );
 };
