@@ -34,18 +34,14 @@ export function refreshSessionTrackerLiftEntries(
 }
 
 export function refreshSessionTrackerSetEntries(
-  id: number,
-  setSetEntries: (
-    value:
-      | ((prevState: SessionTrackerSetEntry[]) => SessionTrackerSetEntry[])
-      | SessionTrackerSetEntry[]
-  ) => void
-) {
+  id: number
+): SessionTrackerSetEntry[] | undefined {
   getSessionTrackerSetEntries(id)
     .then((ce: SessionTrackerSetEntry[]) => {
-      setSetEntries(ce);
+      return ce;
     })
-    .catch(() => console.debug("error fetching Session Tracker set entries")); // todo use a map idLift: list(stse)
+    .catch(() => console.debug("error fetching Session Tracker set entries"));
+  return;
 }
 
 export function getSessionTrackerLiftLastEntry(
