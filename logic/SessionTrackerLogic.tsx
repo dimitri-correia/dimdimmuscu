@@ -1,6 +1,7 @@
 import {
   addSessionTrackerLiftEntry,
   addSessionTrackerSetEntry,
+  getSessionTrackerLastLiftEntry,
   getSessionTrackerLiftEntries,
   getSessionTrackerSetEntries,
 } from "../database/SessionTrackerDB";
@@ -33,18 +34,25 @@ export function refreshSessionTrackerLiftEntries(
 }
 
 export function refreshSessionTrackerSetEntries(
-  id: number,
-  setSetEntries: (
-    value:
-      | ((prevState: SessionTrackerSetEntry[]) => SessionTrackerSetEntry[])
-      | SessionTrackerSetEntry[]
-  ) => void
-) {
+  id: number
+): SessionTrackerSetEntry[] | undefined {
   getSessionTrackerSetEntries(id)
     .then((ce: SessionTrackerSetEntry[]) => {
-      setSetEntries(ce);
+      return ce;
     })
-    .catch(() => console.debug("error fetching Session Tracker set entries")); // todo use a map idLift: list(stse)
+    .catch(() => console.debug("error fetching Session Tracker set entries"));
+  return;
+}
+
+export function getSessionTrackerLiftLastEntry(
+  id: number
+): SessionTrackerLiftEntry | undefined {
+  getSessionTrackerLastLiftEntry(id)
+    .then((ce: SessionTrackerLiftEntry) => {
+      return ce;
+    })
+    .catch(() => console.debug("error fetching Session Tracker lift entries"));
+  return;
 }
 
 export function addSessionTrackerLift(ex: number) {
