@@ -81,6 +81,27 @@ export const getSessionTrackerLiftEntries = (): Promise<
   });
 };
 
+export const getSessionTrackerLastLiftEntry = (
+  ex: number
+): Promise<SessionTrackerLiftEntry> => {
+  return new Promise<SessionTrackerLiftEntry>((resolve) => {
+    CommonDB.transaction((tx) => {
+      tx.executeSql(
+        `SELECT * FROM ${liftEntries} WHERE ${colEx} = ? ORDER BY ${colDate} ASC LIMIT 1;`,
+        [ex],
+        (_, result) => {
+          const { id, date, ex } = result.rows.item(0) as tableEntryLift;
+          resolve({
+            id: id,
+            date: new Date(date),
+            ex: ex,
+          });
+        }
+      );
+    });
+  });
+};
+
 export const getSessionTrackerSetEntries = (
   idLiftReferenced: number
 ): Promise<SessionTrackerSetEntry[]> => {
