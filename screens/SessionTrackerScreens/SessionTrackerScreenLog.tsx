@@ -9,8 +9,9 @@ import { Picker } from "@react-native-picker/picker";
 import { ExercisesEntry } from "../../logic/ExercisesListLogic";
 import {
   getSessionTrackerLiftLastEntry,
-  refreshSessionTrackerLiftEntries, refreshSessionTrackerSetEntries,
-  SessionTrackerLiftEntry
+  refreshSessionTrackerLiftEntries,
+  refreshSessionTrackerSetEntries,
+  SessionTrackerLiftEntry,
 } from "../../logic/SessionTrackerLogic";
 
 export const SessionTrackerScreenLog: React.FC<
@@ -20,13 +21,6 @@ export const SessionTrackerScreenLog: React.FC<
   useKeepAwake(); // prevent from sleeping
 
   const [exToShow, setExToShow] = useState<number[]>([1, 2]);
-
-  // table with id, ex, date
-  // table with id, idExDate, set, rep, weight
-  const [liftEntries, setLiftEntries] = useState<SessionTrackerLiftEntry[]>([]);
-  useEffect(() => {
-    refreshSessionTrackerLiftEntries(setLiftEntries);
-  }, []);
 
   return (
     <ScrollView style={CommonStyles.container}>
@@ -117,7 +111,7 @@ interface ExProps {
 
 const Ex = ({ exName, ex }: ExProps) => {
   const lastLift = getSessionTrackerLiftLastEntry(ex);
-  const setList= refreshSessionTrackerSetEntries(ex);
+  const setList = refreshSessionTrackerSetEntries(ex);
   return (
     <View>
       <Text>{`${exName ? exName : "ex name"} - previous ${
@@ -131,7 +125,16 @@ const Ex = ({ exName, ex }: ExProps) => {
         previous={"previous"}
         improvement={"improvement"}
       />
-      {}
+      {setList?.map((set) => (
+        <Row
+          setNumber={set.set.toFixed(0)}
+          repDone={"0"}
+          weightLifted={"0"}
+          total={"0"}
+          previous={`${set.rep}*${set.weight}=${set.rep * set.weight}`}
+          improvement={"0"}
+        />
+      ))}
     </View>
   );
 };
