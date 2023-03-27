@@ -157,3 +157,16 @@ export const addSessionTrackerSetEntry = (
     });
   });
 };
+
+export const editSessionTrackerSetEntry = (
+  id: number,
+  rep: number,
+  weight: number
+) => {
+  CommonDB.transaction((tx) => {
+    tx.executeSql(
+      `UPDATE ${setEntries} SET (${colRep}, ${colWeight}) = (?, ?) WHERE ${colIdSet} = ?;`,
+      [rep, weight, id]
+    );
+  });
+};
