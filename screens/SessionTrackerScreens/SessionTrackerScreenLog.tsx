@@ -12,7 +12,10 @@ import {
   SessionTrackerSetEntry,
 } from "../../logic/SessionTrackerLogic";
 import { getImprovementString } from "../../logic/PersonalRecordLogic";
-import { addSessionTrackerSetEntry } from "../../database/SessionTrackerDB";
+import {
+  addSessionTrackerSetEntry,
+  editSessionTrackerSetEntry,
+} from "../../database/SessionTrackerDB";
 
 export const SessionTrackerScreenLog: React.FC<
   NavigationPropsSessionTrackerPages
@@ -120,6 +123,7 @@ const Ex = ({ exName, ex }: ExProps) => {
       {setList?.map((set) => {
         return (
           <RowItem
+            id={lastLift ? lastLift.id : 0}
             setNumber={set.set.toFixed(0)}
             previousRep={set.rep}
             previousWeight={set.weight}
@@ -152,14 +156,20 @@ const Ex = ({ exName, ex }: ExProps) => {
 };
 
 interface RowItemProp {
+  id: number;
   setNumber: string;
   previousRep: number;
   previousWeight: number;
 }
 
-const RowItem = ({ setNumber, previousRep, previousWeight }: RowItemProp) => {
-  const [rep, setRep] = useState<number>(0);
-  const [weight, setWeight] = useState<number>(0);
+const RowItem = ({
+  id,
+  setNumber,
+  previousRep,
+  previousWeight,
+}: RowItemProp) => {
+  const [rep, setRep] = useState<number>(0); //fetch db
+  const [weight, setWeight] = useState<number>(0); //fetch db
   const total = rep * weight;
   const totalPrevious = previousWeight * previousRep;
   return (
@@ -168,14 +178,20 @@ const RowItem = ({ setNumber, previousRep, previousWeight }: RowItemProp) => {
       <TextInput
         style={[pageStyles.column, { backgroundColor: "grey" }]}
         keyboardType="numeric"
-        onChangeText={(text) => setRep(Number(text))}
+        onChangeText={(text) => {
+          setRep(Number(text));
+          editSessionTrackerSetEntry(id, rep, weight);
+        }}
       >
         {rep}
       </TextInput>
       <TextInput
         style={[pageStyles.column, { backgroundColor: "grey" }]}
         keyboardType="numeric"
-        onChangeText={(text) => setWeight(Number(text))}
+        onChangeText={(text) => {
+          setWeight(Number(text));
+          editSessionTrackerSetEntry(id, rep, weight);
+        }}
       >
         {weight}
       </TextInput>
