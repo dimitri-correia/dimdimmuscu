@@ -144,11 +144,29 @@ export const addSessionTrackerSetEntry = (
   set: number,
   rep: number,
   weight: number
+): Promise<number> => {
+  return new Promise<number>((resolve) => {
+    CommonDB.transaction((tx) => {
+      tx.executeSql(
+        `INSERT INTO ${setEntries} (${colRefLift}, ${colSet}, ${colRep}, ${colWeight}) VALUES (?, ?, ?, ?);`,
+        [idLift, set, rep, weight],
+        (r, e) => {
+          resolve(e.insertId ? e.insertId : -1);
+        }
+      );
+    });
+  });
+};
+
+export const editSessionTrackerSetEntry = (
+  id: number,
+  rep: number,
+  weight: number
 ) => {
   CommonDB.transaction((tx) => {
     tx.executeSql(
-      `INSERT INTO ${setEntries} (${colRefLift}, ${colSet}, ${colRep}, ${colWeight}) VALUES (?, ?, ?, ?);`,
-      [idLift, set, rep, weight]
+      `UPDATE ${setEntries} SET (${colRep}, ${colWeight}) = (?, ?) WHERE ${colIdSet} = ?;`,
+      [rep, weight, id]
     );
   });
 };

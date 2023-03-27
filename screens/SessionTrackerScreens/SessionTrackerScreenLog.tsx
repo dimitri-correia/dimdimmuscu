@@ -7,7 +7,15 @@ import Chrono from "../../components/commons/Chrono";
 import { NavigationPropsSessionTrackerPages } from "./SessionTrackerScreen";
 import { Picker } from "@react-native-picker/picker";
 import { ExercisesEntry } from "../../logic/ExercisesListLogic";
-import { getSessionTrackerLiftLastEntry } from "../../logic/SessionTrackerLogic";
+import {
+  getSessionTrackerLiftLastEntry,
+  SessionTrackerSetEntry,
+} from "../../logic/SessionTrackerLogic";
+import { getImprovementString } from "../../logic/PersonalRecordLogic";
+import {
+  addSessionTrackerSetEntry,
+  editSessionTrackerSetEntry,
+} from "../../database/SessionTrackerDB";
 
 export const SessionTrackerScreenLog: React.FC<
   NavigationPropsSessionTrackerPages
@@ -88,9 +96,9 @@ interface ExProps {
 
 const Ex = ({ exName, ex }: ExProps) => {
   const lastLift = getSessionTrackerLiftLastEntry(ex);
-  //const setList = refreshSessionTrackerSetEntries(ex);
+  //const setList = refreshSessionTrackerSetEntries(lastLift?.id);
 
-  const setList = [];
+  const setList = [] as SessionTrackerSetEntry[];
 
   setList?.push({
     id: 1,
@@ -101,6 +109,10 @@ const Ex = ({ exName, ex }: ExProps) => {
 
   console.log(setList);
 
+  const maxSet = setList.sort((s) => s.set).at(0)?.set;
+
+  const newSet = maxSet ? maxSet + 1 : 1;
+
   return (
     <View>
       <Text>{`${exName ? exName : "ex name"} - previous ${
@@ -109,11 +121,12 @@ const Ex = ({ exName, ex }: ExProps) => {
 
       <RowTitle />
       {setList?.map((set) => {
-        console.log(set);
         return (
           <RowItem
+            id={lastLift ? lastLift.id : 0}
             setNumber={set.set.toFixed(0)}
-            previous={`${set.rep}*${set.weight}=${set.rep * set.weight}`}
+            previousRep={set.rep}
+            previousWeight={set.weight}
           />
         );
       })}
@@ -121,7 +134,21 @@ const Ex = ({ exName, ex }: ExProps) => {
       <Button
         title={"Add New Set"}
         onPress={() => {
-          console.log("new set");
+          addSessionTrackerSetEntry(
+            lastLift?.id ? lastLift.id : -1,
+            newSet,
+            0,
+            0
+          )
+            .then((r) => {
+              setList.push({
+                id: r,
+                set: newSet,
+                rep: 0,
+                weight: 0,
+              });
+            })
+            .catch(() => console.log("Error adding new set"));
         }}
       />
     </View>
@@ -129,27 +156,52 @@ const Ex = ({ exName, ex }: ExProps) => {
 };
 
 interface RowItemProp {
+  id: number;
   setNumber: string;
-  previous: string;
+  previousRep: number;
+  previousWeight: number;
 }
 
-const RowItem = ({ setNumber, previous }: RowItemProp) => {
-  const [rep, setRep] = useState<number>(0);
-  const [weight, setWeight] = useState<number>(0);
+const RowItem = ({
+  id,
+  setNumber,
+  previousRep,
+  previousWeight,
+}: RowItemProp) => {
+  const [rep, setRep] = useState<number>(0); //fetch db
+  const [weight, setWeight] = useState<number>(0); //fetch db
   const total = rep * weight;
-  const improvement = total;
+  const totalPrevious = previousWeight * previousRep;
   return (
     <View style={pageStyles.row}>
       <Text style={pageStyles.column}>{setNumber}</Text>
-      <TextInput style={[pageStyles.column, { backgroundColor: "grey" }]}>
+      <TextInput
+        style={[pageStyles.column, { backgroundColor: "grey" }]}
+        keyboardType="numeric"
+        onChangeText={(text) => {
+          setRep(Number(text));
+          editSessionTrackerSetEntry(id, rep, weight);
+        }}
+      >
         {rep}
       </TextInput>
-      <TextInput style={[pageStyles.column, { backgroundColor: "grey" }]}>
+      <TextInput
+        style={[pageStyles.column, { backgroundColor: "grey" }]}
+        keyboardType="numeric"
+        onChangeText={(text) => {
+          setWeight(Number(text));
+          editSessionTrackerSetEntry(id, rep, weight);
+        }}
+      >
         {weight}
       </TextInput>
       <Text style={pageStyles.column}>{total}</Text>
-      <Text style={pageStyles.column}>{previous}</Text>
-      <Text style={pageStyles.column}>{improvement}</Text>
+      <Text
+        style={pageStyles.column}
+      >{`${previousRep}*${previousWeight}=${totalPrevious}`}</Text>
+      <Text style={pageStyles.column}>
+        {getImprovementString(total, totalPrevious)}
+      </Text>
     </View>
   );
 };
