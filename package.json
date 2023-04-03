@@ -29,7 +29,7 @@
     "react-native": "0.71.4",
     "react-native-pager-view": "6.2.0",
     "react-native-tab-view": "^3.5.1",
-    "react-native-web": "~0.18.9",
+    "react-native-web": "~0.19.1",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "eslint": "^8.34.0",
