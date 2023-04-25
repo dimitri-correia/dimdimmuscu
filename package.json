@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@react-native-community/datetimepicker": "7.0.1",
-    "@react-native-picker/picker": "2.4.9",
+    "@react-native-picker/picker": "2.4.10",
     "@react-navigation/material-top-tabs": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
