@@ -26,7 +26,7 @@
     "jest-expo": "^48.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.71.7",
+    "react-native": "0.71.10",
     "react-native-pager-view": "6.2.0",
     "react-native-tab-view": "^3.5.1",
     "react-native-web": "~0.19.4",
