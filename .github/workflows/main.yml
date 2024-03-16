@@ -13,6 +13,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
+      - name: Move to backend
+        run: cd /back/dimdimmuscuback
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
@@ -24,6 +26,8 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
+      - name: Move to backend
+        run: cd /back/dimdimmuscuback
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -35,6 +39,8 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
+      - name: Move to backend
+        run: cd /back/dimdimmuscuback
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
         with:
