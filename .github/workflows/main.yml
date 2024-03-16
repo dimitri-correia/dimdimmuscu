@@ -1,4 +1,4 @@
-name: github CI
+name: GitHub CI
 
 on:
   pull_request:
@@ -14,13 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Move to backend
-        run: cd /back/dimdimmuscuback
+        run: ls
+      - name: Move to backend
+        run: cd back/dimdimmuscuback
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Run tests
         run: cargo test
-
 
   fmt:
     name: Rustfmt
