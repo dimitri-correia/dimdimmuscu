@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Move to backend
-        run: ls
+        run: ls /
       - name: Move to backend
         run: cd back/dimdimmuscuback
       - uses: actions/checkout@v3
