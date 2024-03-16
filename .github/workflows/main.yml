@@ -1,17 +1,39 @@
-name: github CI
+name: GitHub CI
 
 on:
   pull_request:
-    branches: [ main ]
-    
+    branches:
+      - main
+
 jobs:
-  build:
+  rust-tests:
+    name: Test-back
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Run tests
+        run: cd back/dimdimmuscuback && cargo test
+
+  fmt:
+    name: Rustfmt-back
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          node-version: '18'
-          cache: 'npm'
-      - run: npm install
-      - run: npm test
+          components: rustfmt
+      - name: Enforce formatting
+        run: cd back/dimdimmuscuback && cargo fmt --check
+
+  clippy:
+    name: Clippy-back
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cd back/dimdimmuscuback && cargo clippy -- -D warnings
