@@ -17,7 +17,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Move to backend
-        run: ls /
+        run: ls
       - name: Run tests
         run: cargo test
 
