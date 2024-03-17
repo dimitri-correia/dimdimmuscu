@@ -7,7 +7,8 @@ pub async fn init_db(pool: PgPool) -> DbInfos {
     sqlx::migrate!()
         .run(&pool)
         .await
-        .map_err(CustomError::new)?;
+        .map_err(CustomError::new)
+        .expect("cannot init database");
 
     DbInfos { pool }
 }
