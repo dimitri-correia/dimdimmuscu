@@ -4,7 +4,7 @@ use sqlx::PgPool;
 use tower_cookies::CookieManagerLayer;
 use tracing::info;
 
-use crate::db::methods::init_db::init_db;
+use crate::db::methods::init_db::init_db_shuttle;
 use crate::routers::fallback::fallback;
 
 mod cookies;
@@ -20,7 +20,7 @@ async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::Shut
     let router = Router::new()
         .fallback(fallback)
         .layer(CookieManagerLayer::new())
-        .with_state(init_db(pool).await);
+        .with_state(init_db_shuttle(pool).await);
 
     info!("started");
 

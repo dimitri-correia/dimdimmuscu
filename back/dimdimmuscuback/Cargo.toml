@@ -6,7 +6,6 @@ edition = "2021"
 [dependencies]
 # My libs
 lib-auth = { path = "../libs/lib-auth" }
-lib-db = { path = "../libs/lib-db" }
 # Axum
 axum = "0.7.4"
 tower-cookies = "0.10"
