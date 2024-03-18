@@ -85,15 +85,13 @@ mod tests {
     use axum_test::TestServer;
     use serde_json::json;
 
-    use lib_db::tests::init_test;
-
     use crate::cookies::AUTH_TOKEN;
 
     use super::*;
 
     #[tokio::test]
     async fn task1() {
-        let db = init_test().await;
+        let db = lib_db::init_test().await;
         let app = routes(db);
 
         // Run the application for testing.

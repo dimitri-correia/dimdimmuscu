@@ -1,7 +1,7 @@
 use shuttle_runtime::CustomError;
 use sqlx::PgPool;
 
-use crate::db::structs::db_infos::DbInfos;
+use lib_db::DbInfos;
 
 pub async fn init_db(pool: PgPool) -> DbInfos {
     sqlx::migrate!()

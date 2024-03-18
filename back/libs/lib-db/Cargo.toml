@@ -11,3 +11,4 @@ workspace = true
 
 [dependencies]
 sqlx = { version = "0.7.4", features = ["runtime-tokio-native-tls", "postgres"] }
+tokio = "1.36.0"
