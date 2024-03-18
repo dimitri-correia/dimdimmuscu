@@ -22,10 +22,29 @@ pub struct AuthConfig {
 impl AuthConfig {
     fn load_from_env() -> Result<AuthConfig, EnvError> {
         Ok(AuthConfig {
-            PWD_KEY: get_env_b64u_as_u8s("SERVICE_PWD_KEY")?,
+            PWD_KEY: get_env_b64u_as_u8s("DIMDIMMUSCU_SERVICE_PWD_KEY")?,
 
-            TOKEN_KEY: get_env_b64u_as_u8s("SERVICE_TOKEN_KEY")?,
-            TOKEN_DURATION_MS: get_env_parse("SERVICE_TOKEN_DURATION_MS")?,
+            TOKEN_KEY: get_env_b64u_as_u8s("DIMDIMMUSCU_SERVICE_TOKEN_KEY")?,
+            TOKEN_DURATION_MS: get_env_parse("DIMDIMMUSCU_SERVICE_TOKEN_DURATION_MS")?,
         })
+    }
+}
+
+#[cfg(test)]
+pub mod tests {
+    use lib_envs::get_env;
+
+    #[test]
+    fn setup_env() {
+        assert_eq!(
+            get_env("DIMDIMMUSCU_SERVICE_PWD_KEY").unwrap(),
+            "CKUGFOD9_2Qf6Pn3ZFRYgPYb8ht4vKqEG9PGMXTB7497bT0367DjoaD6ydFnEVaIRda0kKeBZVCT5Hb62m2sCA".to_string());
+        assert_eq!(
+            get_env("DIMDIMMUSCU_SERVICE_TOKEN_KEY").unwrap(),
+            "9FoHBmkyxbgu_xFoQK7e0jz3RMNVJWgfvbVn712FBNH9LLaAWS3CS6Zpcg6RveiObvCUb6a2z-uAiLjhLh2igw");
+        assert_eq!(
+            get_env("DIMDIMMUSCU_SERVICE_TOKEN_DURATION_MS").unwrap(),
+            "1800000"
+        );
     }
 }
