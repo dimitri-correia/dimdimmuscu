@@ -12,6 +12,7 @@ workspace = true
 [dependencies]
 # My libs
 lib-envs = { path = "../lib-envs" }
+lib-b64 = { path = "../lib-b64" }
 # Async
 tokio = { version = "1.36.0", features = ["full"] }
 # Json
@@ -27,3 +28,5 @@ uuid = { version = "1.7.0", features = ["v4", "fast-rng", ] }
 lazy-regex = "3.1.0"
 # Tmp
 enum_dispatch = "0.3.12"
+# Time
+chrono = "0.4.35"

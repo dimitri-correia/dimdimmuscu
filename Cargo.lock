@@ -1147,9 +1147,11 @@ name = "lib-auth"
 version = "0.1.0"
 dependencies = [
  "argon2",
+ "chrono",
  "enum_dispatch",
  "hmac",
  "lazy-regex",
+ "lib-b64",
  "lib-envs",
  "serde",
  "sha2",
