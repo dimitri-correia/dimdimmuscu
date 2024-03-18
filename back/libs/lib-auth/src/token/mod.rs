@@ -11,7 +11,7 @@ use lib_b64::{b64u_decode_to_string, b64u_encode};
 use crate::config::auth_config;
 use crate::token::error::AuthError;
 
-mod error;
+pub mod error;
 
 /// String format: `ident_b64u.exp_b64u.sign_b64u`
 #[derive(Debug)]
