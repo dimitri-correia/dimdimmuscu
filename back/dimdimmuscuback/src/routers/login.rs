@@ -11,7 +11,7 @@ use lib_auth::pwd::{self, ContentToHash, SchemeStatus};
 use lib_db::DbInfos;
 
 use crate::cookies;
-use crate::db::structs::auth_users::UserForLogin;
+use crate::db::structs::users::UserForLogin;
 use crate::errors::login::LoginError;
 
 pub fn routes(db_infos: DbInfos) -> Router {
@@ -51,7 +51,7 @@ async fn api_login_handler(
     // -- Update password scheme if needed
     if let SchemeStatus::Outdated = scheme_status {
         debug!("pwd encrypt scheme outdated, upgrading.");
-        // todo update pwd
+        UserForLogin::update_pwd(&db_infos.pool, &payload.username, &payload.pwd);
     }
 
     cookies::set_token_cookie(&cookies, &payload.username, user.token_salt)
@@ -86,12 +86,13 @@ mod tests {
     use serde_json::json;
 
     use crate::cookies::AUTH_TOKEN;
+    use crate::db::methods::init_db::init_test;
 
     use super::*;
 
     #[tokio::test]
     async fn task1() {
-        let db = lib_db::init_test().await;
+        let db = init_test().await;
         let app = routes(db);
 
         // Run the application for testing.
