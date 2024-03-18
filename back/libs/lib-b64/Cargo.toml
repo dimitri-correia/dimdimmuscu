@@ -10,4 +10,4 @@ doctest = false
 workspace = true
 
 [dependencies]
-base64 = "0.21"
+base64 = "0.22.0"

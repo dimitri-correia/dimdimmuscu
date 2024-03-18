@@ -4,27 +4,27 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# My libs
 lib-auth = { path = "../libs/lib-auth" }
-
+# Axum
 axum = "0.7.4"
-
+# Shuttle
 shuttle-axum = "0.41.0"
 shuttle-runtime = "0.41.0"
 shuttle-shared-db = { version = "0.41.0", features = ["postgres", "sqlx"] }
-
+# Async
 tokio = "1.36.0"
-
+# Db
 sqlx = { version = "0.7.4", features = ["runtime-tokio-native-tls", "postgres"] }
-
+# Json
 serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.114"
-
+# Time
 chrono = "0.4.35"
-
+# Tracing
 tracing-subscriber = "0.3.18"
 tracing = "0.1.40"
-
+# Uuid
 uuid = { version = "1.7.0", features = ["v4"] }
-
-
+# Cookies
 tower-cookies = "0.10"
