@@ -21,3 +21,15 @@ pub enum EnvError {
     MissingEnv(&'static str),
     WrongFormat(&'static str),
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_env_exists() {
+        env::set_var("TEST_ENV", "value");
+
+        assert_eq!(get_env("TEST_ENV").unwrap(), "value".to_string());
+    }
+}
