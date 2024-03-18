@@ -1,0 +1,14 @@
+[workspace.lints.rust]
+unsafe_code = "forbid"
+# unused = "allow"
+
+[workspace]
+resolver = "2"
+members = [
+    # -- Application Libraries
+    "back/libs/lib-auth",
+    "back/libs/lib-envs",
+    "back/libs/lib-b64",
+    # -- Application Services
+    "back/dimdimmuscuback",
+]
