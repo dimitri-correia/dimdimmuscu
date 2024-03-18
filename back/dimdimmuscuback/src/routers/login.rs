@@ -1,4 +1,5 @@
 use axum::extract::State;
+use axum::http::StatusCode;
 use axum::routing::post;
 use axum::{Json, Router};
 use serde::Deserialize;
@@ -7,9 +8,10 @@ use tower_cookies::Cookies;
 use tracing::debug;
 
 use lib_auth::pwd::{self, ContentToHash, SchemeStatus};
+use lib_db::DbInfos;
 
+use crate::cookies;
 use crate::db::structs::auth_users::UserForLogin;
-use crate::db::structs::db_infos::DbInfos;
 use crate::errors::login::LoginError;
 
 pub fn routes(db_infos: DbInfos) -> Router {
@@ -29,12 +31,12 @@ async fn api_login_handler(
     State(db_infos): State<DbInfos>,
     cookies: Cookies,
     Json(payload): Json<LoginPayload>,
-) -> Result<Json<Value>, LoginError> {
+) -> Result<Json<Value>, (StatusCode, String)> {
     debug!("attempt to login");
 
     let user: UserForLogin = UserForLogin::find_by_name(&db_infos.pool, &payload.username)
-        .await?
-        .ok_or(LoginError::LoginFailUsernameNotFound)?;
+        .await
+        .map_err(|_| LoginError::LoginFailUsernameNotFound.login_failed())?;
 
     let scheme_status = pwd::validate_pwd(
         ContentToHash {
@@ -44,7 +46,7 @@ async fn api_login_handler(
         user.pwd,
     )
     .await
-    .map_err(|_| LoginError::LoginFailPwdNotMatching { user_id })?;
+    .map_err(|_| LoginError::LoginFailPwdNotMatching { user_id: user.id }.login_failed())?;
 
     // -- Update password scheme if needed
     if let SchemeStatus::Outdated = scheme_status {
@@ -52,7 +54,8 @@ async fn api_login_handler(
         // todo update pwd
     }
 
-    web::set_token_cookie(&cookies, &user.username, user.token_salt)?;
+    cookies::set_token_cookie(&cookies, &payload.username, user.token_salt)
+        .map_err(|_| LoginError::SetCookieFailed.login_failed())?;
 
     // Create the success body.
     let body = Json(json!({
@@ -64,28 +67,49 @@ async fn api_login_handler(
     Ok(body)
 }
 
-#[derive(Debug, Deserialize)]
-struct LogoffPayload {
-    logoff: bool,
+async fn api_logoff_handler(cookies: Cookies) -> Json<Value> {
+    debug!("{:<12} - api_logoff_handler", "HANDLER");
+
+    cookies::remove_token_cookie(&cookies);
+
+    Json(json!({
+        "result": {
+            "logged_off": true
+        }
+    }))
 }
 
-async fn api_logoff_handler(
-    cookies: Cookies,
-    Json(payload): Json<LogoffPayload>,
-) -> Result<Json<Value>> {
-    debug!("{:<12} - api_logoff_handler", "HANDLER");
-    let should_logoff = payload.logoff;
+#[cfg(test)]
+mod tests {
+    use axum::http::StatusCode;
+    use axum_test::TestServer;
+    use serde_json::json;
 
-    if should_logoff {
-        remove_token_cookie(&cookies)?;
-    }
+    use lib_db::tests::init_test;
 
-    // Create the success body.
-    let body = Json(json!({
+    use crate::cookies::AUTH_TOKEN;
+
+    use super::*;
+
+    #[tokio::test]
+    async fn task1() {
+        let db = init_test().await;
+        let app = routes(db);
+
+        // Run the application for testing.
+        let server = TestServer::new(app).unwrap();
+
+        // Send the request.
+        let response = server.post("/login").await;
+
+        response.assert_status(StatusCode::OK);
+
+        assert!(response.cookies().get(AUTH_TOKEN).is_some());
+
+        response.assert_json(&json!({
         "result": {
-            "logged_off": should_logoff
+            "success": true
         }
-    }));
-
-    Ok(body)
+        }));
+    }
 }
