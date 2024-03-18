@@ -9,15 +9,10 @@ CREATE TABLE users
 
 CREATE TABLE users_auth
 (
-    profile_id     INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-
-    -- Auth
-    pwd            varchar(256),
-    pwd_salt       uuid    NOT NULL DEFAULT gen_random_uuid(),
-    token_salt     uuid    NOT NULL DEFAULT gen_random_uuid(),
-
-    -- Timestamps
-    last_connexion DATE    NOT NULL
+    profile_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    pwd        varchar(256),
+    pwd_salt   uuid    NOT NULL DEFAULT gen_random_uuid(),
+    token_salt uuid    NOT NULL DEFAULT gen_random_uuid()
 );
 
 CREATE TABLE muscles
