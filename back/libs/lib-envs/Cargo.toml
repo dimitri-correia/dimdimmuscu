@@ -1,0 +1,13 @@
+[package]
+name = "lib-envs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+lib-b64 = { path = "../lib-b64" }
