@@ -69,7 +69,6 @@ pub async fn validate_pwd(
         .await
         .map_err(|_| PwdError::FailSpawnBlockForValidate)??;
 
-    // validate_for_scheme(&scheme_name, to_hash, &hashed).await?;
     Ok(scheme_status)
 }
 

@@ -60,14 +60,14 @@ impl UserForCreate {
         .fetch_one(pool)
         .await?;
 
-        let pwd_salt = "";
-        let encoded_pwd = encode_pwd(&user_for_create.pwd_clear, pwd_salt).await;
+        let pwd_salt = Uuid::new_v4();
+        let encoded_pwd = encode_pwd(&user_for_create.pwd_clear, pwd_salt).await?;
         let token_salt = "";
         let auth_user = sqlx::query_as::<_, UserForLoginInDb>(
             "INSERT INTO users_auth (profile_id, pwd, pwd_salt, token_salt) VALUES ($1, $2, $3, $4)")
             .bind(user.id)
             .bind(encoded_pwd)
-            .bind(pwd_salt)
+            .bind(pwd_salt.to_string())
             .bind(token_salt)
             .fetch_one(pool)
             .await?;
@@ -76,14 +76,14 @@ impl UserForCreate {
     }
 }
 
-async fn encode_pwd(pwd_clear: &String, salt: Uuid) -> Result<(), Error> {
+async fn encode_pwd(pwd_clear: &String, salt: Uuid) -> Result<String, Error> {
     let pwd = pwd::hash_pwd(ContentToHash {
         content: pwd_clear.to_string(),
         salt,
     })
     .await
     .map_err(|_| Error)?;
-    Ok(())
+    Ok(pwd)
 }
 
 impl UserForLogin {

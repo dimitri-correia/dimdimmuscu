@@ -8,9 +8,9 @@ use tower_cookies::Cookies;
 use tracing::debug;
 
 use lib_auth::pwd::{self, ContentToHash, SchemeStatus};
-use lib_db::DbInfos;
 
 use crate::cookies;
+use crate::db::methods::init_db::DbInfos;
 use crate::db::structs::users::UserForLogin;
 use crate::errors::login::LoginError;
 

@@ -23,7 +23,6 @@ impl AuthConfig {
     fn load_from_env() -> Result<AuthConfig, EnvError> {
         Ok(AuthConfig {
             PWD_KEY: get_env_b64u_as_u8s("DIMDIMMUSCU_SERVICE_PWD_KEY")?,
-
             TOKEN_KEY: get_env_b64u_as_u8s("DIMDIMMUSCU_SERVICE_TOKEN_KEY")?,
             TOKEN_DURATION_MS: get_env_parse("DIMDIMMUSCU_SERVICE_TOKEN_DURATION_MS")?,
         })
