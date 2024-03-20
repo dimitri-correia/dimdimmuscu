@@ -4,6 +4,7 @@ pub enum LoginError {
     LoginFailUsernameNotFound,
     LoginFailPwdNotMatching { user_id: i32 },
     SetCookieFailed,
+    FailUpdate,
 }
 
 impl LoginError {

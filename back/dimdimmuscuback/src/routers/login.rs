@@ -14,7 +14,7 @@ use crate::db::methods::init_db::DbInfos;
 use crate::db::structs::users::UserForLogin;
 use crate::errors::login::LoginError;
 
-pub fn routes(db_infos: DbInfos) -> Router {
+pub fn login_routes(db_infos: DbInfos) -> Router {
     Router::new()
         .route("/login", post(api_login_handler))
         .route("/logoff", post(api_logoff_handler))
@@ -51,7 +51,9 @@ async fn api_login_handler(
     // -- Update password scheme if needed
     if let SchemeStatus::Outdated = scheme_status {
         debug!("pwd encrypt scheme outdated, upgrading.");
-        UserForLogin::update_pwd(&db_infos.pool, &payload.username, &payload.pwd);
+        UserForLogin::update_pwd(&db_infos.pool, &payload.username, &payload.pwd)
+            .await
+            .map_err(|_| LoginError::FailUpdate.login_failed())?;
     }
 
     cookies::set_token_cookie(&cookies, &payload.username, user.token_salt)
@@ -93,7 +95,7 @@ mod tests {
     #[tokio::test]
     async fn task1() {
         let db = init_test().await;
-        let app = routes(db);
+        let app = login_routes(db);
 
         // Run the application for testing.
         let server = TestServer::new(app).unwrap();
