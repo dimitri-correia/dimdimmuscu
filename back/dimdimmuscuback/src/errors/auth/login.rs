@@ -8,7 +8,7 @@ pub enum LoginError {
 }
 
 impl LoginError {
-    pub fn login_failed(&self) -> (StatusCode, String) {
+    pub fn error_to_show(&self) -> (StatusCode, String) {
         (StatusCode::UNAUTHORIZED, "Auth failed".to_string())
     }
 }

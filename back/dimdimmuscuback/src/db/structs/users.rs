@@ -1,30 +1,13 @@
 use std::fmt::Error;
 
-use chrono::Local;
+use argon2::password_hash::{rand_core::OsRng, SaltString};
+use argon2::{Argon2, PasswordHasher};
+use chrono::{DateTime, Local, Utc};
 use serde::Deserialize;
 use sqlx::{FromRow, PgPool};
-use uuid::Uuid;
 
-use lib_auth::pwd;
-use lib_auth::pwd::ContentToHash;
-
-#[derive(Debug, sqlx::FromRow)]
-struct User {
-    id: i32,
-    name: String,
-    birthdate: String,
-    account_creation: String,
-}
-
-impl User {
-    async fn find_by_name(pool: &PgPool, name: &str) -> Result<Self, Error> {
-        let row = sqlx::query_as::<_, Self>("SELECT * FROM users WHERE name = $1")
-            .bind(name)
-            .fetch_one(pool)
-            .await?;
-        Ok(row)
-    }
-}
+use crate::errors::auth::signup::SignupError;
+use crate::errors::auth::signup::SignupError::{ErrorHashing, ErrorParsingBirthday, ErrorWithDb};
 
 #[derive(Debug, Deserialize)]
 pub struct UserForCreate {
@@ -33,92 +16,69 @@ pub struct UserForCreate {
     pub birthdate: String,
 }
 
-#[derive(Debug)]
-pub struct UserForLogin {
-    pub id: i32,
-    pub pwd: String,
-    pub pwd_salt: Uuid,
-    pub token_salt: Uuid,
+impl UserForCreate {
+    pub async fn add_new_user_in_db(self, pool: &PgPool) -> Result<(), SignupError> {
+        let utc_date = match DateTime::parse_from_rfc3339(&self.birthdate) {
+            Ok(date) => date.with_timezone(&Utc),
+            Err(_) => return Err(ErrorParsingBirthday),
+        };
+
+        dbg!(&utc_date);
+
+        let user: User = sqlx::query_as(
+            "INSERT INTO users (name, birthdate, account_creation) VALUES ($1, $2, $3) RETURNING *",
+        )
+        .bind(&self.username)
+        .bind(utc_date)
+        .bind(Local::now())
+        .fetch_one(pool)
+        .await
+        .map_err(ErrorWithDb)?; // need more precision
+
+        dbg!(&user);
+
+        let salt = SaltString::generate(&mut OsRng);
+
+        // Hash password to PHC string ($argon2id$v=19$...)
+        let password_hash = Argon2::default()
+            .hash_password(self.pwd_clear.as_ref(), &salt)
+            .map_err(ErrorHashing)?
+            .to_string();
+
+        dbg!(&password_hash);
+
+        sqlx::query("INSERT INTO users_auth (profile_id, pwd) VALUES ($1, $2)")
+            .bind(user.id)
+            .bind(password_hash)
+            .execute(pool)
+            .await
+            .map_err(ErrorWithDb)?;
+
+        Ok(())
+    }
 }
 
 #[derive(Debug, FromRow)]
-pub struct UserForLoginInDb {
-    pub id: i32,
+pub struct UserForLogin {
+    pub id: i64,
     pub pwd: String,
-    pub pwd_salt: String,
-    pub token_salt: String,
 }
 
-impl UserForCreate {
-    pub async fn add(pool: &PgPool, user_for_create: Self) -> Result<UserForLogin, Error> {
-        let user = sqlx::query_as::<_, User>(
-            "INSERT INTO users (name, birthdate, account_creation) VALUES ($1, $2, $3)",
-        )
-        .bind(user_for_create.username)
-        .bind(user_for_create.birthdate)
-        .bind(Local::now().to_rfc3339())
-        .fetch_one(pool)
-        .await?;
+#[derive(Debug, sqlx::FromRow)]
+struct User {
+    id: i64,
+    name: String,
+    birthdate: DateTime<Utc>,
+    account_creation: DateTime<Utc>,
+}
 
-        let pwd_salt = Uuid::new_v4();
-        let encoded_pwd = encode_pwd(&user_for_create.pwd_clear, pwd_salt).await?;
-        let token_salt = "";
-        let auth_user = sqlx::query_as::<_, UserForLoginInDb>(
-            "INSERT INTO users_auth (profile_id, pwd, pwd_salt, token_salt) VALUES ($1, $2, $3, $4)")
-            .bind(user.id)
-            .bind(encoded_pwd)
-            .bind(pwd_salt.to_string())
-            .bind(token_salt)
+impl User {
+    async fn find_by_name(pool: &PgPool, name: &str) -> Result<Self, Error> {
+        let row: Self = sqlx::query_as("SELECT * FROM users WHERE name = $1")
+            .bind(name)
             .fetch_one(pool)
-            .await?;
-
-        UserForLogin {}
-    }
-}
-
-async fn encode_pwd(pwd_clear: &String, salt: Uuid) -> Result<String, Error> {
-    let pwd = pwd::hash_pwd(ContentToHash {
-        content: pwd_clear.to_string(),
-        salt,
-    })
-    .await
-    .map_err(|_| Error)?;
-    Ok(pwd)
-}
-
-impl UserForLogin {
-    pub async fn update_pwd(
-        pool: &PgPool,
-        username: &String,
-        pwd_clear: &String,
-    ) -> Result<Self, Error> {
-        let user: Self = Self::find_by_name(pool, username).await?;
-        encode_pwd(pwd_clear, user.pwd_salt).await?;
-
-        UserForLogin {}
-    }
-
-    pub async fn find_by_name(pool: &PgPool, name: &str) -> Result<Self, Error> {
-        let row = sqlx::query_as::<_, UserForLoginInDb>(
-            "SELECT * FROM users_auth WHERE profile_id = (SELECT id FROM users WHERE name = $1)",
-        )
-        .bind(name)
-        .fetch_one(pool)
-        .await
-        .map_err(|_| Error)?;
-
-        UserForLogin::from(row)
-    }
-
-    fn from(user: UserForLoginInDb) -> Result<Self, Error> {
-        let pwd_salt = Uuid::parse_str(&user.pwd_salt).map_err(|_| Error)?;
-        let token_salt = Uuid::parse_str(&user.token_salt).map_err(|_| Error)?;
-
-        Ok(UserForLogin {
-            id: user.id,
-            pwd: user.pwd,
-            pwd_salt,
-            token_salt,
-        })
+            .await
+            .unwrap();
+        Ok(row)
     }
 }
