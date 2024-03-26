@@ -4,8 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# My libs
-lib-auth = { path = "../libs/lib-auth" }
 # Axum
 axum = "0.7.4"
 tower-cookies = "0.10"
@@ -27,7 +25,6 @@ tracing-subscriber = "0.3.18"
 tracing = "0.1.40"
 # Uuid
 uuid = { version = "1.7.0", features = ["v4"] }
-
 
 [dev-dependencies]
 axum-test = "14.2.2"

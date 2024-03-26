@@ -21,9 +21,6 @@ async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::Shut
 
     let db = init_db_shuttle(pool).await;
 
-    let routes_connected =
-        web::routes_rpc::routes(db.clone()).route_layer(middleware::from_fn(mw_ctx_require));
-
     let router = Router::new()
         .nest("/connect", login_routes(db.clone()))
         .nest("/api", routes_connected())
@@ -33,4 +30,8 @@ async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::Shut
     info!("started");
 
     Ok(router.into())
+}
+
+fn routes_connected() -> Router {
+    todo!()
 }
