@@ -1,4 +1,4 @@
-name: GitHub CI
+name: Tests on PR to main
 
 on:
   pull_request:
