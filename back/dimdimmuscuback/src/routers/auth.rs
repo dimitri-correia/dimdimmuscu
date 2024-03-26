@@ -2,15 +2,18 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::post;
-use axum::{Json, Router};
-use serde::Deserialize;
+use axum::{http, Json, Router};
+use http_body::Empty;
 use serde_json::{json, Value};
-use tower_cookies::Cookies;
+use tower_cookies::cookie::time::Duration;
+use tower_cookies::{Cookie, Cookies};
 
 use crate::db::methods::init_db::DbInfos;
-use crate::db::structs::users::UserForCreate;
+use crate::db::structs::session::Session;
+use crate::db::structs::users_auth::{UserForCreate, UserForLogin};
+use crate::env::{COOKIE_MAX_AGE, COOKIE_MAX_AGE_DAY, USER_COOKIE_NAME};
 
-pub fn login_routes(db_infos: DbInfos) -> Router {
+pub fn auth_routes(db_infos: DbInfos) -> Router {
     Router::new()
         .route("/signup", post(api_signup_handler))
         .route("/login", post(api_login_handler))
@@ -22,68 +25,47 @@ async fn api_signup_handler(
     State(db_infos): State<DbInfos>,
     Json(user): Json<UserForCreate>,
 ) -> impl IntoResponse {
-    dbg!("create user");
-
-    let creation = user.add_new_user_in_db(&db_infos.pool).await;
-
-    if creation.is_err() {
-        return creation.err().unwrap().error_to_show();
-    }
+    if let Some(creation) = user.add_new_user_in_db(&db_infos.pool).await.err() {
+        return creation.error_to_show();
+    };
 
     // we choose to not give a cookie here but to force authentication with /login endpoint
     (StatusCode::CREATED, "User creation worked".to_string())
 }
 
-#[derive(Debug, Deserialize)]
-struct LoginPayload {
-    username: String,
-    pwd: String,
-}
-
 async fn api_login_handler(
     State(db_infos): State<DbInfos>,
     cookies: Cookies,
-    Json(payload): Json<LoginPayload>,
+    Json(user_for_login): Json<UserForLogin>,
 ) -> impl IntoResponse {
-    // let user: UserForLogin = UserForLogin::find_by_name(&db_infos.pool, &payload.username)
-    //     .await
-    //     .map_err(|_| LoginError::LoginFailUsernameNotFound.error_to_show())?;
-    //
-    // let scheme_status = pwd::validate_pwd(
-    //     ContentToHash {
-    //         salt: user.pwd_salt,
-    //         content: payload.pwd.clone(),
-    //     },
-    //     user.pwd,
-    // )
-    //     .await
-    //     .map_err(|_| LoginError::LoginFailPwdNotMatching { user_id: user.id }.login_failed())?;
+    let profile_id = match user_for_login.authenticate(&db_infos.pool).await {
+        Ok(id) => id,
+        Err(auth_error) => return auth_error.error_to_show(),
+    };
 
-    // -- Update password scheme if needed
-    // if let SchemeStatus::Outdated = scheme_status {
-    //     debug!("pwd encrypt scheme outdated, upgrading.");
-    //     UserForLogin::update_pwd(&db_infos.pool, &payload.username, &payload.pwd)
-    //         .await
-    //         .map_err(|_| LoginError::FailUpdate.login_failed())?;
-    // }
+    let token = match Session::new(profile_id, &db_infos.pool).await {
+        Ok(t) => t,
+        Err(err) => return err.error_to_show(),
+    };
 
-    // cookies::set_token_cookie(&cookies, &payload.username, user.token_salt)
-    //     .map_err(|_| LoginError::SetCookieFailed.login_failed())?;
+    let cookie: Cookie = Cookie::build((USER_COOKIE_NAME, token.clone()))
+        .domain("dimdimmuscu")
+        .path("/")
+        .secure(true)
+        .http_only(true)
+        .max_age(Duration::days(COOKIE_MAX_AGE_DAY))
+        .build();
 
-    // Create the success body.
-    // let body = Json(json!({
-    //     "result": {
-    //         "success": true
-    //     }
-    // }));
+    cookies.add(cookie);
 
-    // Ok(body)
-
-    (StatusCode::CREATED, "User creation worked".to_string())
+    (StatusCode::CREATED, format!("token: {}", token)) // todo
 }
 
-async fn api_logoff_handler(cookies: Cookies) -> Json<Value> {
-    // cookies::remove_token_cookie(&cookies);
+async fn api_logoff_handler(
+    State(db_infos): State<DbInfos>,
+    cookies: Cookies,
+) -> impl IntoResponse {
+    cookies.remove(cookies);
 
     Json(json!({
         "result": {
@@ -106,7 +88,7 @@ mod tests {
     #[tokio::test]
     async fn signup_ok_test() {
         let db = init_test().await;
-        let app = login_routes(db);
+        let app = auth_routes(db);
 
         // Run the application for testing.
         let server = TestServer::new(app).unwrap();
@@ -128,7 +110,7 @@ mod tests {
     #[tokio::test]
     async fn login_ok_test() {
         let db = init_test().await;
-        let app = login_routes(db);
+        let app = auth_routes(db);
 
         // Run the application for testing.
         let server = TestServer::new(app).unwrap();
