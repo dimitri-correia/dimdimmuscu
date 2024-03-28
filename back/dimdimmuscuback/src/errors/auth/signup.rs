@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 
 pub enum SignupError {
-    ErrorWithDb(sqlx::Error),
+    ErrorWithDb(libsql::Error),
     ErrorHashing(argon2::password_hash::Error),
     ErrorParsingBirthday,
 }

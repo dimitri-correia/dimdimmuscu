@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 
 pub enum LoginError {
-    ErrorWithDb(sqlx::Error),
+    ErrorWithDb(libsql::Error),
     ErrorWithHash,
     WrongPwd,
 }

@@ -1,10 +1,13 @@
 use axum::http::StatusCode;
 
-pub enum CookieError {
-    ErrorWithDb(sqlx::Error),
+pub enum SessionError {
+    Db(libsql::Error),
+    TokenCreation,
+    EnvVariableNotSetup,
+    FailingParsingEnvVariable,
 }
 
-impl CookieError {
+impl SessionError {
     pub fn error_to_show(&self) -> (StatusCode, String) {
         (StatusCode::UNAUTHORIZED, "Auth failed".to_string())
     }
