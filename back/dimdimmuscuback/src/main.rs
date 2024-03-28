@@ -16,7 +16,7 @@ async fn main() -> shuttle_axum::ShuttleAxum {
     let env_variables = init_env().await;
 
     let router = Router::new()
-        .nest("/connect", auth_routes(&env_variables))
+        .nest("/connect", auth_routes(env_variables.clone()))
         // .nest("/api", routes_connected())
         .fallback(fallback);
     //.layer(CookieManagerLayer::new());
