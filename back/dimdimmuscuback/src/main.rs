@@ -1,7 +1,7 @@
 use axum::Router;
-use sqlx::PgPool;
 
-use crate::db::methods::init_db::{init_db, DbInfos};
+use crate::db::methods::init_db::init_db;
+use crate::env::init_env;
 use crate::routers::auth::auth_routes;
 use crate::routers::fallback::fallback;
 
@@ -13,10 +13,9 @@ mod mw;
 mod routers;
 
 #[shuttle_runtime::main]
-async fn main(#[shuttle_shared_db::Postgres] pool: PgPool) -> shuttle_axum::ShuttleAxum {
-    init_db(&pool).await;
-
-    let db = DbInfos { pool };
+async fn main() -> shuttle_axum::ShuttleAxum {
+    let (env_variables, env_variables_db) = init_env();
+    let db = init_db(env_variables_db).await;
 
     let router = Router::new()
         .nest("/connect", auth_routes(db.clone()))
