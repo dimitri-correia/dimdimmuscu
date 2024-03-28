@@ -1,29 +1,21 @@
 use libsql::Connection;
 use tokio::sync::OnceCell;
 
-use crate::env::EnvVariablesDb;
+pub async fn init_db(db_url: String, db_auth_token: String) -> Connection {
+    static INIT: OnceCell<Connection> = OnceCell::const_new();
 
-#[derive(Clone)]
-pub struct DbInfos {
-    pub conn: Connection,
-}
-
-pub async fn init_db(env_variables_db: EnvVariablesDb) -> DbInfos {
-    static INIT: OnceCell<DbInfos> = OnceCell::const_new();
-
-    INIT.get_or_init(|| async { prepare_db(env_variables_db).await })
+    INIT.get_or_init(|| async { prepare_db(db_url, db_auth_token).await })
         .await
         .clone()
 }
 
-async fn prepare_db(env_variables_db: EnvVariablesDb) -> DbInfos {
+async fn prepare_db(db_url: String, db_auth_token: String) -> Connection {
     use libsql::Builder;
 
-    let db = Builder::new_remote(env_variables_db.db_url, env_variables_db.db_auth_token)
+    let db = Builder::new_remote(db_url, db_auth_token)
         .build()
         .await
         .unwrap();
-    let conn = db.connect().unwrap();
 
-    DbInfos { conn }
+    db.connect().unwrap()
 }
