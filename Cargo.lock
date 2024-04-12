@@ -155,7 +155,7 @@ dependencies = [
  "pin-project-lite",
  "rustversion",
  "serde",
- "sync_wrapper",
+ "sync_wrapper 0.1.2",
  "tower",
  "tower-layer",
  "tower-service",
@@ -163,9 +163,9 @@ dependencies = [
 
 [[package]]
 name = "axum"
-version = "0.7.4"
+version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1236b4b292f6c4d6dc34604bb5120d85c3fe1d1aa596bd5cc52ca054d13e7b9e"
+checksum = "3a6c9af12842a67734c9a2e355436e5d03b22383ed60cf13cd0c18fbfe3dcbcf"
 dependencies = [
  "async-trait",
  "axum-core 0.4.3",
@@ -187,7 +187,7 @@ dependencies = [
  "serde_json",
  "serde_path_to_error",
  "serde_urlencoded",
- "sync_wrapper",
+ "sync_wrapper 1.0.1",
  "tokio",
  "tower",
  "tower-layer",
@@ -227,7 +227,7 @@ dependencies = [
  "mime",
  "pin-project-lite",
  "rustversion",
- "sync_wrapper",
+ "sync_wrapper 0.1.2",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -235,14 +235,14 @@ dependencies = [
 
 [[package]]
 name = "axum-test"
-version = "14.6.0"
+version = "14.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "feeac32f78598625ed66da8eb352354f1a959311a029fa418d6eed17551eb786"
+checksum = "db705caa0b050aa7247c4748293b09e4cddaf7a3c4a87faf145859c11ce501e3"
 dependencies = [
  "anyhow",
  "async-trait",
  "auto-future",
- "axum 0.7.4",
+ "axum 0.7.5",
  "bytes",
  "cookie",
  "http 1.1.0",
@@ -601,9 +601,10 @@ name = "dimdimmuscuback"
 version = "0.1.0"
 dependencies = [
  "argon2",
- "axum 0.7.4",
+ "axum 0.7.5",
  "axum-test",
  "chrono",
+ "dotenv",
  "jsonwebtoken",
  "libsql",
  "rand",
@@ -614,6 +615,12 @@ dependencies = [
  "tokio",
  "uuid",
 ]
+
+[[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "either"
@@ -814,25 +821,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "h2"
-version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51ee2dd2e4f378392eeff5d51618cd9a63166a2513846bbc55f21cfacd9199d4"
-dependencies = [
- "bytes",
- "fnv",
- "futures-core",
- "futures-sink",
- "futures-util",
- "http 1.1.0",
- "indexmap 2.2.5",
- "slab",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
 name = "hashbrown"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -962,7 +950,7 @@ dependencies = [
  "futures-channel",
  "futures-core",
  "futures-util",
- "h2 0.3.25",
+ "h2",
  "http 0.2.12",
  "http-body 0.4.6",
  "httparse",
@@ -985,7 +973,6 @@ dependencies = [
  "bytes",
  "futures-channel",
  "futures-util",
- "h2 0.4.3",
  "http 1.1.0",
  "http-body 1.0.0",
  "httparse",
@@ -1179,9 +1166,9 @@ dependencies = [
 
 [[package]]
 name = "libsql"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3879a4ed80a245fd4dd8c8fa139245653e86184ed3ab97a6d6ea592045d25793"
+checksum = "2e89165c57dc1db6994bf96ca1107e81b592658f7830bb7b891691762f0d936b"
 dependencies = [
  "anyhow",
  "async-stream",
@@ -2163,19 +2150,19 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "shuttle-axum"
-version = "0.42.0"
+version = "0.43.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92b5da6adec6308876d96ba9acc8be7592eb3621f97c59900a411e18a0d52b76"
+checksum = "cd98da5e07e2f265cc9a673a8273d32e126242dcb886cd0529bcf59b8c023799"
 dependencies = [
- "axum 0.7.4",
+ "axum 0.7.5",
  "shuttle-runtime",
 ]
 
 [[package]]
 name = "shuttle-codegen"
-version = "0.42.0"
+version = "0.43.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbaaa74ae77edfc5590c87af97bfc15d0aff2db9ff4a5fd891be0a7dd0de8089"
+checksum = "2c7c1ea0dfd165fa64dd91bf4c67d1cf22e2f13c5edc4b64656b6015303aa82f"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -2185,9 +2172,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-common"
-version = "0.42.0"
+version = "0.43.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "910ae1502f083563f06fee5d5ceb2a8b45f92c67ef7834806880484f15d79bb5"
+checksum = "5367bffb2a9788af483024aaa3a7efc52f901516ef007eb82f739eb7ba609c5f"
 dependencies = [
  "anyhow",
  "chrono",
@@ -2212,9 +2199,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-proto"
-version = "0.42.0"
+version = "0.43.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad7aa381187faaa32562c1e3631047b1edd070c055be50a5f32d13a538110fd7"
+checksum = "bdf359a9d0077e1526f02004b34a4ad605bd72855a5ce371a646096297043f2f"
 dependencies = [
  "futures-core",
  "prost",
@@ -2225,15 +2212,13 @@ dependencies = [
 
 [[package]]
 name = "shuttle-runtime"
-version = "0.42.0"
+version = "0.43.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "322f013c5058e37bf19a9ad8af35a2ac139605b0cbd941c0d0a009d032e23b73"
+checksum = "163ea2e829b0448c8faaf10bba50c66d6280449beafcbdda3da3e69461d974d6"
 dependencies = [
  "anyhow",
  "async-trait",
- "chrono",
  "colored",
- "prost-types",
  "serde",
  "serde_json",
  "shuttle-codegen",
@@ -2241,7 +2226,6 @@ dependencies = [
  "shuttle-proto",
  "shuttle-service",
  "strfmt",
- "thiserror",
  "tokio",
  "tokio-stream",
  "tonic",
@@ -2250,9 +2234,9 @@ dependencies = [
 
 [[package]]
 name = "shuttle-service"
-version = "0.42.0"
+version = "0.43.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9118dcf5aea64a38a06875a744b6c7daf8aa41e56eb2ecea2a21fb8c42ff7db5"
+checksum = "0c41b682b8639915d01f6b9b5bff76afc8b67d553b8199d0364bd4675397b06d"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2423,6 +2407,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2047c6ded9c721764247e62cd3b03c09ffc529b2ba5b10ec482ae507a4a70160"
 
 [[package]]
+name = "sync_wrapper"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7065abeca94b6a8a577f9bd45aa0867a2238b74e8eb67cf10d492bc39351394"
+
+[[package]]
 name = "thiserror"
 version = "1.0.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2500,9 +2490,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.36.0"
+version = "1.37.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61285f6515fa018fb2d1e46eb21223fff441ee8db5d0f1435e8ab4f5cdb80931"
+checksum = "1adbebffeca75fcfd058afa480fb6c0b81e165a0323f9c9d39c9697e37c46787"
 dependencies = [
  "backtrace",
  "bytes",
@@ -2595,7 +2585,7 @@ dependencies = [
  "axum 0.6.20",
  "base64",
  "bytes",
- "h2 0.3.25",
+ "h2",
  "http 0.2.12",
  "http-body 0.4.6",
  "hyper 0.14.28",
@@ -2864,9 +2854,9 @@ checksum = "daf8dba3b7eb870caf1ddeed7bc9d2a049f3cfdfae7cb521b087cc33ae4c49da"
 
 [[package]]
 name = "uuid"
-version = "1.7.0"
+version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f00cc9702ca12d3c81455259621e676d0f7251cec66a21e98fe2e9a37db93b2a"
+checksum = "a183cf7feeba97b4dd1c0d46788634f6221d87fa961b305bed08c851829efcc0"
 dependencies = [
  "getrandom",
  "serde",
