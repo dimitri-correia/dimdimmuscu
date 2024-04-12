@@ -44,3 +44,12 @@ impl Session {
         Ok(token)
     }
 }
+
+#[derive(Debug)]
+pub struct SessionLogoff {
+    token: String,
+}
+
+impl SessionLogoff {
+    pub async fn clear_session(self, connection: Connection) {}
+}
