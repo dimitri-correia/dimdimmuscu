@@ -1,7 +1,7 @@
 use std::string::ToString;
 
 use argon2::password_hash::{rand_core::OsRng, SaltString};
-use argon2::{Argon2, PasswordHasher};
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use chrono::{DateTime, Utc};
 use libsql::{Connection, Rows};
 use serde::Deserialize;
@@ -92,24 +92,42 @@ pub struct UserForLogin {
 
 impl UserForLogin {
     pub async fn authenticate(self, connection: &Connection) -> Result<i32, LoginError> {
-        // let rows: Rows = connection.query(
-        //     "SELECT ua.pwd, ua.profile_id
-        //      FROM users u
-        //      JOIN users_auth ua ON u.id = ua.profile_id
-        //      WHERE u.name = $1;",
-        //     [self.username],
-        // )
-        //     .await
-        //     .map_err(LoginError::ErrorWithDb)?;
-        //
-        // let parsed_hash =
-        //     PasswordHash::new(&password_hash).map_err(|_| LoginError::ErrorWithHash)?;
-        //
-        // Argon2::default()
-        //     .verify_password(self.pwd_clear.as_ref(), &parsed_hash)
-        //     .map_err(|_| LoginError::WrongPwd)?;
-        //
-        // Ok(profile_id)
-        Ok(3)
+        let mut rows: Rows = connection
+            .query(
+                "SELECT ua.pwd, ua.profile_id
+             FROM users u
+             JOIN users_auth ua
+             ON u.id = ua.profile_id
+             WHERE u.name = $1;",
+                [self.username],
+            )
+            .await
+            .map_err(LoginError::ErrorWithDb)?;
+
+        let (pwd_in_db, profile_id) = Self::get_info_from_db(&mut rows).await?;
+
+        let parsed_hash = PasswordHash::new(&pwd_in_db).map_err(|_| LoginError::ErrorWithHash)?;
+
+        Argon2::default()
+            .verify_password(self.pwd_clear.as_ref(), &parsed_hash)
+            .map_err(|_| LoginError::WrongPwd)?;
+
+        Ok(profile_id)
+    }
+    async fn get_info_from_db(user_rows: &mut Rows) -> Result<(String, i32), LoginError> {
+        let user = user_rows.next().await.map_err(LoginError::ErrorWithDb)?;
+
+        let row = match user {
+            Some(row) => row,
+            None => return Err(LoginError::ErrorWithHash),
+        };
+
+        let pwd: String = row
+            .get::<String>(0)
+            .map_err(|_| LoginError::ErrorWithHash)?;
+
+        let profile_id: i32 = row.get::<i32>(1).map_err(|_| LoginError::ErrorWithHash)?;
+
+        Ok((pwd, profile_id))
     }
 }
