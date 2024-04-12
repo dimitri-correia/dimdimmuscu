@@ -2,30 +2,29 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::post;
-use axum::{http, Json, Router};
-use http_body::Empty;
-use serde_json::{json, Value};
-use tower_cookies::cookie::time::Duration;
-use tower_cookies::{Cookie, Cookies};
+use axum::{Json, Router};
 
-use crate::db::methods::init_db::DbInfos;
-use crate::db::structs::session::Session;
+use crate::db::structs::session::{Session, SessionLogoff};
 use crate::db::structs::users_auth::{UserForCreate, UserForLogin};
-use crate::env::{COOKIE_MAX_AGE, COOKIE_MAX_AGE_DAY, USER_COOKIE_NAME};
+use crate::env::EnvVariables;
 
-pub fn auth_routes(db_infos: DbInfos) -> Router {
+pub fn auth_routes(env_variables: EnvVariables) -> Router {
     Router::new()
         .route("/signup", post(api_signup_handler))
         .route("/login", post(api_login_handler))
         .route("/logoff", post(api_logoff_handler))
-        .with_state(db_infos)
+        .with_state(env_variables)
 }
 
 async fn api_signup_handler(
-    State(db_infos): State<DbInfos>,
+    State(env_variables): State<EnvVariables>,
     Json(user): Json<UserForCreate>,
 ) -> impl IntoResponse {
-    if let Some(creation) = user.add_new_user_in_db(&db_infos.pool).await.err() {
+    if let Some(creation) = user
+        .add_new_user_in_db(&env_variables.db_connection)
+        .await
+        .err()
+    {
         return creation.error_to_show();
     };
 
@@ -34,98 +33,90 @@ async fn api_signup_handler(
 }
 
 async fn api_login_handler(
-    State(db_infos): State<DbInfos>,
-    cookies: Cookies,
+    State(env_variables): State<EnvVariables>,
     Json(user_for_login): Json<UserForLogin>,
 ) -> impl IntoResponse {
-    let profile_id = match user_for_login.authenticate(&db_infos.pool).await {
+    let profile_id = match user_for_login
+        .authenticate(&env_variables.db_connection)
+        .await
+    {
         Ok(id) => id,
         Err(auth_error) => return auth_error.error_to_show(),
     };
 
-    let token = match Session::new(profile_id, &db_infos.pool).await {
+    let token: String = match Session::create(profile_id, &env_variables.db_connection).await {
         Ok(t) => t,
         Err(err) => return err.error_to_show(),
     };
 
-    let cookie: Cookie = Cookie::build((USER_COOKIE_NAME, token.clone()))
-        .domain("dimdimmuscu")
-        .path("/")
-        .secure(true)
-        .http_only(true)
-        .max_age(Duration::days(COOKIE_MAX_AGE_DAY))
-        .build();
-
-    cookies.add(cookie);
-
-    (StatusCode::CREATED, format!("token: {}", token)) // todo
+    (StatusCode::OK, format!("token: {}", token))
 }
 
 async fn api_logoff_handler(
-    State(db_infos): State<DbInfos>,
-    cookies: Cookies,
+    State(env_variables): State<EnvVariables>,
+    Json(user_for_logoff): Json<SessionLogoff>,
 ) -> impl IntoResponse {
-    cookies.remove(cookies);
-
-    Json(json!({
-        "result": {
-            "logged_off": true
-        }
-    }))
+    user_for_logoff
+        .clear_session(env_variables.db_connection)
+        .await;
+    (StatusCode::OK, "Logged off successfully".to_string())
 }
 
 #[cfg(test)]
 mod tests {
     use axum::http::StatusCode;
     use axum_test::TestServer;
+    use chrono::Utc;
     use serde_json::json;
 
-    use crate::cookies::AUTH_TOKEN;
-    use crate::db::methods::init_db::base_tests_db::init_test;
+    use crate::env::init_env;
 
     use super::*;
 
     #[tokio::test]
-    async fn signup_ok_test() {
-        let db = init_test().await;
-        let app = auth_routes(db);
+    async fn test_end_to_end_auth() {
+        let env = init_env().await;
+        let app = auth_routes(env);
 
         // Run the application for testing.
         let server = TestServer::new(app).unwrap();
 
-        // Send the request.
-        let response = server
-            .post("/signup")
-            .json(&json!({
-                "username": "String",
-                "pwd_clear": "String",
-                "birthdate": "String"
-            }
-            ))
-            .await;
+        let username = "test_user";
+        let pwd_clear = "pwd_clear";
 
-        response.assert_status(StatusCode::OK);
-    }
+        // User creation
+        {
+            let response = server
+                .post("/signup")
+                .json(&json!({
+                    "username": username,
+                    "pwd_clear": pwd_clear,
+                    "birthdate": Utc::now().to_rfc3339(),
+                }
+                ))
+                .await;
 
-    #[tokio::test]
-    async fn login_ok_test() {
-        let db = init_test().await;
-        let app = auth_routes(db);
-
-        // Run the application for testing.
-        let server = TestServer::new(app).unwrap();
-
-        // Send the request.
-        let response = server.post("/login").await;
-
-        response.assert_status(StatusCode::OK);
-
-        assert!(response.cookies().get(AUTH_TOKEN).is_some());
-
-        response.assert_json(&json!({
-        "result": {
-            "success": true
+            response.assert_status(StatusCode::CREATED);
         }
-        }));
+
+        // User auth
+        {
+            let response = server
+                .post("/login")
+                .json(&json!({
+                    "username": username,
+                    "pwd_clear": pwd_clear,
+                }
+                ))
+                .await;
+
+            response.assert_status(StatusCode::OK);
+        }
+
+        // User logoff
+        {}
+
+        // User delete
+        {}
     }
 }
