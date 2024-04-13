@@ -1,10 +1,13 @@
 use std::i32;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use libsql::Connection;
 use serde::{Deserialize, Serialize};
 
+use crate::db::methods::queries::insert;
+use crate::db::{SESSION_TABLE, SESSION_TABLE_COL};
+use crate::env::EnvVariables;
 use crate::errors::auth::session::SessionError;
 
 #[derive(Debug)]
@@ -21,35 +24,55 @@ struct SessionToken {
 }
 
 impl Session {
-    pub async fn create(profile_id: i32, conn: &Connection) -> Result<String, SessionError> {
-        let until = Utc::now(); //+ Duration::hours(session_duration_hours);
-
-        let session_token = SessionToken { profile_id, until };
+    pub async fn create(
+        profile_id: i32,
+        env_variables: &EnvVariables,
+    ) -> Result<String, SessionError> {
+        // multiple session for a single user can live at the same time
+        let until = Utc::now() + Duration::hours(env_variables.session_duration_hours);
 
         let token = encode(
             &Header::default(),
-            &session_token,
-            &EncodingKey::from_secret(b"your_secret_key"),
+            &SessionToken { profile_id, until },
+            &EncodingKey::from_secret(&env_variables.secret_key_session),
         )
         .map_err(|_| SessionError::TokenCreation)?;
 
-        // sqlx::query("INSERT INTO session (token, profile_id, until) VALUES ($1, $2, $3)")
-        //     .bind(&token)
-        //     .bind(profile_id)
-        //     .bind(until)
-        //     .execute(pool)
-        //     .await
-        //     .map_err(CookieError::ErrorWithDb)?; // need more precision;
+        env_variables
+            .db_connection
+            .query(
+                &insert(SESSION_TABLE, &SESSION_TABLE_COL, None),
+                [token.clone(), profile_id.to_string(), until.to_rfc3339()],
+            )
+            .await
+            .map_err(SessionError::Db)?;
 
         Ok(token)
     }
 }
 
-#[derive(Debug)]
+#[derive(Deserialize, Serialize)]
 pub struct SessionLogoff {
     token: String,
 }
 
 impl SessionLogoff {
-    pub async fn clear_session(self, connection: Connection) {}
+    pub async fn clear_session(self, connection: Connection) -> Result<String, SessionError> {
+        let profile_name = connection
+            .query(
+                "DELETE FROM session WHERE token = ?
+                RETURNING (SELECT name FROM users WHERE id = session.profile_id);",
+                [self.token],
+            )
+            .await
+            .map_err(|_| SessionError::TokenDoesntExists)?
+            .next()
+            .await
+            .map_err(SessionError::Db)?
+            .ok_or(SessionError::TokenDoesntExists)?
+            .get::<String>(0)
+            .map_err(|_| SessionError::TokenDoesntExists)?;
+
+        Ok(profile_name)
+    }
 }
