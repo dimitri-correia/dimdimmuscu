@@ -3,3 +3,4 @@
 .shuttle-storage
 Secrets*.toml
 .env
+.cargo/config.toml
