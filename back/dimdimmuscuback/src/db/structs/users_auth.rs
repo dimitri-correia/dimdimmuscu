@@ -13,7 +13,7 @@ use crate::errors::auth::signup::SignupError;
 
 #[derive(Deserialize)]
 pub struct UserForCreate {
-    username: String,
+    pub username: String,
     pwd_clear: String,
     birthdate: String,
 }

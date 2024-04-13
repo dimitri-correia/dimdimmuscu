@@ -637,6 +637,7 @@ dependencies = [
  "dotenv",
  "jsonwebtoken",
  "libsql",
+ "log",
  "rand",
  "serde",
  "serde_json",
@@ -903,6 +904,8 @@ dependencies = [
 name = "hand_testing"
 version = "0.1.0"
 dependencies = [
+ "chrono",
+ "rand",
  "reqwest",
  "tokio",
 ]

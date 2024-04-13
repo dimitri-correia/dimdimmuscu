@@ -3,6 +3,8 @@ use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::post;
 use axum::{Json, Router};
+use log;
+use log::info;
 
 use crate::db::structs::session::{SessionLogoff, SessionTokenValue};
 use crate::db::structs::users_auth::{UserForCreate, UserForDelete, UserForLogin};
@@ -21,6 +23,7 @@ async fn api_signup_handler(
     State(env_variables): State<EnvVariables>,
     Json(user): Json<UserForCreate>,
 ) -> impl IntoResponse {
+    info!("Trying signup for {}", user.username);
     if let Some(creation) = user
         .add_new_user_in_db(&env_variables.db_connection)
         .await

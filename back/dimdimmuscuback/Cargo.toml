@@ -28,6 +28,8 @@ argon2 = "0.5.3"
 rand = "0.8.5"
 # Env variables
 dotenv = "0.15"
+# Log
+log = "0.4.21"
 
 [dev-dependencies]
 axum-test = "14.8.0"
