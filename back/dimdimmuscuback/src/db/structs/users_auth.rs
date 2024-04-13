@@ -7,13 +7,9 @@ use libsql::{Connection, Rows};
 use serde::Deserialize;
 
 use crate::db::methods::queries::insert;
-use crate::errors::auth::login::LoginError;
+use crate::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
+use crate::errors::auth::login_logoff::{LoginError, LogoffError};
 use crate::errors::auth::signup::SignupError;
-
-const USERS_TABLE: &str = "users";
-const USERS_TABLE_COL: [&str; 4] = ["id", "name", "birthdate", "account_creation"];
-const USERS_AUTH_TABLE: &str = "users_auth";
-const USERS_AUTH_TABLE_COL: [&str; 2] = ["profile_id", "pwd"];
 
 #[derive(Deserialize)]
 pub struct UserForCreate {
@@ -92,13 +88,13 @@ pub struct UserForLogin {
 
 impl UserForLogin {
     pub async fn authenticate(self, connection: &Connection) -> Result<i32, LoginError> {
-        let mut rows: Rows = connection
+        let mut rows = connection
             .query(
                 "SELECT ua.pwd, ua.profile_id
              FROM users u
              JOIN users_auth ua
              ON u.id = ua.profile_id
-             WHERE u.name = $1;",
+             WHERE u.name = ?;",
                 [self.username],
             )
             .await
@@ -115,12 +111,11 @@ impl UserForLogin {
         Ok(profile_id)
     }
     async fn get_info_from_db(user_rows: &mut Rows) -> Result<(String, i32), LoginError> {
-        let user = user_rows.next().await.map_err(LoginError::ErrorWithDb)?;
-
-        let row = match user {
-            Some(row) => row,
-            None => return Err(LoginError::ErrorWithHash),
-        };
+        let row = user_rows
+            .next()
+            .await
+            .map_err(LoginError::ErrorWithDb)?
+            .ok_or(LoginError::ErrorWithHash)?;
 
         let pwd: String = row
             .get::<String>(0)
@@ -129,5 +124,40 @@ impl UserForLogin {
         let profile_id: i32 = row.get::<i32>(1).map_err(|_| LoginError::ErrorWithHash)?;
 
         Ok((pwd, profile_id))
+    }
+}
+
+#[derive(Deserialize)]
+pub struct UserForDelete {
+    token: String,
+}
+
+impl UserForDelete {
+    pub async fn delete_user(self, connection: Connection) -> Result<String, LogoffError> {
+        let row = connection
+            .query(
+                "SELECT u.name, u.id
+                FROM session s
+                JOIN users u ON s.profile_id = u.id
+                WHERE s.token = ?;",
+                [self.token],
+            )
+            .await
+            .map_err(LogoffError::ErrorWithDb)?
+            .next()
+            .await
+            .map_err(LogoffError::ErrorWithDb)?
+            .ok_or(LogoffError::NotConnected)?;
+        let profile_name = row
+            .get::<String>(0)
+            .map_err(|_| LogoffError::NotConnected)?;
+        let profile_id = row.get::<i32>(1).map_err(|_| LogoffError::NotConnected)?;
+
+        connection
+            .execute("DELETE FROM users WHERE id = ?;", [profile_id])
+            .await
+            .map_err(LogoffError::ErrorWithDb)?;
+
+        Ok(profile_name)
     }
 }
