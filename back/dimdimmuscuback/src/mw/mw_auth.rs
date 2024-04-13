@@ -1,1 +1,43 @@
+use axum::extract::FromRequestParts;
+use axum::http::request::Parts;
+use axum::{async_trait, RequestPartsExt};
+use axum_extra::{
+    headers::{authorization::Bearer, Authorization},
+    TypedHeader,
+};
+use chrono::{DateTime, Utc};
+use jsonwebtoken::{decode, DecodingKey, Validation};
+use serde::{Deserialize, Serialize};
 
+use crate::env::EnvVariables;
+use crate::errors::auth::session::SessionError;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SessionToken {
+    pub profile_id: i32,
+    pub until: DateTime<Utc>,
+}
+
+#[async_trait]
+impl FromRequestParts<EnvVariables> for SessionToken {
+    type Rejection = SessionError;
+
+    async fn from_request_parts(
+        parts: &mut Parts,
+        env_variables: &EnvVariables,
+    ) -> Result<Self, Self::Rejection> {
+        let TypedHeader(Authorization(bearer)) = parts
+            .extract::<TypedHeader<Authorization<Bearer>>>()
+            .await
+            .map_err(|_| SessionError::BadToken)?;
+
+        let token_data = decode::<SessionToken>(
+            bearer.token(),
+            &DecodingKey::from_secret(&env_variables.secret_key_session),
+            &Validation::default(),
+        )
+        .map_err(|_| SessionError::BadToken)?;
+
+        Ok(token_data.claims)
+    }
+}

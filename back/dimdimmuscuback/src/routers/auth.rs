@@ -4,7 +4,7 @@ use axum::response::IntoResponse;
 use axum::routing::post;
 use axum::{Json, Router};
 
-use crate::db::structs::session::{SessionLogoff, SessionToken};
+use crate::db::structs::session::{SessionLogoff, SessionTokenValue};
 use crate::db::structs::users_auth::{UserForCreate, UserForDelete, UserForLogin};
 use crate::env::EnvVariables;
 
@@ -26,11 +26,11 @@ async fn api_signup_handler(
         .await
         .err()
     {
-        return creation.error_to_show();
+        return creation.into_response();
     };
 
     // we choose to not give a cookie here but to force authentication with /login endpoint
-    (StatusCode::CREATED, "User creation worked".to_string())
+    (StatusCode::CREATED, "User creation worked".to_string()).into_response()
 }
 
 async fn api_login_handler(
@@ -42,12 +42,12 @@ async fn api_login_handler(
         .await
     {
         Ok(id) => id,
-        Err(auth_error) => return auth_error.error_to_show(),
+        Err(auth_error) => return auth_error.into_response(),
     };
 
-    match SessionToken::create(profile_id, &env_variables).await {
-        Ok(token) => (StatusCode::OK, token.to_string()),
-        Err(err) => err.error_to_show(),
+    match SessionTokenValue::create(profile_id, &env_variables).await {
+        Ok(token) => (StatusCode::OK, token.to_string()).into_response(),
+        Err(err) => err.into_response(),
     }
 }
 
@@ -62,8 +62,9 @@ async fn api_logoff_handler(
         Ok(profile_name) => (
             StatusCode::OK,
             format!("User {} logged off successfully", profile_name).to_string(),
-        ),
-        Err(e) => e.error_to_show(),
+        )
+            .into_response(),
+        Err(e) => e.into_response(),
     }
 }
 
@@ -78,8 +79,9 @@ async fn api_delete_user_handler(
         Ok(profile_name) => (
             StatusCode::OK,
             format!("User {} deleted successfully", profile_name).to_string(),
-        ),
-        Err(error) => error.error_to_show(),
+        )
+            .into_response(),
+        Err(error) => error.into_response(),
     }
 }
 

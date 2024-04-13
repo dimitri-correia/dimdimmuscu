@@ -110,6 +110,7 @@ impl UserForLogin {
 
         Ok(profile_id)
     }
+
     async fn get_info_from_db(user_rows: &mut Rows) -> Result<(String, i32), LoginError> {
         let row = user_rows
             .next()

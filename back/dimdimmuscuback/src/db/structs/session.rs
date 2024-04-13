@@ -1,7 +1,7 @@
 use std::fmt::Display;
 use std::i32;
 
-use chrono::{DateTime, Duration, Utc};
+use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use libsql::Connection;
 use serde::{Deserialize, Serialize};
@@ -10,6 +10,7 @@ use crate::db::methods::queries::insert;
 use crate::db::{SESSION_TABLE, SESSION_TABLE_COL};
 use crate::env::EnvVariables;
 use crate::errors::auth::session::SessionError;
+use crate::mw::mw_auth::SessionToken;
 
 #[derive(Deserialize, Serialize)]
 pub struct SessionTokenValue(String);
@@ -20,13 +21,7 @@ impl Display for SessionTokenValue {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct SessionToken {
-    profile_id: i32,
-    until: DateTime<Utc>,
-}
-
-impl SessionToken {
+impl SessionTokenValue {
     pub async fn create(
         profile_id: i32,
         env_variables: &EnvVariables,
@@ -36,7 +31,7 @@ impl SessionToken {
 
         let token = encode(
             &Header::default(),
-            &Self { profile_id, until },
+            &SessionToken { profile_id, until },
             &EncodingKey::from_secret(&env_variables.secret_key_session),
         )
         .map_err(|_| SessionError::TokenCreation)?;

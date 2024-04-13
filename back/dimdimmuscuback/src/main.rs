@@ -1,8 +1,9 @@
 use axum::Router;
 
-use crate::env::init_env;
+use crate::env::{init_env, EnvVariables};
 use crate::routers::auth::auth_routes;
 use crate::routers::fallback::fallback;
+use crate::routers::muscles::muscles_routes;
 
 mod db;
 mod env;
@@ -17,11 +18,14 @@ async fn main() -> shuttle_axum::ShuttleAxum {
 
     let router = Router::new()
         .nest("/connect", auth_routes(env_variables.clone()))
-        // .nest("/api", routes_connected())
+        .nest("/api", routes_connected(env_variables))
         .fallback(fallback);
-    //.layer(CookieManagerLayer::new());
 
     Ok(router.into())
+}
+
+fn routes_connected(env_variables: EnvVariables) -> Router {
+    Router::new().nest("/muscles", muscles_routes(env_variables))
 }
 
 // fn routes_connected() -> Router {
