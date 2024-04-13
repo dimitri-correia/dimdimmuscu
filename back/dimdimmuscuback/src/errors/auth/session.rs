@@ -1,4 +1,5 @@
 use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
 
 pub enum SessionError {
     Db(libsql::Error),
@@ -6,10 +7,11 @@ pub enum SessionError {
     EnvVariableNotSetup,
     FailingParsingEnvVariable,
     TokenDoesntExists,
+    BadToken,
 }
 
-impl SessionError {
-    pub fn error_to_show(&self) -> (StatusCode, String) {
-        (StatusCode::UNAUTHORIZED, "Auth failed".to_string())
+impl IntoResponse for SessionError {
+    fn into_response(self) -> Response {
+        (StatusCode::UNAUTHORIZED, "Auth failed".to_string()).into_response()
     }
 }

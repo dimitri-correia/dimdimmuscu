@@ -1,4 +1,5 @@
 use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
 
 pub enum LoginError {
     ErrorWithDb(libsql::Error),
@@ -6,9 +7,9 @@ pub enum LoginError {
     WrongPwd,
 }
 
-impl LoginError {
-    pub fn error_to_show(&self) -> (StatusCode, String) {
-        (StatusCode::UNAUTHORIZED, "Auth failed".to_string())
+impl IntoResponse for LoginError {
+    fn into_response(self) -> Response {
+        (StatusCode::UNAUTHORIZED, "Auth failed".to_string()).into_response()
     }
 }
 
@@ -17,8 +18,8 @@ pub enum LogoffError {
     NotConnected,
 }
 
-impl LogoffError {
-    pub fn error_to_show(&self) -> (StatusCode, String) {
-        (StatusCode::UNAUTHORIZED, "Deletion failed".to_string())
+impl IntoResponse for LogoffError {
+    fn into_response(self) -> Response {
+        (StatusCode::UNAUTHORIZED, "Deletion failed".to_string()).into_response()
     }
 }

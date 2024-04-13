@@ -1,4 +1,5 @@
 use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
 
 pub enum SignupError {
     ErrorWithDb(libsql::Error),
@@ -6,8 +7,8 @@ pub enum SignupError {
     ErrorParsingBirthday,
 }
 
-impl SignupError {
-    pub fn error_to_show(&self) -> (StatusCode, String) {
-        (StatusCode::UNAUTHORIZED, "Signup failed".to_string())
+impl IntoResponse for SignupError {
+    fn into_response(self) -> Response {
+        (StatusCode::UNAUTHORIZED, "Signup failed".to_string()).into_response()
     }
 }
