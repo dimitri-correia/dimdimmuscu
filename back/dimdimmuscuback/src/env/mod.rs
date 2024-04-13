@@ -35,13 +35,13 @@ fn get_variables_from_env() -> (i64, String, String) {
     // Load the .env file
     dotenv().ok();
 
-    let session_duration_hours: i64 = env::var("SESSION_DURATION_HOUR")
-        .expect("SESSION_DURATION_HOUR must be set")
-        .parse()
-        .expect("SESSION_DURATION_HOUR must be i64");
-
     let db_url = env::var("TURSO_DATABASE_URL").expect("TURSO_DATABASE_URL must be set");
-    let db_auth_token = env::var("TURSO_AUTH_TOKEN").unwrap_or_default();
+    let db_auth_token = env::var("TURSO_AUTH_TOKEN").expect("TURSO_AUTH_TOKEN must be set");
+    let session_duration_hours: i64 = env::var("SESSION_DURATION_HOURS")
+        .expect("SESSION_DURATION_HOURS must be set")
+        .parse()
+        .expect("SESSION_DURATION_HOURS must be i64");
+
     (session_duration_hours, db_url, db_auth_token)
 }
 
