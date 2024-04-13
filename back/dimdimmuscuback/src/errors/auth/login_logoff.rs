@@ -11,3 +11,14 @@ impl LoginError {
         (StatusCode::UNAUTHORIZED, "Auth failed".to_string())
     }
 }
+
+pub enum LogoffError {
+    ErrorWithDb(libsql::Error),
+    NotConnected,
+}
+
+impl LogoffError {
+    pub fn error_to_show(&self) -> (StatusCode, String) {
+        (StatusCode::UNAUTHORIZED, "Deletion failed".to_string())
+    }
+}

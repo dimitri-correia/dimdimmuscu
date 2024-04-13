@@ -5,6 +5,7 @@ pub enum SessionError {
     TokenCreation,
     EnvVariableNotSetup,
     FailingParsingEnvVariable,
+    TokenDoesntExists,
 }
 
 impl SessionError {
