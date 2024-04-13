@@ -10,20 +10,13 @@ use crate::db::{SESSION_TABLE, SESSION_TABLE_COL};
 use crate::env::EnvVariables;
 use crate::errors::auth::session::SessionError;
 
-#[derive(Debug)]
-pub struct Session {
-    token: String,
-    profile_id: i32,
-    until: DateTime<Utc>,
-}
-
 #[derive(Debug, Serialize, Deserialize)]
-struct SessionToken {
+pub struct SessionToken {
     profile_id: i32,
     until: DateTime<Utc>,
 }
 
-impl Session {
+impl SessionToken {
     pub async fn create(
         profile_id: i32,
         env_variables: &EnvVariables,
@@ -33,7 +26,7 @@ impl Session {
 
         let token = encode(
             &Header::default(),
-            &SessionToken { profile_id, until },
+            &Self { profile_id, until },
             &EncodingKey::from_secret(&env_variables.secret_key_session),
         )
         .map_err(|_| SessionError::TokenCreation)?;
