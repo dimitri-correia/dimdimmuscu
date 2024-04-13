@@ -4,7 +4,7 @@ use axum::response::IntoResponse;
 use axum::routing::post;
 use axum::{Json, Router};
 
-use crate::db::structs::session::{Session, SessionLogoff, SessionToken};
+use crate::db::structs::session::{SessionLogoff, SessionToken};
 use crate::db::structs::users_auth::{UserForCreate, UserForDelete, UserForLogin};
 use crate::env::EnvVariables;
 
@@ -46,7 +46,7 @@ async fn api_login_handler(
     };
 
     match SessionToken::create(profile_id, &env_variables).await {
-        Ok(token) => (StatusCode::OK, token),
+        Ok(token) => (StatusCode::OK, token.to_string()),
         Err(err) => err.error_to_show(),
     }
 }

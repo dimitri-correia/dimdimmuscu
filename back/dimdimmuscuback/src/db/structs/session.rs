@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::i32;
 
 use chrono::{DateTime, Duration, Utc};
@@ -10,6 +11,15 @@ use crate::db::{SESSION_TABLE, SESSION_TABLE_COL};
 use crate::env::EnvVariables;
 use crate::errors::auth::session::SessionError;
 
+#[derive(Deserialize, Serialize)]
+pub struct SessionTokenValue(String);
+
+impl Display for SessionTokenValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0.clone())
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SessionToken {
     profile_id: i32,
@@ -20,7 +30,7 @@ impl SessionToken {
     pub async fn create(
         profile_id: i32,
         env_variables: &EnvVariables,
-    ) -> Result<String, SessionError> {
+    ) -> Result<SessionTokenValue, SessionError> {
         // multiple session for a single user can live at the same time
         let until = Utc::now() + Duration::hours(env_variables.session_duration_hours);
 
@@ -40,13 +50,13 @@ impl SessionToken {
             .await
             .map_err(SessionError::Db)?;
 
-        Ok(token)
+        Ok(SessionTokenValue(token))
     }
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct SessionLogoff {
-    token: String,
+    token: SessionTokenValue,
 }
 
 impl SessionLogoff {
@@ -55,7 +65,7 @@ impl SessionLogoff {
             .query(
                 "DELETE FROM session WHERE token = ?
                 RETURNING (SELECT name FROM users WHERE id = session.profile_id);",
-                [self.token],
+                [self.token.to_string()],
             )
             .await
             .map_err(|_| SessionError::TokenDoesntExists)?
