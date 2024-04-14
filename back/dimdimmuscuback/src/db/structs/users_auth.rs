@@ -5,6 +5,7 @@ use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use chrono::{DateTime, Utc};
 use libsql::{Connection, Rows};
 use serde::Deserialize;
+use uuid::Uuid;
 
 use crate::db::methods::queries::insert;
 use crate::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
@@ -23,28 +24,24 @@ impl UserForCreate {
         //todo
         // actually deal with errors
 
+        let uuid = Uuid::now_v7().to_string();
+
         let utc_date = match DateTime::parse_from_rfc3339(&self.birthdate) {
             Ok(date) => date.with_timezone(&Utc),
             Err(_) => return Err(SignupError::ErrorParsingBirthday),
         };
 
-        let mut user_rows: Rows = conn
-            .query(
-                &insert(
-                    USERS_TABLE,
-                    &USERS_TABLE_COL[1..],
-                    Some(vec![USERS_TABLE_COL[0]]),
-                ),
-                [
-                    self.username,
-                    utc_date.to_rfc3339(),
-                    Utc::now().to_rfc3339(),
-                ],
-            )
-            .await
-            .map_err(SignupError::ErrorWithDb)?;
-
-        let profile_id = Self::get_profile_id(&mut user_rows).await?;
+        conn.execute(
+            &insert(USERS_TABLE, &USERS_TABLE_COL, None),
+            [
+                uuid.clone(),
+                self.username,
+                utc_date.to_rfc3339(),
+                Utc::now().to_rfc3339(),
+            ],
+        )
+        .await
+        .map_err(SignupError::ErrorWithDb)?;
 
         let salt = SaltString::generate(&mut OsRng);
 
@@ -56,27 +53,12 @@ impl UserForCreate {
 
         conn.query(
             &insert(USERS_AUTH_TABLE, &USERS_AUTH_TABLE_COL, None),
-            [profile_id.to_string(), password_hash],
+            [uuid, password_hash],
         )
         .await
         .map_err(SignupError::ErrorWithDb)?;
 
         Ok(())
-    }
-
-    async fn get_profile_id(user_rows: &mut Rows) -> Result<i32, SignupError> {
-        let user = user_rows.next().await.map_err(SignupError::ErrorWithDb)?;
-
-        let row = match user {
-            Some(row) => row,
-            None => return Err(SignupError::ErrorParsingBirthday),
-        };
-
-        let profile_id: i32 = row
-            .get::<i32>(0)
-            .map_err(|_| SignupError::ErrorParsingBirthday)?;
-
-        Ok(profile_id)
     }
 }
 
