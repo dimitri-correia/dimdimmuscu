@@ -15,7 +15,7 @@ use crate::errors::auth::session::SessionError;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SessionToken {
-    pub profile_id: i32,
+    pub profile_id: String,
     pub until: DateTime<Utc>,
 }
 

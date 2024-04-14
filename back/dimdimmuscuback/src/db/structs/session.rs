@@ -1,5 +1,4 @@
 use std::fmt::Display;
-use std::i32;
 
 use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
@@ -23,7 +22,7 @@ impl Display for SessionTokenValue {
 
 impl SessionTokenValue {
     pub async fn create(
-        profile_id: i32,
+        profile_id: String,
         env_variables: &EnvVariables,
     ) -> Result<SessionTokenValue, SessionError> {
         // multiple session for a single user can live at the same time
@@ -31,7 +30,10 @@ impl SessionTokenValue {
 
         let token = encode(
             &Header::default(),
-            &SessionToken { profile_id, until },
+            &SessionToken {
+                profile_id: profile_id.clone(),
+                until,
+            },
             &EncodingKey::from_secret(&env_variables.secret_key_session),
         )
         .map_err(|_| SessionError::TokenCreation)?;
@@ -40,7 +42,7 @@ impl SessionTokenValue {
             .db_connection
             .query(
                 &insert(SESSION_TABLE, &SESSION_TABLE_COL, None),
-                [token.clone(), profile_id.to_string(), until.to_rfc3339()],
+                [token.clone(), profile_id, until.to_rfc3339()],
             )
             .await
             .map_err(SessionError::Db)?;

@@ -69,7 +69,7 @@ pub struct UserForLogin {
 }
 
 impl UserForLogin {
-    pub async fn authenticate(self, connection: &Connection) -> Result<i32, LoginError> {
+    pub async fn authenticate(self, connection: &Connection) -> Result<String, LoginError> {
         let mut rows = connection
             .query(
                 "SELECT ua.pwd, ua.profile_id
@@ -93,7 +93,7 @@ impl UserForLogin {
         Ok(profile_id)
     }
 
-    async fn get_info_from_db(user_rows: &mut Rows) -> Result<(String, i32), LoginError> {
+    async fn get_info_from_db(user_rows: &mut Rows) -> Result<(String, String), LoginError> {
         let row = user_rows
             .next()
             .await
@@ -104,7 +104,9 @@ impl UserForLogin {
             .get::<String>(0)
             .map_err(|_| LoginError::ErrorWithHash)?;
 
-        let profile_id: i32 = row.get::<i32>(1).map_err(|_| LoginError::ErrorWithHash)?;
+        let profile_id: String = row
+            .get::<String>(1)
+            .map_err(|_| LoginError::ErrorWithHash)?;
 
         Ok((pwd, profile_id))
     }
@@ -134,7 +136,9 @@ impl UserForDelete {
         let profile_name = row
             .get::<String>(0)
             .map_err(|_| LogoffError::NotConnected)?;
-        let profile_id = row.get::<i32>(1).map_err(|_| LogoffError::NotConnected)?;
+        let profile_id = row
+            .get::<String>(1)
+            .map_err(|_| LogoffError::NotConnected)?;
 
         connection
             .execute("DELETE FROM users WHERE id = ?;", [profile_id])
