@@ -27,7 +27,3 @@ async fn main() -> shuttle_axum::ShuttleAxum {
 fn routes_connected(env_variables: EnvVariables) -> Router {
     Router::new().nest("/muscles", muscles_routes(env_variables))
 }
-
-// fn routes_connected() -> Router {
-//     todo!()
-// }
