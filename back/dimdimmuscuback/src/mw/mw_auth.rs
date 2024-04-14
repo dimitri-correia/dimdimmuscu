@@ -7,6 +7,7 @@ use axum_extra::{
 };
 use chrono::{DateTime, Utc};
 use jsonwebtoken::{decode, DecodingKey, Validation};
+use log::info;
 use serde::{Deserialize, Serialize};
 
 use crate::env::EnvVariables;
@@ -26,6 +27,7 @@ impl FromRequestParts<EnvVariables> for SessionToken {
         parts: &mut Parts,
         env_variables: &EnvVariables,
     ) -> Result<Self, Self::Rejection> {
+        info!("trying to connect");
         let TypedHeader(Authorization(bearer)) = parts
             .extract::<TypedHeader<Authorization<Bearer>>>()
             .await
