@@ -22,7 +22,6 @@ serde_json = "1.0.115"
 # Time
 chrono = "0.4.37"
 # Auth
-uuid = { version = "1.8.0", features = ["v4"] }
 argon2 = "0.5.3"
 # Rand
 rand = "0.8.5"

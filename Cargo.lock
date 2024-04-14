@@ -644,7 +644,6 @@ dependencies = [
  "shuttle-axum",
  "shuttle-runtime",
  "tokio",
- "uuid",
 ]
 
 [[package]]
