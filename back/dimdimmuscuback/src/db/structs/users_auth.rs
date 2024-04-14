@@ -20,6 +20,14 @@ pub struct UserForCreate {
 }
 
 impl UserForCreate {
+    pub fn _create(username: String, pwd_clear: String, birthdate: String) -> Self {
+        Self {
+            username,
+            pwd_clear,
+            birthdate,
+        }
+    }
+
     pub async fn add_new_user_in_db(self, conn: &Connection) -> Result<(), SignupError> {
         //todo
         // actually deal with errors
@@ -69,6 +77,12 @@ pub struct UserForLogin {
 }
 
 impl UserForLogin {
+    pub fn _create(username: String, pwd_clear: String) -> Self {
+        Self {
+            username,
+            pwd_clear,
+        }
+    }
     pub async fn authenticate(self, connection: &Connection) -> Result<String, LoginError> {
         let mut rows = connection
             .query(
