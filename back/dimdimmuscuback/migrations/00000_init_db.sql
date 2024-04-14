@@ -4,10 +4,10 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE users
 (
-    id               INTEGER PRIMARY KEY AUTOINCREMENT,
-    name             VARCHAR(256) NOT NULL,
-    birthdate        TEXT         NOT NULL,
-    account_creation TEXT         NOT NULL,
+    id               TEXT PRIMARY KEY,
+    name             TEXT NOT NULL,
+    birthdate        TEXT NOT NULL,
+    account_creation TEXT NOT NULL,
     CONSTRAINT unique_name UNIQUE (name)
 );
 
@@ -16,30 +16,30 @@ CREATE INDEX idx_users_name ON users (name);
 
 CREATE TABLE users_auth
 (
-    profile_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE PRIMARY KEY,
-    pwd        VARCHAR(256),
+    profile_id TEXT NOT NULL REFERENCES users (id) ON DELETE CASCADE PRIMARY KEY,
+    pwd        TEXT,
     CONSTRAINT unique_profile_id UNIQUE (profile_id)
 );
 
 CREATE TABLE session
 (
-    token      VARCHAR(256) NOT NULL PRIMARY KEY,
-    profile_id INTEGER      NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    until      TEXT         NOT NULL
+    token      TEXT NOT NULL PRIMARY KEY,
+    profile_id TEXT NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    until      TEXT NOT NULL
 );
 
 CREATE TABLE muscles
 (
     id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(256) NOT NULL,
+    name TEXT NOT NULL,
     CONSTRAINT unique_muscle_name UNIQUE (name)
 );
 
 CREATE TABLE movements
 (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    name          VARCHAR(256) NOT NULL,
-    first_muscle  INTEGER      NOT NULL REFERENCES muscles (id),
+    name          TEXT    NOT NULL,
+    first_muscle  INTEGER NOT NULL REFERENCES muscles (id),
     second_muscle INTEGER REFERENCES muscles (id),
     third_muscle  INTEGER REFERENCES muscles (id),
     CONSTRAINT unique_movement_name UNIQUE (name)
@@ -47,16 +47,16 @@ CREATE TABLE movements
 
 CREATE TABLE lifts
 (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    profile_id  INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    id          TEXT PRIMARY KEY,
+    profile_id  TEXT    NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     movement_id INTEGER NOT NULL REFERENCES movements (id),
     lift_time   TEXT
 );
 
 CREATE TABLE sets
 (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    lift_id    INTEGER NOT NULL REFERENCES lifts (id) ON DELETE CASCADE,
+    id         TEXT PRIMARY KEY,
+    lift_id    TEXT    NOT NULL REFERENCES lifts (id) ON DELETE CASCADE,
     set_number INTEGER NOT NULL,
     number_rep INTEGER NOT NULL,
     weight     INTEGER NOT NULL,
@@ -65,8 +65,8 @@ CREATE TABLE sets
 
 CREATE TABLE maxes
 (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    profile_id  INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    id          TEXT PRIMARY KEY,
+    profile_id  TEXT    NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     movement_id INTEGER NOT NULL REFERENCES movements (id),
     number_rep  INTEGER NOT NULL,
     weight      INTEGER NOT NULL,
