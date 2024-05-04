@@ -5,5 +5,5 @@ unsafe_code = "forbid"
 [workspace]
 resolver = "2"
 members = [
-    "back/dimdimmuscuback", "hand_testing",
+    "back/dimdimmuscuback", "back/testing_back",
 ]

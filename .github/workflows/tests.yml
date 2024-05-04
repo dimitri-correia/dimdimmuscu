@@ -37,3 +37,14 @@ jobs:
           components: clippy
       - uses: Swatinem/rust-cache@v2
       - run: cargo clippy -- -D warnings
+
+  unused-dep:
+    name: Unused-deps-back
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: cargo-udeps
+      - run: cargo install cargo-udeps --locked
+      - run: cargo +nightly udeps
