@@ -1,7 +1,7 @@
 pub mod auth;
+pub mod connected;
 pub mod fallback;
-pub mod muscles;
-pub mod users;
+pub mod main_router;
 
 #[cfg(test)]
 mod tests {
@@ -10,9 +10,9 @@ mod tests {
     use chrono::Utc;
     use rand::Rng;
 
-    use crate::db::structs::session::SessionTokenValue;
-    use crate::db::structs::users_auth::{UserForCreate, UserForLogin};
-    use crate::env::{init_env, EnvVariables};
+    use crate::libs::db::structs::session::SessionTokenValue;
+    use crate::libs::db::structs::users_auth::{UserForCreate, UserForLogin};
+    use crate::libs::env::{init_env, EnvVariables};
 
     pub async fn create_user_test_helper() -> (EnvVariables, SessionTokenValue) {
         let env = init_env().await;
@@ -23,7 +23,7 @@ mod tests {
         );
         let pwd_clear = "pwd_clear";
 
-        let user = UserForCreate::create(
+        let user = UserForCreate::_create(
             username.clone(),
             pwd_clear.to_string(),
             Utc::now().to_rfc3339(),
@@ -33,7 +33,7 @@ mod tests {
             .map_err(|_| Error)
             .expect("should add without issue");
 
-        let user_for_login = UserForLogin::create(username, pwd_clear.to_string());
+        let user_for_login = UserForLogin::_create(username, pwd_clear.to_string());
         let profile_id = user_for_login
             .authenticate(&env.db_connection)
             .await

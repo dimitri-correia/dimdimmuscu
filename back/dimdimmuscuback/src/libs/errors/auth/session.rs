@@ -4,8 +4,8 @@ use axum::response::{IntoResponse, Response};
 pub enum SessionError {
     Db(libsql::Error),
     TokenCreation,
-    EnvVariableNotSetup,
-    FailingParsingEnvVariable,
+    //EnvVariableNotSetup,
+    //FailingParsingEnvVariable,
     TokenDoesntExists,
     BadToken,
 }

@@ -5,8 +5,8 @@ use axum::routing::post;
 use axum::Router;
 use log::info;
 
-use crate::env::EnvVariables;
-use crate::mw::mw_auth::SessionToken;
+use crate::libs::env::EnvVariables;
+use crate::libs::mw::mw_auth::SessionToken;
 
 pub fn muscles_routes(env_variables: EnvVariables) -> Router {
     Router::new()
@@ -30,8 +30,8 @@ mod tests {
     use axum_test::http::HeaderValue;
     use axum_test::TestServer;
 
-    use crate::routers::tests::create_user_test_helper;
-    use crate::*;
+    use crate::libs::routers::connected::muscles::muscles_routes;
+    use crate::libs::routers::tests::create_user_test_helper;
 
     #[tokio::test]
     async fn test_add_muscle() {

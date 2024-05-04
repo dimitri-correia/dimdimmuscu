@@ -6,9 +6,9 @@ use axum::{Json, Router};
 use log;
 use log::info;
 
-use crate::db::structs::session::{SessionLogoff, SessionTokenValue};
-use crate::db::structs::users_auth::{UserForCreate, UserForDelete, UserForLogin};
-use crate::env::EnvVariables;
+use crate::libs::db::structs::session::{SessionLogoff, SessionTokenValue};
+use crate::libs::db::structs::users_auth::{UserForCreate, UserForDelete, UserForLogin};
+use crate::libs::env::EnvVariables;
 
 pub fn auth_routes(env_variables: EnvVariables) -> Router {
     Router::new()
@@ -96,7 +96,7 @@ mod tests {
     use rand::Rng;
     use serde_json::json;
 
-    use crate::env::init_env;
+    use crate::libs::env::init_env;
 
     use super::*;
 

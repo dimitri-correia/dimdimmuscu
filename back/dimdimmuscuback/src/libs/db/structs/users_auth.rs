@@ -83,6 +83,7 @@ impl UserForLogin {
             pwd_clear,
         }
     }
+
     pub async fn authenticate(self, connection: &Connection) -> Result<String, LoginError> {
         let mut rows = connection
             .query(
