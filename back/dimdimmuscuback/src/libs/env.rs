@@ -13,6 +13,20 @@ pub struct EnvVariables {
     pub db_connection: Connection,
 }
 
+pub struct Secret<T>(pub T);
+
+impl<T> std::fmt::Debug for Secret<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Secret")
+    }
+}
+
+impl<T> std::fmt::Display for Secret<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Secret")
+    }
+}
+
 // Should fail directly in case of issue
 pub async fn init_env() -> EnvVariables {
     // from .env
@@ -31,12 +45,13 @@ pub async fn init_env() -> EnvVariables {
     }
 }
 
-fn get_variables_from_env() -> (i64, String, String) {
+fn get_variables_from_env() -> (i64, Secret<String>, Secret<String>) {
     // Load the .env file
     dotenv().ok();
 
-    let db_url = env::var("TURSO_DATABASE_URL").expect("TURSO_DATABASE_URL must be set");
-    let db_auth_token = env::var("TURSO_AUTH_TOKEN").expect("TURSO_AUTH_TOKEN must be set");
+    // should not be possible to print those values anywhere
+    let db_url = Secret(env::var("TURSO_DATABASE_URL").expect("TURSO_DATABASE_URL must be set"));
+    let db_auth_token = Secret(env::var("TURSO_AUTH_TOKEN").expect("TURSO_AUTH_TOKEN must be set"));
     let session_duration_hours: i64 = env::var("SESSION_DURATION_HOURS")
         .expect("SESSION_DURATION_HOURS must be set")
         .parse()
