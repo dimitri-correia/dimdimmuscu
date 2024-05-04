@@ -48,7 +48,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@nightly
-        with:
-          components: cargo-udeps
       - run: cargo install cargo-udeps --locked
       - run: cargo +nightly udeps
