@@ -14,3 +14,11 @@ jobs:
         with:
           deploy-key: ${{ secrets.SHUTTLE_API_KEY }}
           no-test: "true"
+#          working-directory: "backend"
+#          name: "my-project"
+#          allow-dirty: "true"
+#          no-test: "true"
+#          cargo-shuttle-version: "0.28.1"
+#          secrets: |
+#            MY_AWESOME_SECRET_1 = '${{ secrets.SECRET_1 }}'
+#            MY_AWESOME_SECRET_2 = '${{ secrets.SECRET_2 }}'
