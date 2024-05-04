@@ -3,9 +3,9 @@ use chrono::{DateTime, Utc};
 #[derive(Debug)]
 pub struct User {
     pub id: i64,
-    name: String,
-    birthdate: DateTime<Utc>,
-    account_creation: DateTime<Utc>,
+    _name: String,
+    _birthdate: DateTime<Utc>,
+    _account_creation: DateTime<Utc>,
 }
 
 // impl User {

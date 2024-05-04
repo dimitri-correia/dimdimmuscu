@@ -15,8 +15,8 @@ pub fn muscles_routes(env_variables: EnvVariables) -> Router {
 }
 
 async fn add_new(
-    token: SessionToken,
-    State(env_variables): State<EnvVariables>,
+    _token: SessionToken,
+    State(_env_variables): State<EnvVariables>,
     // Json(muscle): Json<UserForCreate>,
 ) -> impl IntoResponse {
     info!("{} is adding {}", "token.profile_id", "muscle.username");

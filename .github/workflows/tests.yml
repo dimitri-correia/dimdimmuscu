@@ -15,6 +15,10 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Run tests
         run: cargo test
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          SESSION_DURATION_HOURS: ${{ secrets.SESSION_DURATION_HOURS }}
 
   fmt:
     name: Rustfmt-back
