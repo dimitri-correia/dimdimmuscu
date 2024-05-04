@@ -1,9 +1,10 @@
-name: Shuttle deploy
+name: Shuttle Deploy
 
 on:
   push:
     branches:
-      - "main"
+      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -11,5 +12,5 @@ jobs:
     steps:
       - uses: shuttle-hq/deploy-action@main
         with:
-          allow-dirty: true
-          deploy-key: ${{ secrets.SHUTTLE_DEPLOY_KEY }}
+          deploy-key: ${{ secrets.SHUTTLE_API_KEY }}
+          no-test: "true"
