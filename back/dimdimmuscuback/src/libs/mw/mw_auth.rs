@@ -10,8 +10,8 @@ use jsonwebtoken::{decode, DecodingKey, Validation};
 use log::info;
 use serde::{Deserialize, Serialize};
 
-use crate::env::EnvVariables;
-use crate::errors::auth::session::SessionError;
+use crate::libs::env::EnvVariables;
+use crate::libs::errors::auth::session::SessionError;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SessionToken {

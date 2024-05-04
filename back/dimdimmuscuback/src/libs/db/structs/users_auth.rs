@@ -7,10 +7,10 @@ use libsql::{Connection, Rows};
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::db::methods::queries::insert;
-use crate::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
-use crate::errors::auth::login_logoff::{LoginError, LogoffError};
-use crate::errors::auth::signup::SignupError;
+use crate::libs::db::methods::queries::insert;
+use crate::libs::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
+use crate::libs::errors::auth::login_logoff::{LoginError, LogoffError};
+use crate::libs::errors::auth::signup::SignupError;
 
 #[derive(Deserialize)]
 pub struct UserForCreate {

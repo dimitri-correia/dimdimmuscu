@@ -4,7 +4,7 @@ use dotenv::dotenv;
 use libsql::Connection;
 use rand::{rngs::OsRng, RngCore};
 
-use crate::db::methods::init_db::init_db;
+use crate::libs::db::methods::init_db::init_db;
 
 #[derive(Clone)]
 pub struct EnvVariables {

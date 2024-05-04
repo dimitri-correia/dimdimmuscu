@@ -5,11 +5,11 @@ use jsonwebtoken::{encode, EncodingKey, Header};
 use libsql::Connection;
 use serde::{Deserialize, Serialize};
 
-use crate::db::methods::queries::insert;
-use crate::db::{SESSION_TABLE, SESSION_TABLE_COL};
-use crate::env::EnvVariables;
-use crate::errors::auth::session::SessionError;
-use crate::mw::mw_auth::SessionToken;
+use crate::libs::db::methods::queries::insert;
+use crate::libs::db::{SESSION_TABLE, SESSION_TABLE_COL};
+use crate::libs::env::EnvVariables;
+use crate::libs::errors::auth::session::SessionError;
+use crate::libs::mw::mw_auth::SessionToken;
 
 #[derive(Deserialize, Serialize)]
 pub struct SessionTokenValue(String);

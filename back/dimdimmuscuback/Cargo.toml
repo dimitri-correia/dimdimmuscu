@@ -11,7 +11,7 @@ axum-extra = { version = "0.9.3", features = ["typed-header"] }
 shuttle-axum = "0.44.0"
 shuttle-runtime = "0.44.0"
 # Database
-libsql = { version = "0.3.5", features = ["serde", "remote", "parser"] }
+libsql = "0.3.5"
 # Session
 jsonwebtoken = "9.3.0"
 # Async
