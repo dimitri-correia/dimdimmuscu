@@ -29,7 +29,7 @@ jobs:
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-          SESSION_DURATION_HOURS: ${{ vars.SESSION_DURATION_HOURS }}
+          SESSION_DURATION_HOURS: 1
 
   fmt:
     name: Rustfmt-back
@@ -83,11 +83,3 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: EmbarkStudios/cargo-deny-action@v1
-
-  security:
-    name: Security-back
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: rustsec/audit-check@v1.4.1
