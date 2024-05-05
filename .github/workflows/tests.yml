@@ -29,7 +29,7 @@ jobs:
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-          SESSION_DURATION_HOURS: ${{ secrets.SESSION_DURATION_HOURS }}
+          SESSION_DURATION_HOURS: ${{ vars.SESSION_DURATION_HOURS }}
 
   fmt:
     name: Rustfmt-back
