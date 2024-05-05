@@ -43,12 +43,8 @@ fn get_variables_from_env() -> (i64, Secret<String>, Secret<String>) {
         Secret::new(env::var("TURSO_AUTH_TOKEN").expect("TURSO_AUTH_TOKEN must be set"));
     let session_duration_hours = env::var("SESSION_DURATION_HOURS")
         .expect("SESSION_DURATION_HOURS must be set")
-        .parse();
-
-    println!("{:?}", session_duration_hours);
-
-    let session_duration_hours =
-        session_duration_hours.expect("SESSION_DURATION_HOURS must be i64");
+        .parse()
+        .expect("SESSION_DURATION_HOURS must be i64");
 
     (session_duration_hours, db_url, db_auth_token)
 }
