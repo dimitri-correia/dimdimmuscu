@@ -1,6 +1,8 @@
 name: Security audit
 on:
   push:
+    branches:
+      - main
     paths:
       - '**/Cargo.toml'
       - '**/Cargo.lock'
@@ -12,3 +14,11 @@ jobs:
       - uses: rustsec/audit-check@v1.4.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  cargo-deny:
+    name: Deny-back
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v1

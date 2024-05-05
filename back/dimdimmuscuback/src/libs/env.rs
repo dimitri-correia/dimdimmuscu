@@ -1,6 +1,5 @@
 use std::env;
 
-use dotenvy::dotenv;
 use libsql::Connection;
 use rand::{rngs::OsRng, RngCore};
 use redact::Secret;
@@ -33,9 +32,6 @@ pub async fn init_env() -> EnvVariables {
 }
 
 fn get_variables_from_env() -> (i64, Secret<String>, Secret<String>) {
-    // Load the .env file
-    dotenv().ok();
-
     // should not be possible to print those values anywhere
     let db_url =
         Secret::new(env::var("TURSO_DATABASE_URL").expect("TURSO_DATABASE_URL must be set"));

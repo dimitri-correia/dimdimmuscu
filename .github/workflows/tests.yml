@@ -29,7 +29,7 @@ jobs:
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-          SESSION_DURATION_HOURS: 1
+          SESSION_DURATION_HOURS: ${{ secrets.SESSION_DURATION_HOURS }}
 
   fmt:
     name: Rustfmt-back
@@ -76,10 +76,3 @@ jobs:
           fi
       - run: cargo +nightly udeps
 
-  cargo-deny:
-    name: Deny-back
-    needs: build
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: EmbarkStudios/cargo-deny-action@v1
