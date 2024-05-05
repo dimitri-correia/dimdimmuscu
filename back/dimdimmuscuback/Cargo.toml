@@ -26,8 +26,6 @@ uuid = { version = "1.8.0", features = ["v7"] }
 argon2 = "0.5.3"
 # Rand
 rand = "0.8.5"
-# Env variables
-dotenvy = "0.15.7"
 # Log
 log = "0.4.21"
 # Secrets

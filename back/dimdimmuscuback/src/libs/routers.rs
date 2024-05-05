@@ -16,7 +16,7 @@ mod tests {
     use crate::libs::env::{init_env, EnvVariables};
 
     pub async fn create_user_test_helper() -> (EnvVariables, SessionTokenValue) {
-        let env = init_env().await;
+        let env = init_env(None).await;
 
         let username = format!(
             "test_user_for_test_end_to_end_auth_{}",

@@ -3,6 +3,7 @@ use std::env;
 use libsql::Connection;
 use rand::{rngs::OsRng, RngCore};
 use redact::Secret;
+use shuttle_runtime::SecretStore;
 
 use crate::libs::db::methods::init_db::init_db;
 
@@ -14,9 +15,9 @@ pub struct EnvVariables {
 }
 
 // Should fail directly in case of issue
-pub async fn init_env() -> EnvVariables {
+pub async fn init_env(secrets: Option<SecretStore>) -> EnvVariables {
     // from .env
-    let (session_duration_hours, db_url, db_auth_token) = get_variables_from_env();
+    let (session_duration_hours, db_url, db_auth_token) = get_variables_from_env(secrets);
 
     // need to change at each restart
     let secret_key_session = generate_secret_key();
@@ -31,10 +32,14 @@ pub async fn init_env() -> EnvVariables {
     }
 }
 
-fn get_variables_from_env() -> (i64, Secret<String>, Secret<String>) {
-    // should not be possible to print those values anywhere
-    let db_url =
-        Secret::new(env::var("TURSO_DATABASE_URL").expect("TURSO_DATABASE_URL must be set"));
+fn get_variables_from_env(secrets: Option<SecretStore>) -> (i64, Secret<String>, Secret<String>) {
+    let db_url = Secret::new(if let Some(secret) = secrets {
+        secret
+            .get("TURSO_DATABASE_URL")
+            .expect("TURSO_DATABASE_URL must be set")
+    } else {
+        env::var("TURSO_DATABASE_URL").expect("TURSO_DATABASE_URL must be set")
+    });
     let db_auth_token =
         Secret::new(env::var("TURSO_AUTH_TOKEN").expect("TURSO_AUTH_TOKEN must be set"));
     let session_duration_hours = env::var("SESSION_DURATION_HOURS")
@@ -58,7 +63,7 @@ mod tests {
 
     #[tokio::test]
     async fn get_env_var() {
-        let _ = get_variables_from_env();
+        let _ = get_variables_from_env(None);
     }
 
     #[tokio::test]
@@ -72,7 +77,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_db() {
-        let env = init_env().await;
+        let env = init_env(None).await;
 
         // do nothing but test if connection ok
         env.db_connection.execute("SELECT 2", ()).await.unwrap();
