@@ -9,6 +9,7 @@ use log::info;
 use crate::libs::db::structs::session::{SessionLogoff, SessionTokenValue};
 use crate::libs::db::structs::users_auth::{UserForCreate, UserForDelete, UserForLogin};
 use crate::libs::env::EnvVariables;
+use crate::libs::routers::fallback::fallback;
 
 pub fn auth_routes(env_variables: EnvVariables) -> Router {
     Router::new()
@@ -17,6 +18,7 @@ pub fn auth_routes(env_variables: EnvVariables) -> Router {
         .route("/logoff", post(api_logoff_handler))
         .route("/delete_user", post(api_delete_user_handler))
         .with_state(env_variables)
+        .fallback(fallback)
 }
 
 async fn api_signup_handler(
