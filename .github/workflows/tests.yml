@@ -62,5 +62,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@nightly
-      - run: cargo install cargo-udeps --locked
+      - name: Cache cargo-udeps
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/cargo-udeps
+          key: ${{ runner.os }}-cargo-udeps-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-udeps-
+      - name: Install cargo-udeps
+        run: |
+          if ! cargo udeps --version &>/dev/null; then
+            cargo install cargo-udeps --locked
+          fi
       - run: cargo +nightly udeps
+
+  cargo-deny:
+    name: Deny-back
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v1
+
+  security:
+    name: Security-back
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: rustsec/audit-check@v1.4.1
