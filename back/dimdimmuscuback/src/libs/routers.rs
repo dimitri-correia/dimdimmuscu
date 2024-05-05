@@ -9,11 +9,11 @@ mod tests {
 
     use chrono::Utc;
     use rand::Rng;
+    use redact::Secret;
 
     use crate::libs::db::structs::session::SessionTokenValue;
     use crate::libs::db::structs::users_auth::{UserForCreate, UserForLogin};
     use crate::libs::env::{init_env, EnvVariables};
-    use crate::libs::secret::Secret;
 
     pub async fn create_user_test_helper() -> (EnvVariables, SessionTokenValue) {
         let env = init_env().await;
@@ -26,7 +26,7 @@ mod tests {
 
         let user = UserForCreate::_create(
             username.clone(),
-            Secret(pwd_clear.to_string()),
+            Secret::new(pwd_clear.to_string()),
             Utc::now().to_rfc3339(),
         );
         user.add_new_user_in_db(&env.db_connection)
@@ -46,6 +46,6 @@ mod tests {
             .map_err(|_| Error)
             .expect("should give back the token");
 
-        return (env, token);
+        (env, token)
     }
 }

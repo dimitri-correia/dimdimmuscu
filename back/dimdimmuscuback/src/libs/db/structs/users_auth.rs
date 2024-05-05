@@ -4,6 +4,7 @@ use argon2::password_hash::{rand_core::OsRng, SaltString};
 use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use chrono::{DateTime, Utc};
 use libsql::{Connection, Rows};
+use redact::Secret;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -11,13 +12,10 @@ use crate::libs::db::methods::queries::insert;
 use crate::libs::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
 use crate::libs::errors::auth::login_logoff::{LoginError, LogoffError};
 use crate::libs::errors::auth::signup::SignupError;
-use crate::libs::secret::deserialize_secret;
-use crate::libs::secret::Secret;
 
 #[derive(Deserialize)]
 pub struct UserForCreate {
     pub username: String,
-    #[serde(deserialize_with = "deserialize_secret")]
     pwd_clear: Secret<String>,
     birthdate: String,
 }
@@ -58,7 +56,7 @@ impl UserForCreate {
 
         // Hash password to PHC string ($argon2id$v=19$...)
         let password_hash = Argon2::default()
-            .hash_password(self.pwd_clear.0.as_ref(), &salt)
+            .hash_password(self.pwd_clear.expose_secret().as_ref(), &salt)
             .map_err(SignupError::ErrorHashing)?
             .to_string();
 

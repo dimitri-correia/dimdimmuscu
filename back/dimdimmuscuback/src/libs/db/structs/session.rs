@@ -26,7 +26,7 @@ impl SessionTokenValue {
                 profile_id: profile_id.clone(),
                 until,
             },
-            &EncodingKey::from_secret(&env_variables.secret_key_session),
+            &EncodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
         )
         .map_err(|_| SessionError::TokenCreation)?;
 

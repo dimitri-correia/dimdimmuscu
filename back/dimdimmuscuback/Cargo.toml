@@ -30,6 +30,8 @@ rand = "0.8.5"
 dotenv = "0.15"
 # Log
 log = "0.4.21"
+# Secrets
+redact = { version = "0.1", features = ["serde"] }
 
 [dev-dependencies]
 axum-test = "14.9.1"

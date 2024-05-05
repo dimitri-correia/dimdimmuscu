@@ -35,7 +35,7 @@ impl FromRequestParts<EnvVariables> for SessionToken {
 
         let token_data = decode::<SessionToken>(
             bearer.token(),
-            &DecodingKey::from_secret(&env_variables.secret_key_session),
+            &DecodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
             &Validation::default(),
         )
         .map_err(|_| SessionError::BadToken)?;

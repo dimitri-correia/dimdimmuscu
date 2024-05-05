@@ -645,6 +645,7 @@ dependencies = [
  "libsql",
  "log",
  "rand",
+ "redact",
  "serde",
  "serde_json",
  "shuttle-axum",
@@ -1998,6 +1999,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
  "getrandom",
+]
+
+[[package]]
+name = "redact"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b7301863b5e5486c9f18320ccc1aedce9a5fdf3056ae89fa021933d6f054430f"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

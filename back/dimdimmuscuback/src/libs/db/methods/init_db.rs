@@ -1,7 +1,6 @@
 use libsql::Connection;
+use redact::Secret;
 use tokio::sync::OnceCell;
-
-use crate::libs::secret::Secret;
 
 pub async fn init_db(db_url: Secret<String>, db_auth_token: Secret<String>) -> Connection {
     static INIT: OnceCell<Connection> = OnceCell::const_new();
@@ -14,10 +13,13 @@ pub async fn init_db(db_url: Secret<String>, db_auth_token: Secret<String>) -> C
 async fn prepare_db(db_url: Secret<String>, db_auth_token: Secret<String>) -> Connection {
     use libsql::Builder;
 
-    let db = Builder::new_remote(db_url.0, db_auth_token.0)
-        .build()
-        .await
-        .unwrap();
+    let db = Builder::new_remote(
+        db_url.expose_secret().clone(),
+        db_auth_token.expose_secret().clone(),
+    )
+    .build()
+    .await
+    .unwrap();
 
     db.connect().unwrap()
 }

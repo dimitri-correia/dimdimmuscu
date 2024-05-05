@@ -3,14 +3,14 @@ use std::env;
 use dotenv::dotenv;
 use libsql::Connection;
 use rand::{rngs::OsRng, RngCore};
+use redact::Secret;
 
 use crate::libs::db::methods::init_db::init_db;
-use crate::libs::secret::Secret;
 
 #[derive(Clone)]
 pub struct EnvVariables {
     pub session_duration_hours: i64,
-    pub secret_key_session: [u8; 32],
+    pub secret_key_session: Secret<[u8; 32]>,
     pub db_connection: Connection,
 }
 
@@ -37,8 +37,10 @@ fn get_variables_from_env() -> (i64, Secret<String>, Secret<String>) {
     dotenv().ok();
 
     // should not be possible to print those values anywhere
-    let db_url = Secret(env::var("TURSO_DATABASE_URL").expect("TURSO_DATABASE_URL must be set"));
-    let db_auth_token = Secret(env::var("TURSO_AUTH_TOKEN").expect("TURSO_AUTH_TOKEN must be set"));
+    let db_url =
+        Secret::new(env::var("TURSO_DATABASE_URL").expect("TURSO_DATABASE_URL must be set"));
+    let db_auth_token =
+        Secret::new(env::var("TURSO_AUTH_TOKEN").expect("TURSO_AUTH_TOKEN must be set"));
     let session_duration_hours: i64 = env::var("SESSION_DURATION_HOURS")
         .expect("SESSION_DURATION_HOURS must be set")
         .parse()
@@ -47,11 +49,11 @@ fn get_variables_from_env() -> (i64, Secret<String>, Secret<String>) {
     (session_duration_hours, db_url, db_auth_token)
 }
 
-fn generate_secret_key() -> [u8; 32] {
+fn generate_secret_key() -> Secret<[u8; 32]> {
     let mut key = [0u8; 32];
     OsRng.fill_bytes(&mut key);
 
-    key
+    Secret::new(key)
 }
 
 #[cfg(test)]
@@ -66,7 +68,10 @@ mod tests {
     #[tokio::test]
     async fn key_gen_generation() {
         // should be different each time
-        assert_ne!(generate_secret_key(), generate_secret_key());
+        assert_ne!(
+            generate_secret_key().expose_secret(),
+            generate_secret_key().expose_secret()
+        );
     }
 
     #[tokio::test]
