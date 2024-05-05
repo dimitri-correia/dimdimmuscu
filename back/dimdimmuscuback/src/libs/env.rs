@@ -1,6 +1,6 @@
 use std::env;
 
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use libsql::Connection;
 use rand::{rngs::OsRng, RngCore};
 use redact::Secret;
