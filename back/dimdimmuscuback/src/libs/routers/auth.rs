@@ -51,7 +51,7 @@ async fn api_login_handler(
     };
 
     match SessionTokenValue::create(profile_id, &env_variables).await {
-        Ok(token) => (StatusCode::OK, token.to_string()).into_response(),
+        Ok(token) => (StatusCode::OK, token.get()).into_response(),
         Err(err) => err.into_response(),
     }
 }

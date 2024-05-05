@@ -1,7 +1,7 @@
 use libsql::Connection;
 use tokio::sync::OnceCell;
 
-use crate::libs::env::Secret;
+use crate::libs::secret::Secret;
 
 pub async fn init_db(db_url: Secret<String>, db_auth_token: Secret<String>) -> Connection {
     static INIT: OnceCell<Connection> = OnceCell::const_new();

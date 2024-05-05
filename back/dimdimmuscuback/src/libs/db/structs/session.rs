@@ -1,5 +1,3 @@
-use std::fmt::Display;
-
 use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use libsql::Connection;
@@ -13,12 +11,6 @@ use crate::libs::mw::mw_auth::SessionToken;
 
 #[derive(Deserialize, Serialize)]
 pub struct SessionTokenValue(String);
-
-impl Display for SessionTokenValue {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0.clone())
-    }
-}
 
 impl SessionTokenValue {
     pub async fn create(
@@ -49,6 +41,10 @@ impl SessionTokenValue {
 
         Ok(SessionTokenValue(token))
     }
+
+    pub fn get(&self) -> String {
+        self.0.to_string()
+    }
 }
 
 #[derive(Deserialize, Serialize)]
@@ -62,7 +58,7 @@ impl SessionLogoff {
             .query(
                 "DELETE FROM session WHERE token = ?
                 RETURNING (SELECT name FROM users WHERE id = session.profile_id);",
-                [self.token.to_string()],
+                [self.token.0],
             )
             .await
             .map_err(|_| SessionError::TokenDoesntExists)?

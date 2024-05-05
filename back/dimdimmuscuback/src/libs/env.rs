@@ -5,26 +5,13 @@ use libsql::Connection;
 use rand::{rngs::OsRng, RngCore};
 
 use crate::libs::db::methods::init_db::init_db;
+use crate::libs::secret::Secret;
 
 #[derive(Clone)]
 pub struct EnvVariables {
     pub session_duration_hours: i64,
     pub secret_key_session: [u8; 32],
     pub db_connection: Connection,
-}
-
-pub struct Secret<T>(pub T);
-
-impl<T> std::fmt::Debug for Secret<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Secret")
-    }
-}
-
-impl<T> std::fmt::Display for Secret<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Secret")
-    }
 }
 
 // Should fail directly in case of issue

@@ -44,7 +44,7 @@ mod tests {
             .post("/add")
             .add_header(
                 AUTHORIZATION,
-                HeaderValue::from_str(&format!("Bearer {}", token)).unwrap(),
+                HeaderValue::from_str(&format!("Bearer {}", token.get())).unwrap(),
             )
             .await;
 
