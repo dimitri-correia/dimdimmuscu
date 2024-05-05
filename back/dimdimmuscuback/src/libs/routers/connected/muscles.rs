@@ -40,7 +40,7 @@ mod tests {
         // Run the application for testing.
         let server = TestServer::new(app).unwrap();
 
-        let response = server
+        let _response = server
             .post("/add")
             .add_header(
                 AUTHORIZATION,
