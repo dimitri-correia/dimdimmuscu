@@ -4,8 +4,7 @@ use chrono::Utc;
 use rand::Rng;
 use serde_json::json;
 
-use dimdimmuscuback::libs::env::init_env;
-use dimdimmuscuback::libs::routers::auth::auth_routes;
+use dimdimmuscuback::libs::routers::main_router::main_router;
 
 use crate::test_helper::get_secret_store_for_tests;
 
@@ -13,8 +12,7 @@ pub mod test_helper;
 
 #[tokio::test]
 async fn test_end_to_end_auth() {
-    let env = init_env(get_secret_store_for_tests()).await;
-    let app = auth_routes(env);
+    let app = main_router(get_secret_store_for_tests()).await;
 
     // Run the application for testing.
     let server = TestServer::new(app).unwrap();
@@ -26,9 +24,11 @@ async fn test_end_to_end_auth() {
     let pwd_clear = "pwd_clear";
 
     // User creation
+    let token_from_creation: String;
     {
         let response = create_user(&server, &username, pwd_clear).await;
         response.assert_status(StatusCode::CREATED);
+        token_from_creation = response.text();
     }
 
     // Can't have the same username
@@ -43,11 +43,15 @@ async fn test_end_to_end_auth() {
         let response = user_login(&server, &username, pwd_clear).await;
         response.assert_status(StatusCode::OK);
         token = response.text();
+        assert_ne!(token, token_from_creation);
     }
 
     // User logoff
     {
-        let response = server.post("/logoff").json(&json!({"token": token,})).await;
+        let response = server
+            .post("/connect/logoff")
+            .json(&json!({"token": token,}))
+            .await;
         response.assert_status(StatusCode::OK);
         dbg!(response.text());
         response.assert_text(format!("User {} logged off successfully", username));
@@ -64,7 +68,7 @@ async fn test_end_to_end_auth() {
     // User delete
     {
         let response = server
-            .post("/delete_user")
+            .post("/connect/delete_user")
             .json(&json!({"token": token,}))
             .await;
 
@@ -81,7 +85,7 @@ async fn test_end_to_end_auth() {
 
 async fn user_login(server: &TestServer, username: &String, pwd_clear: &str) -> TestResponse {
     server
-        .post("/login")
+        .post("/connect/login")
         .json(&json!({
             "username": username,
             "pwd_clear": pwd_clear,
@@ -92,7 +96,7 @@ async fn user_login(server: &TestServer, username: &String, pwd_clear: &str) -> 
 
 async fn create_user(server: &TestServer, username: &String, pwd_clear: &str) -> TestResponse {
     server
-        .post("/signup")
+        .post("/connect/signup")
         .json(&json!({
             "username": username,
             "pwd_clear": pwd_clear,

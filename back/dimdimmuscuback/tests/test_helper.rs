@@ -7,9 +7,8 @@ use redact::Secret;
 use shuttle_runtime::SecretStore;
 use toml::Value;
 
-use dimdimmuscuback::libs::db::structs::session::SessionTokenValue;
-use dimdimmuscuback::libs::db::structs::users_auth::{UserForCreate, UserForLogin};
-use dimdimmuscuback::libs::env::{init_env, EnvVariables};
+use dimdimmuscuback::libs::db::structs::users_auth::UserForCreate;
+use dimdimmuscuback::libs::env::{EnvVariables, init_env};
 
 pub fn get_secret_store_for_tests() -> SecretStore {
     let mut secrets = std::collections::BTreeMap::new();
@@ -49,7 +48,7 @@ fn get_env_or_toml(var_name: &str) -> String {
     }
 }
 
-pub async fn create_user_test_helper() -> (EnvVariables, SessionTokenValue) {
+pub async fn create_user_test_helper() -> (EnvVariables, String) {
     let env = init_env(get_secret_store_for_tests()).await;
 
     let username = format!(
@@ -63,22 +62,11 @@ pub async fn create_user_test_helper() -> (EnvVariables, SessionTokenValue) {
         Secret::new(pwd_clear.to_string()),
         Utc::now().to_rfc3339(),
     );
-    user.add_new_user_in_db(&env.db_connection)
+    let token = user
+        .add_new_user_in_db(&env.db_connection)
         .await
         .map_err(|_| Error)
         .expect("should add without issue");
-
-    let user_for_login = UserForLogin::_create(username, pwd_clear.to_string());
-    let profile_id = user_for_login
-        .authenticate(&env.db_connection)
-        .await
-        .map_err(|_| Error)
-        .expect("should connect without issue");
-
-    let token = SessionTokenValue::create(profile_id, &env)
-        .await
-        .map_err(|_| Error)
-        .expect("should give back the token");
 
     (env, token)
 }
