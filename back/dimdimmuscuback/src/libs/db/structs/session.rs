@@ -1,10 +1,10 @@
 use chrono::{Duration, Utc};
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{decode, DecodingKey, encode, EncodingKey, Header, Validation};
 use libsql::Connection;
 use serde::{Deserialize, Serialize};
 
-use crate::libs::db::methods::queries::insert;
 use crate::libs::db::{SESSION_TABLE, SESSION_TABLE_COL};
+use crate::libs::db::methods::queries::insert;
 use crate::libs::env::EnvVariables;
 use crate::libs::errors::auth_errors::session_errors::SessionError;
 use crate::libs::mw::mw_auth::SessionToken;
@@ -28,7 +28,7 @@ impl SessionTokenValue {
             },
             &EncodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
         )
-        .map_err(|_| SessionError::TokenCreation)?;
+            .map_err(|_| SessionError::TokenCreation)?;
 
         env_variables
             .db_connection
@@ -52,9 +52,9 @@ impl SessionTokenValue {
             &DecodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
             &Validation::default(),
         )
-        .map_err(|_| SessionError::BadToken)
-        .map(|data| data.claims.profile_id)
-        .unwrap_or("[impossible to decode token]".to_string())
+            .map_err(|_| SessionError::BadToken)
+            .map(|data| data.claims.profile_id)
+            .unwrap_or("[impossible to decode token]".to_string())
     }
 }
 

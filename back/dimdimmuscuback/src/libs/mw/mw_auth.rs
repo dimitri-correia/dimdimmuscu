@@ -1,5 +1,3 @@
-use axum::extract::FromRequestParts;
-use axum::http::request::Parts;
 use axum::{async_trait, RequestPartsExt};
 use axum::{
     extract::Request,
@@ -7,8 +5,10 @@ use axum::{
     middleware::Next,
     response::Response,
 };
+use axum::extract::FromRequestParts;
+use axum::http::request::Parts;
 use axum_extra::{
-    headers::{authorization::Bearer, Authorization},
+    headers::{Authorization, authorization::Bearer},
     TypedHeader,
 };
 use chrono::{DateTime, Utc};
@@ -44,7 +44,7 @@ impl FromRequestParts<EnvVariables> for SessionToken {
             &DecodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
             &Validation::default(),
         )
-        .map_err(|_| SessionError::BadToken)?;
+            .map_err(|_| SessionError::BadToken)?;
 
         Ok(token_data.claims)
     }
