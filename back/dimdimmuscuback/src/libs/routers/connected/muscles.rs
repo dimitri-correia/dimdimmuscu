@@ -1,7 +1,7 @@
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::routing::post;
+use axum::routing::get;
 use axum::Router;
 use log::info;
 
@@ -10,11 +10,11 @@ use crate::libs::mw::mw_auth::SessionToken;
 
 pub fn muscles_routes(env_variables: EnvVariables) -> Router {
     Router::new()
-        .route("/add", post(add_new))
+        .route("/get", get(get_one))
         .with_state(env_variables)
 }
 
-async fn add_new(
+async fn get_one(
     _token: SessionToken,
     State(_env_variables): State<EnvVariables>,
     // Json(muscle): Json<UserForCreate>,
