@@ -14,8 +14,7 @@ pub struct EnvVariables {
 
 // Should fail directly in case of issue
 pub async fn init_env(secrets: SecretStore) -> EnvVariables {
-    // from .env
-    let (session_duration_hours, db_url, db_auth_token) = get_variables_from_env(secrets);
+    let (session_duration_hours, db_url, db_auth_token) = get_variables_from_secret(secrets);
 
     // need to change at each restart
     let secret_key_session = generate_secret_key();
@@ -30,7 +29,7 @@ pub async fn init_env(secrets: SecretStore) -> EnvVariables {
     }
 }
 
-fn get_variables_from_env(secrets: SecretStore) -> (i64, Secret<String>, Secret<String>) {
+fn get_variables_from_secret(secrets: SecretStore) -> (i64, Secret<String>, Secret<String>) {
     let db_url = Secret::new(
         secrets
             .get("TURSO_DATABASE_URL")
@@ -64,9 +63,6 @@ mod tests {
     #[tokio::test]
     async fn key_gen_generation() {
         // should be different each time
-        assert_ne!(
-            generate_secret_key().expose_secret(),
-            generate_secret_key().expose_secret()
-        );
+        assert_ne!(generate_secret_key(), generate_secret_key());
     }
 }
