@@ -1,0 +1,1 @@
+cargo shuttle logs --latest

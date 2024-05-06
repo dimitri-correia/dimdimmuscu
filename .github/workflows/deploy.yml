@@ -1,0 +1,23 @@
+name: Shuttle Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shuttle-hq/deploy-action@main
+        with:
+          deploy-key: ${{ secrets.SHUTTLE_API_KEY }}
+          no-test: "true"
+          #          working-directory: "backend"
+          #          name: "my-project"
+          #          allow-dirty: "true"
+          secrets: |
+            TURSO_DATABASE_URL: ${{ secrets.PROD_TURSO_DATABASE_URL }}
+            TURSO_AUTH_TOKEN: ${{ secrets.PROD_TURSO_AUTH_TOKEN }}
+            SESSION_DURATION_HOURS: ${{ secrets.PROD_SESSION_DURATION_HOURS }}

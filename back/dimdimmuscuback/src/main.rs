@@ -1,12 +1,8 @@
-use axum::{routing::get, Router};
+use shuttle_runtime::SecretStore;
 
-async fn hello_world() -> &'static str {
-    "Hello, world!"
-}
+use dimdimmuscuback::libs::routers::main_router::main_router;
 
 #[shuttle_runtime::main]
-async fn main() -> shuttle_axum::ShuttleAxum {
-    let router = Router::new().route("/", get(hello_world));
-
-    Ok(router.into())
+async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
+    main_router(secrets).await
 }
