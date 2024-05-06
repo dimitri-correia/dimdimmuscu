@@ -1,12 +1,12 @@
 use chrono::{Duration, Utc};
-use jsonwebtoken::{encode, EncodingKey, Header};
+use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use libsql::Connection;
 use serde::{Deserialize, Serialize};
 
 use crate::libs::db::methods::queries::insert;
 use crate::libs::db::{SESSION_TABLE, SESSION_TABLE_COL};
 use crate::libs::env::EnvVariables;
-use crate::libs::errors::auth::session::SessionError;
+use crate::libs::errors::auth_errors::session_errors::SessionError;
 use crate::libs::mw::mw_auth::SessionToken;
 
 #[derive(Deserialize, Serialize)]
@@ -45,6 +45,17 @@ impl SessionTokenValue {
     pub fn get(&self) -> String {
         self.0.to_string()
     }
+
+    pub(crate) fn get_associated_user(token: &str, env_variables: &EnvVariables) -> String {
+        decode::<SessionToken>(
+            token,
+            &DecodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
+            &Validation::default(),
+        )
+        .map_err(|_| SessionError::BadToken)
+        .map(|data| data.claims.profile_id)
+        .unwrap_or("[impossible to decode token]".to_string())
+    }
 }
 
 #[derive(Deserialize, Serialize)]
@@ -53,6 +64,10 @@ pub struct SessionLogoff {
 }
 
 impl SessionLogoff {
+    pub fn get_associated_user(&self, env_variables: &EnvVariables) -> String {
+        SessionTokenValue::get_associated_user(&self.token.0, env_variables)
+    }
+
     pub async fn clear_session(self, connection: Connection) -> Result<String, SessionError> {
         let profile_name = connection
             .query(

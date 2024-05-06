@@ -9,9 +9,11 @@ use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::libs::db::methods::queries::insert;
+use crate::libs::db::structs::session::SessionTokenValue;
 use crate::libs::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
-use crate::libs::errors::auth::login_logoff::{LoginError, LogoffError};
-use crate::libs::errors::auth::signup::SignupError;
+use crate::libs::env::EnvVariables;
+use crate::libs::errors::auth_errors::login_logoff_errors::{LoginError, LogoffError};
+use crate::libs::errors::auth_errors::signup_errors::SignupError;
 
 #[derive(Deserialize)]
 pub struct UserForCreate {
@@ -29,7 +31,7 @@ impl UserForCreate {
         }
     }
 
-    pub async fn add_new_user_in_db(self, conn: &Connection) -> Result<(), SignupError> {
+    pub async fn add_new_user_in_db(&self, conn: &Connection) -> Result<String, SignupError> {
         //todo
         // actually deal with errors
 
@@ -44,7 +46,7 @@ impl UserForCreate {
             &insert(USERS_TABLE, &USERS_TABLE_COL, None),
             [
                 uuid.clone(),
-                self.username,
+                self.username.clone(),
                 utc_date.to_rfc3339(),
                 Utc::now().to_rfc3339(),
             ],
@@ -62,18 +64,18 @@ impl UserForCreate {
 
         conn.query(
             &insert(USERS_AUTH_TABLE, &USERS_AUTH_TABLE_COL, None),
-            [uuid, password_hash],
+            [uuid.clone(), password_hash],
         )
         .await
         .map_err(SignupError::ErrorWithDb)?;
 
-        Ok(())
+        Ok(uuid)
     }
 }
 
 #[derive(Deserialize)]
 pub struct UserForLogin {
-    username: String,
+    pub username: String,
     pwd_clear: String,
 }
 
@@ -85,7 +87,7 @@ impl UserForLogin {
         }
     }
 
-    pub async fn authenticate(self, connection: &Connection) -> Result<String, LoginError> {
+    pub async fn authenticate(&self, connection: &Connection) -> Result<String, LoginError> {
         let mut rows = connection
             .query(
                 "SELECT ua.pwd, ua.profile_id
@@ -93,7 +95,7 @@ impl UserForLogin {
              JOIN users_auth ua
              ON u.id = ua.profile_id
              WHERE u.name = ?;",
-                [self.username],
+                [self.username.clone()],
             )
             .await
             .map_err(LoginError::ErrorWithDb)?;
@@ -134,6 +136,10 @@ pub struct UserForDelete {
 }
 
 impl UserForDelete {
+    pub fn get_associated_user(&self, env_variables: &EnvVariables) -> String {
+        SessionTokenValue::get_associated_user(&self.token, env_variables)
+    }
+
     pub async fn delete_user(self, connection: Connection) -> Result<String, LogoffError> {
         let row = connection
             .query(
