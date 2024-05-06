@@ -30,7 +30,7 @@ mod tests {
     use axum_test::TestServer;
 
     use crate::libs::routers::connected::muscles::muscles_routes;
-    use crate::libs::routers::tests::create_user_test_helper;
+    use crate::test_helper::tests_helper::create_user_test_helper;
 
     #[tokio::test]
     async fn test_add_muscle() {

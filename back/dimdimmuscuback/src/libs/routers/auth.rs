@@ -99,12 +99,13 @@ mod tests {
     use serde_json::json;
 
     use crate::libs::env::init_env;
+    use crate::test_helper::tests_helper::get_secret_store_for_tests;
 
     use super::*;
 
     #[tokio::test]
     async fn test_end_to_end_auth() {
-        let env = init_env().await;
+        let env = init_env(get_secret_store_for_tests()).await;
         let app = auth_routes(env);
 
         // Run the application for testing.
