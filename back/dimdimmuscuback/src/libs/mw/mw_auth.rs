@@ -1,6 +1,12 @@
 use axum::extract::FromRequestParts;
 use axum::http::request::Parts;
 use axum::{async_trait, RequestPartsExt};
+use axum::{
+    extract::Request,
+    http::{HeaderMap, StatusCode},
+    middleware::Next,
+    response::Response,
+};
 use axum_extra::{
     headers::{authorization::Bearer, Authorization},
     TypedHeader,
@@ -11,7 +17,7 @@ use log::info;
 use serde::{Deserialize, Serialize};
 
 use crate::libs::env::EnvVariables;
-use crate::libs::errors::auth::session::SessionError;
+use crate::libs::errors::auth_errors::session_errors::SessionError;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SessionToken {
@@ -42,4 +48,25 @@ impl FromRequestParts<EnvVariables> for SessionToken {
 
         Ok(token_data.claims)
     }
+}
+
+pub async fn mw_auth(
+    headers: HeaderMap,
+    request: Request,
+    next: Next,
+) -> Result<Response, StatusCode> {
+    if token_is_valid(&headers) {
+        let response = next.run(request).await;
+        Ok(response)
+    } else {
+        Err(StatusCode::UNAUTHORIZED)
+    }
+}
+
+fn token_is_valid(header_map: &HeaderMap) -> bool {
+    header_map
+        .get("Authorization")
+        .and_then(|value| value.to_str().ok());
+
+    true
 }
