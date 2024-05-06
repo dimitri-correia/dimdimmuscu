@@ -43,7 +43,7 @@ pub mod tests_helper {
             Err(_) => {
                 // todo set to relative path
                 let contents =
-                    fs::read_to_string("/home/dim/RustroverProjects/DimDimMuscu/Secrets.dev.toml")
+                    fs::read_to_string("/home/dim/RustroverProjects/dimdimmuscu/Secrets.dev.toml")
                         .expect("Something went wrong reading the file");
                 let value: Value = toml::from_str(&contents).unwrap();
                 value[var_name].as_str().unwrap().to_string()

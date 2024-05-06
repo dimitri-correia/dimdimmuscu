@@ -17,8 +17,6 @@ jobs:
           #          working-directory: "backend"
           #          name: "my-project"
           #          allow-dirty: "true"
-          #          no-test: "true"
-          #          cargo-shuttle-version: "0.28.1"
           secrets: |
             TURSO_DATABASE_URL: ${{ secrets.PROD_TURSO_DATABASE_URL }}
             TURSO_AUTH_TOKEN: ${{ secrets.PROD_TURSO_AUTH_TOKEN }}
