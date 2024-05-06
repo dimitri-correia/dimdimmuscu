@@ -6,10 +6,10 @@ use rand::Rng;
 use redact::Secret;
 use shuttle_runtime::SecretStore;
 use toml::Value;
+
 use dimdimmuscuback::libs::db::structs::session::SessionTokenValue;
 use dimdimmuscuback::libs::db::structs::users_auth::{UserForCreate, UserForLogin};
-use dimdimmuscuback::libs::env::{EnvVariables, init_env};
-
+use dimdimmuscuback::libs::env::{init_env, EnvVariables};
 
 pub fn get_secret_store_for_tests() -> SecretStore {
     let mut secrets = std::collections::BTreeMap::new();

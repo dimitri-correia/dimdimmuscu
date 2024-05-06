@@ -3,8 +3,10 @@ use axum_test::{TestResponse, TestServer};
 use chrono::Utc;
 use rand::Rng;
 use serde_json::json;
+
 use dimdimmuscuback::libs::env::init_env;
 use dimdimmuscuback::libs::routers::auth::auth_routes;
+
 use crate::test_helper::get_secret_store_for_tests;
 
 pub mod test_helper;
@@ -81,10 +83,10 @@ async fn user_login(server: &TestServer, username: &String, pwd_clear: &str) -> 
     server
         .post("/login")
         .json(&json!({
-                "username": username,
-                "pwd_clear": pwd_clear,
-            }
-            ))
+            "username": username,
+            "pwd_clear": pwd_clear,
+        }
+        ))
         .await
 }
 
@@ -92,10 +94,10 @@ async fn create_user(server: &TestServer, username: &String, pwd_clear: &str) ->
     server
         .post("/signup")
         .json(&json!({
-                "username": username,
-                "pwd_clear": pwd_clear,
-                "birthdate": Utc::now().to_rfc3339(),
-            }
-            ))
+            "username": username,
+            "pwd_clear": pwd_clear,
+            "birthdate": Utc::now().to_rfc3339(),
+        }
+        ))
         .await
 }
