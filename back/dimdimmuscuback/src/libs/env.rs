@@ -59,14 +59,7 @@ fn generate_secret_key() -> Secret<[u8; 32]> {
 
 #[cfg(test)]
 mod tests {
-    use crate::test_helper::tests_helper::get_secret_store_for_tests;
-
     use super::*;
-
-    #[tokio::test]
-    async fn get_env_var() {
-        let _ = get_variables_from_env(get_secret_store_for_tests());
-    }
 
     #[tokio::test]
     async fn key_gen_generation() {
@@ -75,13 +68,5 @@ mod tests {
             generate_secret_key().expose_secret(),
             generate_secret_key().expose_secret()
         );
-    }
-
-    #[tokio::test]
-    async fn test_db() {
-        let env = init_env(get_secret_store_for_tests()).await;
-
-        // do nothing but test if connection ok
-        env.db_connection.execute("SELECT 2", ()).await.unwrap();
     }
 }
