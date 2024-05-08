@@ -13,6 +13,21 @@ useful for gym enthusiasts like I am. The app provides a range of features that 
 The app is built using Rust and axum for the server part, which allow me to write code that is both performant and
 secure.
 
+### Api calls (tmp - api doc to come)
+
+- /connect
+    - /signup
+    - /login
+    - /logoff
+    - /delete_user
+- /api
+    - /users
+        - /get_myself
+        - /update
+    - /muscles
+        - /get
+    - /exercises
+
 ## Features
 
 TODO
