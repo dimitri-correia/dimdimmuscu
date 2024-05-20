@@ -10,7 +10,7 @@ axum-extra = { version = "0.9.3", features = ["typed-header"] }
 # Shuttle
 shuttle-axum = "0.44.0"
 shuttle-runtime = "0.44.0"
-shuttle-common = "0.44.0"
+shuttle-common = "0.45.0"
 # Database
 libsql = "0.3.5"
 # Session
