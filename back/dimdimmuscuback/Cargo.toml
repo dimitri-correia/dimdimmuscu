@@ -33,5 +33,5 @@ log = "0.4.21"
 redact = { version = "0.1", features = ["serde"] }
 
 [dev-dependencies]
-axum-test = "14.9.1"
+axum-test = "14.10.0"
 toml = "0.8.12"
