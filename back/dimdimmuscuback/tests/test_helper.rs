@@ -66,7 +66,7 @@ pub async fn create_user(
         .json(&json!({
             "username": username,
             "pwd_clear": pwd_clear,
-            "birthdate": Utc::now().to_rfc3339(),
+            "birthdate": Utc::now().format("%Y-%m-%d").to_string(),
             "height_cm": height_cm,
         }
         ))
