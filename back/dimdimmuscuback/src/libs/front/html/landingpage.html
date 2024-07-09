@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Landing Page</title>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<body>
+<h1>DIMDIMMUSCU</h1>
+<h2>Welcome</h2>
+
+<h3>Connect or signup to use</h3>
+<button hx-get="/signup" hx-target="#response">Create an account</button>
+<button hx-get="/login" hx-target="#response">Connect</button>
+
+<div id="response"></div>
+</body>
+</html>

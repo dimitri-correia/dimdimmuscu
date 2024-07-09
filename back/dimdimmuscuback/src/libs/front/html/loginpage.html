@@ -1,0 +1,10 @@
+<form hx-post="/connect/login" hx-swap="innerHTML" hx-target="#response">
+    <label for="username">Username:</label>
+    <input id="username" name="username" required type="text"><br><br>
+
+    <label for="pwd_clear">Password:</label>
+    <input id="pwd_clear" name="pwd_clear" required type="password"><br><br>
+
+    <button type="submit">Login</button>
+</form>
+<div id="response"></div>
