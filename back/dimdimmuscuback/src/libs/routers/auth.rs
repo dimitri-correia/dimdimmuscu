@@ -1,8 +1,8 @@
+use axum::{Json, Router};
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::post;
-use axum::{Json, Router};
 use log;
 use log::info;
 
@@ -61,7 +61,7 @@ async fn get_token(
     profile_id: String,
     code: StatusCode,
 ) -> impl IntoResponse {
-    match SessionTokenValue::create(profile_id, &env_variables).await {
+    match SessionTokenValue::create(profile_id, env_variables).await {
         Ok(token) => (code, token.get()).into_response(),
         Err(err) => err.into_response(),
     }
