@@ -1,3 +1,6 @@
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use axum::routing::get;
 use axum::Router;
 use shuttle_common::SecretStore;
 
@@ -10,7 +13,13 @@ pub async fn main_router(secrets: SecretStore) -> Router {
     let env_variables = init_env(secrets).await;
 
     Router::new()
+        .route("/", get(root))
         .nest("/connect", auth_routes(env_variables.clone()))
         .nest("/api", routes_connected(env_variables))
         .fallback(fallback)
+}
+
+async fn root() -> impl IntoResponse {
+    let txt = "Welcome to Dim Dim Muscu!";
+    (StatusCode::OK, txt).into_response()
 }
