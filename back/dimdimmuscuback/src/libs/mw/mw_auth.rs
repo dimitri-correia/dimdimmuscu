@@ -1,7 +1,7 @@
-use axum::{extract::Request, http::StatusCode, middleware::Next, response::Response};
 use axum::extract::State;
-use axum_extra::headers::Authorization;
+use axum::{extract::Request, http::StatusCode, middleware::Next, response::Response};
 use axum_extra::headers::authorization::Bearer;
+use axum_extra::headers::Authorization;
 use axum_extra::TypedHeader;
 use chrono::{DateTime, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};

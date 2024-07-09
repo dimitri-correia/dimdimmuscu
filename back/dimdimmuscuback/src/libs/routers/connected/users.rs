@@ -2,8 +2,8 @@ use axum::body::Body;
 use axum::extract::{Request, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::Router;
 use axum::routing::get;
+use axum::Router;
 use log::info;
 
 use crate::libs::env::EnvVariables;
