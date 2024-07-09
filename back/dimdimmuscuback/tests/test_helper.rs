@@ -61,10 +61,11 @@ pub async fn create_user(
         "test_user_for_test_end_to_end_auth_{}",
         rand::rngs::OsRng.gen::<u32>()
     );
-    let username = username
-        .unwrap_or(&default_username);
+    let username = username.unwrap_or(&default_username);
 
     let pwd_clear = pwd_clear.unwrap_or(&"pwd_clear");
+
+    let height_cm = height_cm.unwrap_or(180);
 
     server
         .post("/connect/signup")
@@ -72,7 +73,7 @@ pub async fn create_user(
             "username": username,
             "pwd_clear": pwd_clear,
             "birthdate": Utc::now().to_rfc3339(),
-            "height_cm": height_cm.unwrap_or(180),
+            "height_cm": height_cm,
         }
         ))
         .await
@@ -82,6 +83,9 @@ pub async fn create_user_and_get_token(
     test_server: &TestServer,
     username: Option<&str>,
     pwd_clear: Option<&str>,
+    height_cm: Option<u8>,
 ) -> String {
-    create_user(test_server, username, pwd_clear).await.text()
+    create_user(test_server, username, pwd_clear, height_cm)
+        .await
+        .text()
 }

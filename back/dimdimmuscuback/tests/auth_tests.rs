@@ -26,14 +26,14 @@ async fn test_end_to_end_auth() {
     // User creation
     let token_from_creation: String;
     {
-        let response = create_user(&server, Some(&username), Some(pwd_clear)).await;
+        let response = create_user(&server, Some(&username), Some(pwd_clear), Some(180)).await;
         response.assert_status(StatusCode::CREATED);
         token_from_creation = response.text();
     }
 
     // Can't have the same username
     {
-        let response = create_user(&server, Some(&username), Some(pwd_clear)).await;
+        let response = create_user(&server, Some(&username), Some(pwd_clear), Some(180)).await;
         response.assert_status(StatusCode::UNAUTHORIZED);
     }
 

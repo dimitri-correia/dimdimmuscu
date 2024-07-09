@@ -15,7 +15,7 @@ async fn test_end_to_end_normal_use() {
     // Run the application for testing.
     let server = TestServer::new(app).unwrap();
 
-    let token = create_user_and_get_token(&server, None, None).await;
+    let token = create_user_and_get_token(&server, None, None, None).await;
     dbg!(&token);
 
     // Get myself

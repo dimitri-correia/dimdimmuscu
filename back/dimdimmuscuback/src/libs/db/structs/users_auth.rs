@@ -47,7 +47,7 @@ impl UserForCreate {
             return Err(SignupError::HeightOutOfRange);
         }
 
-        conn.execute(
+        let a = conn.execute(
             &insert(USERS_TABLE, &USERS_TABLE_COL, None),
             [
                 uuid.clone(),

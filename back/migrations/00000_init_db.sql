@@ -2,6 +2,14 @@
 
 PRAGMA foreign_keys = ON;
 
+DROP TABLE IF EXISTS maxes;
+DROP TABLE IF EXISTS sets;
+DROP TABLE IF EXISTS lifts;
+DROP TABLE IF EXISTS movements;
+DROP TABLE IF EXISTS muscles;
+DROP TABLE IF EXISTS session;
+DROP TABLE IF EXISTS users_auth;
+DROP TABLE IF EXISTS users;
 CREATE TABLE users
 (
     id               TEXT PRIMARY KEY,
