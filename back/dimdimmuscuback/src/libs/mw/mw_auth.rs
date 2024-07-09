@@ -1,17 +1,10 @@
+use axum::{extract::Request, http::StatusCode, middleware::Next, response::Response};
 use axum::extract::State;
-use axum::http::HeaderName;
-use axum::RequestPartsExt;
-use axum::{
-    extract::Request,
-    http::{HeaderMap, StatusCode},
-    middleware::Next,
-    response::Response,
-};
-use axum_extra::headers::authorization::Bearer;
 use axum_extra::headers::Authorization;
+use axum_extra::headers::authorization::Bearer;
 use axum_extra::TypedHeader;
 use chrono::{DateTime, Utc};
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use log::info;
 use redact::Secret;
 use serde::{Deserialize, Serialize};

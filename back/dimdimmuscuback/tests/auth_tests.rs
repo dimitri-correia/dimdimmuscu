@@ -1,6 +1,5 @@
 use axum::http::StatusCode;
 use axum_test::{TestResponse, TestServer};
-use chrono::Utc;
 use rand::Rng;
 use serde_json::json;
 

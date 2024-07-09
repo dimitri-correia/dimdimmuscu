@@ -1,12 +1,11 @@
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::routing::get;
 use axum::Router;
+use axum::routing::get;
 use log::info;
 
 use crate::libs::env::EnvVariables;
-use crate::libs::mw::mw_auth::SessionToken;
 
 pub fn muscles_routes(env_variables: EnvVariables) -> Router {
     Router::new()

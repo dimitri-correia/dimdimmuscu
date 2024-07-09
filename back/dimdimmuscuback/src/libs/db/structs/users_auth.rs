@@ -1,15 +1,15 @@
 use std::string::ToString;
 
-use argon2::password_hash::{rand_core::OsRng, SaltString};
 use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use argon2::password_hash::{rand_core::OsRng, SaltString};
 use chrono::{DateTime, Utc};
 use libsql::{Connection, Rows};
 use redact::Secret;
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::libs::db::methods::queries::insert;
 use crate::libs::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
+use crate::libs::db::methods::queries::insert;
 use crate::libs::errors::auth_errors::login_logoff_errors::{LoginError, LogoffError};
 use crate::libs::errors::auth_errors::signup_errors::SignupError;
 
@@ -52,7 +52,7 @@ impl UserForCreate {
             return Err(SignupError::HeightOutOfRange);
         }
 
-        let a = conn
+        conn
             .execute(
                 &insert(USERS_TABLE, &USERS_TABLE_COL, None),
                 [
@@ -78,8 +78,8 @@ impl UserForCreate {
             &insert(USERS_AUTH_TABLE, &USERS_AUTH_TABLE_COL, None),
             [uuid.clone(), password_hash],
         )
-        .await
-        .map_err(SignupError::ErrorWithDb)?;
+            .await
+            .map_err(SignupError::ErrorWithDb)?;
 
         Ok(uuid)
     }

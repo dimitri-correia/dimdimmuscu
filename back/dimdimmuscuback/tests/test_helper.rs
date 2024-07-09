@@ -1,17 +1,11 @@
-use std::fmt::Error;
 use std::fs;
 
-use axum::Router;
 use axum_test::{TestResponse, TestServer};
 use chrono::Utc;
 use rand::Rng;
-use redact::Secret;
 use serde_json::json;
 use shuttle_runtime::SecretStore;
 use toml::Value;
-
-use dimdimmuscuback::libs::db::structs::users_auth::UserForCreate;
-use dimdimmuscuback::libs::env::{init_env, EnvVariables};
 
 pub fn get_secret_store_for_tests() -> SecretStore {
     let mut secrets = std::collections::BTreeMap::new();
