@@ -10,8 +10,6 @@ use uuid::Uuid;
 
 use crate::libs::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
 use crate::libs::db::methods::queries::insert;
-use crate::libs::db::structs::session::SessionTokenValue;
-use crate::libs::env::EnvVariables;
 use crate::libs::errors::auth_errors::login_logoff_errors::{LoginError, LogoffError};
 use crate::libs::errors::auth_errors::signup_errors::SignupError;
 
@@ -20,14 +18,16 @@ pub struct UserForCreate {
     pub username: String,
     pwd_clear: Secret<String>,
     birthdate: String,
+    height_cm: u8,
 }
 
 impl UserForCreate {
-    pub fn _create(username: String, pwd_clear: Secret<String>, birthdate: String) -> Self {
+    pub fn _create(username: String, pwd_clear: Secret<String>, birthdate: String, height_cm: u8) -> Self {
         Self {
             username,
             pwd_clear,
             birthdate,
+            height_cm,
         }
     }
 
@@ -35,6 +35,7 @@ impl UserForCreate {
         //todo
         // actually deal with errors
 
+        // uuid using time
         let uuid = Uuid::now_v7().to_string();
 
         let utc_date = match DateTime::parse_from_rfc3339(&self.birthdate) {
@@ -42,12 +43,17 @@ impl UserForCreate {
             Err(_) => return Err(SignupError::ErrorParsingBirthday),
         };
 
+        if self.height_cm < 100 || self.height_cm > 250 {
+            return Err(SignupError::HeightOutOfRange);
+        }
+
         conn.execute(
             &insert(USERS_TABLE, &USERS_TABLE_COL, None),
             [
                 uuid.clone(),
                 self.username.clone(),
                 utc_date.to_rfc3339(),
+                self.height_cm.to_string(),
                 Utc::now().to_rfc3339(),
             ],
         )
@@ -136,10 +142,6 @@ pub struct UserForDelete {
 }
 
 impl UserForDelete {
-    pub fn get_associated_user(&self, env_variables: &EnvVariables) -> String {
-        SessionTokenValue::get_associated_user(&self.token, env_variables)
-    }
-
     pub async fn delete_user(self, connection: Connection) -> Result<String, LogoffError> {
         let row = connection
             .query(

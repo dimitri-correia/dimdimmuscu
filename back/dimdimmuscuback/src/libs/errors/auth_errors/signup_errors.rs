@@ -5,6 +5,7 @@ pub enum SignupError {
     ErrorWithDb(libsql::Error),
     ErrorHashing(argon2::password_hash::Error),
     ErrorParsingBirthday,
+    HeightOutOfRange,
 }
 
 impl IntoResponse for SignupError {

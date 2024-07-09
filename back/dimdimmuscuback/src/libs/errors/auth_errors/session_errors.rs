@@ -8,6 +8,8 @@ pub enum SessionError {
     //FailingParsingEnvVariable,
     TokenDoesntExists,
     BadToken,
+    TokenExpired,
+    InvalidDate,
 }
 
 impl IntoResponse for SessionError {

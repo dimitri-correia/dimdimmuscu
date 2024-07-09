@@ -1,9 +1,12 @@
 use std::fmt::Error;
 use std::fs;
 
+use axum::Router;
+use axum_test::{TestResponse, TestServer};
 use chrono::Utc;
 use rand::Rng;
 use redact::Secret;
+use serde_json::json;
 use shuttle_runtime::SecretStore;
 use toml::Value;
 
@@ -48,25 +51,37 @@ fn get_env_or_toml(var_name: &str) -> String {
     }
 }
 
-pub async fn create_user_test_helper() -> (EnvVariables, String) {
-    let env = init_env(get_secret_store_for_tests()).await;
-
-    let username = format!(
+pub async fn create_user(
+    server: &TestServer,
+    username: Option<&str>,
+    pwd_clear: Option<&str>,
+    height_cm: Option<u8>,
+) -> TestResponse {
+    let default_username = format!(
         "test_user_for_test_end_to_end_auth_{}",
         rand::rngs::OsRng.gen::<u32>()
     );
-    let pwd_clear = "pwd_clear";
+    let username = username
+        .unwrap_or(&default_username);
 
-    let user = UserForCreate::_create(
-        username.clone(),
-        Secret::new(pwd_clear.to_string()),
-        Utc::now().to_rfc3339(),
-    );
-    let token = user
-        .add_new_user_in_db(&env.db_connection)
+    let pwd_clear = pwd_clear.unwrap_or(&"pwd_clear");
+
+    server
+        .post("/connect/signup")
+        .json(&json!({
+            "username": username,
+            "pwd_clear": pwd_clear,
+            "birthdate": Utc::now().to_rfc3339(),
+            "height_cm": height_cm.unwrap_or(180),
+        }
+        ))
         .await
-        .map_err(|_| Error)
-        .expect("should add without issue");
+}
 
-    (env, token)
+pub async fn create_user_and_get_token(
+    test_server: &TestServer,
+    username: Option<&str>,
+    pwd_clear: Option<&str>,
+) -> String {
+    create_user(test_server, username, pwd_clear).await.text()
 }

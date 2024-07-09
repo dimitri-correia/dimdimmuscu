@@ -6,7 +6,7 @@ use serde_json::json;
 
 use dimdimmuscuback::libs::routers::main_router::main_router;
 
-use crate::test_helper::get_secret_store_for_tests;
+use crate::test_helper::{create_user, get_secret_store_for_tests};
 
 pub mod test_helper;
 
@@ -26,14 +26,14 @@ async fn test_end_to_end_auth() {
     // User creation
     let token_from_creation: String;
     {
-        let response = create_user(&server, &username, pwd_clear).await;
+        let response = create_user(&server, Some(&username), Some(pwd_clear)).await;
         response.assert_status(StatusCode::CREATED);
         token_from_creation = response.text();
     }
 
     // Can't have the same username
     {
-        let response = create_user(&server, &username, pwd_clear).await;
+        let response = create_user(&server, Some(&username), Some(pwd_clear)).await;
         response.assert_status(StatusCode::UNAUTHORIZED);
     }
 
@@ -89,18 +89,6 @@ async fn user_login(server: &TestServer, username: &String, pwd_clear: &str) -> 
         .json(&json!({
             "username": username,
             "pwd_clear": pwd_clear,
-        }
-        ))
-        .await
-}
-
-async fn create_user(server: &TestServer, username: &String, pwd_clear: &str) -> TestResponse {
-    server
-        .post("/connect/signup")
-        .json(&json!({
-            "username": username,
-            "pwd_clear": pwd_clear,
-            "birthdate": Utc::now().to_rfc3339(),
         }
         ))
         .await

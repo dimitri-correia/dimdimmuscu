@@ -15,7 +15,7 @@ pub fn muscles_routes(env_variables: EnvVariables) -> Router {
 }
 
 async fn get_one(
-    _token: SessionToken,
+    //_token: SessionToken,
     State(_env_variables): State<EnvVariables>,
     // Json(muscle): Json<UserForCreate>,
 ) -> impl IntoResponse {

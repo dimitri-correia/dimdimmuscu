@@ -1,10 +1,10 @@
 use axum::http::HeaderValue;
-use axum_test::http::HeaderName;
+use axum_test::http::{HeaderName, StatusCode};
 use axum_test::TestServer;
 
 use dimdimmuscuback::libs::routers::main_router::main_router;
 
-use crate::test_helper::{create_user_test_helper, get_secret_store_for_tests};
+use crate::test_helper::{create_user_and_get_token, get_secret_store_for_tests};
 
 pub mod test_helper;
 
@@ -15,17 +15,19 @@ async fn test_end_to_end_normal_use() {
     // Run the application for testing.
     let server = TestServer::new(app).unwrap();
 
-    let (env_variables, token) = create_user_test_helper().await;
+    let token = create_user_and_get_token(&server, None, None).await;
+    dbg!(&token);
 
     // Get myself
     {
         let response = server
-            .get("/api/get_myself")
+            .get("/api/users/get_myself")
             .add_header(
-                HeaderName::from_static("Authorization"),
-                HeaderValue::from_str(&token).unwrap(),
+                HeaderName::from_lowercase(b"authorization").unwrap(),
+                HeaderValue::from_str(&format!("Bearer {}", token)).unwrap(),
             )
             .await;
-        dbg!(response);
+        dbg!(&response);
+        response.assert_status(StatusCode::OK);
     }
 }

@@ -7,6 +7,7 @@ CREATE TABLE users
     id               TEXT PRIMARY KEY,
     name             TEXT NOT NULL,
     birthdate        TEXT NOT NULL,
+    height           INTEGER NOT NULL,
     account_creation TEXT NOT NULL,
     CONSTRAINT unique_name UNIQUE (name)
 );

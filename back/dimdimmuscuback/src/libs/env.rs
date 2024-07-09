@@ -49,7 +49,7 @@ fn get_variables_from_secret(secrets: SecretStore) -> (i64, Secret<String>, Secr
     (session_duration_hours, db_url, db_auth_token)
 }
 
-fn generate_secret_key() -> Secret<[u8; 32]> {
+pub fn generate_secret_key() -> Secret<[u8; 32]> {
     let mut key = [0u8; 32];
     OsRng.fill_bytes(&mut key);
 

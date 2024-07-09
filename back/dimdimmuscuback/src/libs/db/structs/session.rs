@@ -1,5 +1,4 @@
-use chrono::{Duration, Utc};
-use jsonwebtoken::{decode, DecodingKey, encode, EncodingKey, Header, Validation};
+use chrono::{DateTime, Duration, Utc};
 use libsql::Connection;
 use serde::{Deserialize, Serialize};
 
@@ -20,14 +19,13 @@ impl SessionTokenValue {
         // multiple session for a single user can live at the same time
         let until = Utc::now() + Duration::hours(env_variables.session_duration_hours);
 
-        let token = encode(
-            &Header::default(),
-            &SessionToken {
-                profile_id: profile_id.clone(),
-                until,
-            },
-            &EncodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
-        )
+        let session_token = SessionToken {
+            profile_id: profile_id.clone(),
+            until,
+        };
+
+        let token = session_token
+            .encode(&env_variables.secret_key_session)
             .map_err(|_| SessionError::TokenCreation)?;
 
         env_variables
@@ -46,15 +44,40 @@ impl SessionTokenValue {
         self.0.to_string()
     }
 
-    pub(crate) fn get_associated_user(token: &str, env_variables: &EnvVariables) -> String {
-        decode::<SessionToken>(
-            token,
-            &DecodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
-            &Validation::default(),
-        )
-            .map_err(|_| SessionError::BadToken)
-            .map(|data| data.claims.profile_id)
-            .unwrap_or("[impossible to decode token]".to_string())
+    pub async fn validate_token(
+        token: String,
+        env_variables: &EnvVariables,
+    ) -> Result<String, SessionError> {
+        let row = env_variables
+            .db_connection
+            .query(
+                "SELECT profile_id, until FROM session WHERE token = ?",
+                [token],
+            )
+            .await
+            .map_err(SessionError::Db)?
+            .next()
+            .await
+            .map_err(SessionError::Db)?;
+
+        //let profile_id: String = row.unwrap().get(0).map_err(SessionError::Db)?;
+        let until: String = row.unwrap().get(1).map_err(SessionError::Db)?;
+
+        Self::validate_until_date(&until)?;
+
+        Ok("profile_id".to_string())
+    }
+
+    fn validate_until_date(until: &str) -> Result<(), SessionError> {
+        let until = until
+            .parse::<DateTime<Utc>>()
+            .map_err(|_| SessionError::InvalidDate)?;
+
+        if until < Utc::now() {
+            Err(SessionError::TokenExpired)
+        } else {
+            Ok(())
+        }
     }
 }
 
@@ -64,10 +87,6 @@ pub struct SessionLogoff {
 }
 
 impl SessionLogoff {
-    pub fn get_associated_user(&self, env_variables: &EnvVariables) -> String {
-        SessionTokenValue::get_associated_user(&self.token.0, env_variables)
-    }
-
     pub async fn clear_session(self, connection: Connection) -> Result<String, SessionError> {
         let profile_name = connection
             .query(

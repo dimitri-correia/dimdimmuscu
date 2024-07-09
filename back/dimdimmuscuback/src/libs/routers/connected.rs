@@ -10,5 +10,5 @@ pub(super) fn routes_connected(env_variables: EnvVariables) -> Router {
     Router::new()
         .nest("/users", users::users_routes(env_variables.clone()))
         .nest("/muscles", muscles::muscles_routes(env_variables.clone()))
-        .route_layer(middleware::from_fn(mw_auth))
+        .route_layer(middleware::from_fn_with_state(env_variables.clone(), mw_auth))
 }

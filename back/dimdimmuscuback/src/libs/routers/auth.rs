@@ -71,10 +71,6 @@ async fn api_logoff_handler(
     State(env_variables): State<EnvVariables>,
     Json(user_for_logoff): Json<SessionLogoff>,
 ) -> impl IntoResponse {
-    info!(
-        "Trying user de-connection for {}",
-        user_for_logoff.get_associated_user(&env_variables)
-    );
     match user_for_logoff
         .clear_session(env_variables.db_connection)
         .await
@@ -92,10 +88,6 @@ async fn api_delete_user_handler(
     State(env_variables): State<EnvVariables>,
     Json(user_for_delete): Json<UserForDelete>,
 ) -> impl IntoResponse {
-    info!(
-        "Trying user deletion for {}",
-        user_for_delete.get_associated_user(&env_variables)
-    );
     match user_for_delete
         .delete_user(env_variables.db_connection)
         .await
