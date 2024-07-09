@@ -1,17 +1,16 @@
-use axum::extract::FromRequestParts;
-use axum::http::request::Parts;
-use axum::{async_trait, RequestPartsExt};
-use axum_extra::{
-    headers::{authorization::Bearer, Authorization},
-    TypedHeader,
-};
+use axum::extract::State;
+use axum::{extract::Request, http::StatusCode, middleware::Next, response::Response};
+use axum_extra::headers::authorization::Bearer;
+use axum_extra::headers::Authorization;
+use axum_extra::TypedHeader;
 use chrono::{DateTime, Utc};
-use jsonwebtoken::{decode, DecodingKey, Validation};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use log::info;
+use redact::Secret;
 use serde::{Deserialize, Serialize};
 
+use crate::libs::db::structs::session::SessionTokenValue;
 use crate::libs::env::EnvVariables;
-use crate::libs::errors::auth::session::SessionError;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SessionToken {
@@ -19,27 +18,33 @@ pub struct SessionToken {
     pub until: DateTime<Utc>,
 }
 
-#[async_trait]
-impl FromRequestParts<EnvVariables> for SessionToken {
-    type Rejection = SessionError;
-
-    async fn from_request_parts(
-        parts: &mut Parts,
-        env_variables: &EnvVariables,
-    ) -> Result<Self, Self::Rejection> {
-        info!("trying to connect");
-        let TypedHeader(Authorization(bearer)) = parts
-            .extract::<TypedHeader<Authorization<Bearer>>>()
-            .await
-            .map_err(|_| SessionError::BadToken)?;
-
-        let token_data = decode::<SessionToken>(
-            bearer.token(),
-            &DecodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
-            &Validation::default(),
+impl SessionToken {
+    pub fn encode(
+        &self,
+        secret_key_session: &Secret<[u8; 32]>,
+    ) -> jsonwebtoken::errors::Result<String> {
+        encode(
+            &Header::default(),
+            self,
+            &EncodingKey::from_secret(secret_key_session.expose_secret()),
         )
-        .map_err(|_| SessionError::BadToken)?;
+    }
+}
 
-        Ok(token_data.claims)
+pub async fn mw_auth(
+    State(env_variables): State<EnvVariables>,
+    TypedHeader(auth): TypedHeader<Authorization<Bearer>>,
+    mut request: Request,
+    next: Next,
+) -> Result<Response, StatusCode> {
+    info!("trying to connect");
+    if let Ok(profile_id) =
+        SessionTokenValue::validate_token(auth.token().to_string(), &env_variables).await
+    {
+        request.extensions_mut().insert(profile_id);
+        let response = next.run(request).await;
+        Ok(response)
+    } else {
+        Err(StatusCode::UNAUTHORIZED)
     }
 }

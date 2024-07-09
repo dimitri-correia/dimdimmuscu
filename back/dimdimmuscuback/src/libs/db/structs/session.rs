@@ -1,12 +1,11 @@
-use chrono::{Duration, Utc};
-use jsonwebtoken::{encode, EncodingKey, Header};
+use chrono::{DateTime, Duration, Utc};
 use libsql::Connection;
 use serde::{Deserialize, Serialize};
 
 use crate::libs::db::methods::queries::insert;
 use crate::libs::db::{SESSION_TABLE, SESSION_TABLE_COL};
 use crate::libs::env::EnvVariables;
-use crate::libs::errors::auth::session::SessionError;
+use crate::libs::errors::auth_errors::session_errors::SessionError;
 use crate::libs::mw::mw_auth::SessionToken;
 
 #[derive(Deserialize, Serialize)]
@@ -20,15 +19,14 @@ impl SessionTokenValue {
         // multiple session for a single user can live at the same time
         let until = Utc::now() + Duration::hours(env_variables.session_duration_hours);
 
-        let token = encode(
-            &Header::default(),
-            &SessionToken {
-                profile_id: profile_id.clone(),
-                until,
-            },
-            &EncodingKey::from_secret(env_variables.secret_key_session.expose_secret()),
-        )
-        .map_err(|_| SessionError::TokenCreation)?;
+        let session_token = SessionToken {
+            profile_id: profile_id.clone(),
+            until,
+        };
+
+        let token = session_token
+            .encode(&env_variables.secret_key_session)
+            .map_err(|_| SessionError::TokenCreation)?;
 
         env_variables
             .db_connection
@@ -44,6 +42,42 @@ impl SessionTokenValue {
 
     pub fn get(&self) -> String {
         self.0.to_string()
+    }
+
+    pub async fn validate_token(
+        token: String,
+        env_variables: &EnvVariables,
+    ) -> Result<String, SessionError> {
+        let row = env_variables
+            .db_connection
+            .query(
+                "SELECT profile_id, until FROM session WHERE token = ?",
+                [token],
+            )
+            .await
+            .map_err(SessionError::Db)?
+            .next()
+            .await
+            .map_err(SessionError::Db)?;
+
+        //let profile_id: String = row.unwrap().get(0).map_err(SessionError::Db)?;
+        let until: String = row.unwrap().get(1).map_err(SessionError::Db)?;
+
+        Self::validate_until_date(&until)?;
+
+        Ok("profile_id".to_string())
+    }
+
+    fn validate_until_date(until: &str) -> Result<(), SessionError> {
+        let until = until
+            .parse::<DateTime<Utc>>()
+            .map_err(|_| SessionError::InvalidDate)?;
+
+        if until < Utc::now() {
+            Err(SessionError::TokenExpired)
+        } else {
+            Ok(())
+        }
     }
 }
 

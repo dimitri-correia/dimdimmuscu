@@ -9,12 +9,15 @@ pub struct User {
 }
 
 // impl User {
-//     async fn find_by_name(pool: &PgPool, name: &str) -> Result<Self, Error> {
-//         let row: Self = sqlx::query_as("SELECT * FROM users WHERE name = $1")
-//             .bind(name)
-//             .fetch_one(pool)
-//             .await
-//             .unwrap();
-//         Ok(row)
+//     pub async fn get_myself(id: i64, conn: &Connection) -> Self {
+//         let mut rows = conn
+//             .query(
+//                 "SELECT *
+//              FROM users u
+//              WHERE u.id = ?;",
+//                 [id],
+//             )
+//             .await;
+//             // .map_err();
 //     }
 // }

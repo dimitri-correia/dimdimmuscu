@@ -1,49 +1,11 @@
-use std::fmt::Error;
 use std::fs;
 
+use axum_test::{TestResponse, TestServer};
 use chrono::Utc;
 use rand::Rng;
-use redact::Secret;
+use serde_json::json;
 use shuttle_runtime::SecretStore;
 use toml::Value;
-
-use dimdimmuscuback::libs::db::structs::session::SessionTokenValue;
-use dimdimmuscuback::libs::db::structs::users_auth::{UserForCreate, UserForLogin};
-use dimdimmuscuback::libs::env::{init_env, EnvVariables};
-
-pub async fn create_user_test_helper() -> (EnvVariables, SessionTokenValue) {
-    let env = init_env(get_secret_store_for_tests()).await;
-
-    let username = format!(
-        "test_user_for_test_end_to_end_auth_{}",
-        rand::rngs::OsRng.gen::<u32>()
-    );
-    let pwd_clear = "pwd_clear";
-
-    let user = UserForCreate::_create(
-        username.clone(),
-        Secret::new(pwd_clear.to_string()),
-        Utc::now().to_rfc3339(),
-    );
-    user.add_new_user_in_db(&env.db_connection)
-        .await
-        .map_err(|_| Error)
-        .expect("should add without issue");
-
-    let user_for_login = UserForLogin::_create(username, pwd_clear.to_string());
-    let profile_id = user_for_login
-        .authenticate(&env.db_connection)
-        .await
-        .map_err(|_| Error)
-        .expect("should connect without issue");
-
-    let token = SessionTokenValue::create(profile_id, &env)
-        .await
-        .map_err(|_| Error)
-        .expect("should give back the token");
-
-    (env, token)
-}
 
 pub fn get_secret_store_for_tests() -> SecretStore {
     let mut secrets = std::collections::BTreeMap::new();
@@ -81,4 +43,43 @@ fn get_env_or_toml(var_name: &str) -> String {
             value[var_name].as_str().unwrap().to_string()
         }
     }
+}
+
+pub async fn create_user(
+    server: &TestServer,
+    username: Option<&str>,
+    pwd_clear: Option<&str>,
+    height_cm: Option<u8>,
+) -> TestResponse {
+    let default_username = format!(
+        "test_user_for_test_end_to_end_auth_{}",
+        rand::rngs::OsRng.gen::<u32>()
+    );
+    let username = username.unwrap_or(&default_username);
+
+    let pwd_clear = pwd_clear.unwrap_or(&"pwd_clear");
+
+    let height_cm = height_cm.unwrap_or(180);
+
+    server
+        .post("/connect/signup")
+        .json(&json!({
+            "username": username,
+            "pwd_clear": pwd_clear,
+            "birthdate": Utc::now().to_rfc3339(),
+            "height_cm": height_cm,
+        }
+        ))
+        .await
+}
+
+pub async fn create_user_and_get_token(
+    test_server: &TestServer,
+    username: Option<&str>,
+    pwd_clear: Option<&str>,
+    height_cm: Option<u8>,
+) -> String {
+    create_user(test_server, username, pwd_clear, height_cm)
+        .await
+        .text()
 }
