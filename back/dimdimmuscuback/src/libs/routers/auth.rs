@@ -2,7 +2,7 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::post;
-use axum::{Json, Router};
+use axum::{Form, Json, Router};
 use log;
 use log::info;
 
@@ -23,7 +23,7 @@ pub(super) fn auth_routes(env_variables: EnvVariables) -> Router {
 
 async fn api_signup_handler(
     State(env_variables): State<EnvVariables>,
-    Json(user): Json<UserForCreate>,
+    Form(user): Form<UserForCreate>,
 ) -> impl IntoResponse {
     info!("Trying user creation for {}", &user.username);
     match user.add_new_user_in_db(&env_variables.db_connection).await {
@@ -39,7 +39,7 @@ async fn api_signup_handler(
 
 async fn api_login_handler(
     State(env_variables): State<EnvVariables>,
-    Json(user_for_login): Json<UserForLogin>,
+    Form(user_for_login): Form<UserForLogin>,
 ) -> impl IntoResponse {
     info!("Trying user connection for {}", &user_for_login.username);
     let profile_id = match user_for_login
