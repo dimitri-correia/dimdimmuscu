@@ -2,8 +2,8 @@ use chrono::{DateTime, Duration, Utc};
 use libsql::Connection;
 use serde::{Deserialize, Serialize};
 
-use crate::libs::db::{SESSION_TABLE, SESSION_TABLE_COL};
 use crate::libs::db::methods::queries::insert;
+use crate::libs::db::{SESSION_TABLE, SESSION_TABLE_COL};
 use crate::libs::env::EnvVariables;
 use crate::libs::errors::auth_errors::session_errors::SessionError;
 use crate::libs::mw::mw_auth::SessionToken;

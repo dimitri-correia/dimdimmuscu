@@ -1,15 +1,15 @@
 use std::string::ToString;
 
-use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use argon2::password_hash::{rand_core::OsRng, SaltString};
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use chrono::{DateTime, Utc};
 use libsql::{Connection, Rows};
 use redact::Secret;
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::libs::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
 use crate::libs::db::methods::queries::insert;
+use crate::libs::db::{USERS_AUTH_TABLE, USERS_AUTH_TABLE_COL, USERS_TABLE, USERS_TABLE_COL};
 use crate::libs::errors::auth_errors::login_logoff_errors::{LoginError, LogoffError};
 use crate::libs::errors::auth_errors::signup_errors::SignupError;
 
@@ -22,7 +22,12 @@ pub struct UserForCreate {
 }
 
 impl UserForCreate {
-    pub fn _create(username: String, pwd_clear: Secret<String>, birthdate: String, height_cm: u8) -> Self {
+    pub fn _create(
+        username: String,
+        pwd_clear: Secret<String>,
+        birthdate: String,
+        height_cm: u8,
+    ) -> Self {
         Self {
             username,
             pwd_clear,
@@ -47,16 +52,17 @@ impl UserForCreate {
             return Err(SignupError::HeightOutOfRange);
         }
 
-        let a = conn.execute(
-            &insert(USERS_TABLE, &USERS_TABLE_COL, None),
-            [
-                uuid.clone(),
-                self.username.clone(),
-                utc_date.to_rfc3339(),
-                self.height_cm.to_string(),
-                Utc::now().to_rfc3339(),
-            ],
-        )
+        let a = conn
+            .execute(
+                &insert(USERS_TABLE, &USERS_TABLE_COL, None),
+                [
+                    uuid.clone(),
+                    self.username.clone(),
+                    utc_date.to_rfc3339(),
+                    self.height_cm.to_string(),
+                    Utc::now().to_rfc3339(),
+                ],
+            )
             .await
             .map_err(SignupError::ErrorWithDb)?;
 
@@ -72,8 +78,8 @@ impl UserForCreate {
             &insert(USERS_AUTH_TABLE, &USERS_AUTH_TABLE_COL, None),
             [uuid.clone(), password_hash],
         )
-            .await
-            .map_err(SignupError::ErrorWithDb)?;
+        .await
+        .map_err(SignupError::ErrorWithDb)?;
 
         Ok(uuid)
     }

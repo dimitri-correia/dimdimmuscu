@@ -1,5 +1,5 @@
 use libsql::Connection;
-use rand::{RngCore, rngs::OsRng};
+use rand::{rngs::OsRng, RngCore};
 use redact::Secret;
 use shuttle_runtime::SecretStore;
 
