@@ -2,7 +2,7 @@ use std::string::ToString;
 
 use argon2::password_hash::{rand_core::OsRng, SaltString};
 use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 use libsql::{Connection, Rows};
 use redact::Secret;
 use serde::Deserialize;
@@ -43,7 +43,12 @@ impl UserForCreate {
         // uuid using time
         let uuid = Uuid::now_v7().to_string();
 
-        let utc_date = match DateTime::parse_from_rfc3339(&self.birthdate) {
+        let utc_date = match NaiveDate::parse_from_str(&self.birthdate, "%Y-%m-%d").map(|date| {
+            DateTime::<Utc>::from_naive_utc_and_offset(
+                date.and_hms_micro_opt(0, 0, 0, 0).unwrap(),
+                Utc,
+            )
+        }) {
             Ok(date) => date.with_timezone(&Utc),
             Err(_) => return Err(SignupError::ErrorParsingBirthday),
         };
