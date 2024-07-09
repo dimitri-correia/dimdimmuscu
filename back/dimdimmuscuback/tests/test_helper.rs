@@ -7,6 +7,9 @@ use serde_json::json;
 use shuttle_runtime::SecretStore;
 use toml::Value;
 
+//todo
+// use form instead of json for connect/signup
+
 pub fn get_secret_store_for_tests() -> SecretStore {
     let mut secrets = std::collections::BTreeMap::new();
 
