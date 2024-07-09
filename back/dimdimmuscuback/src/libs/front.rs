@@ -1,1 +1,1 @@
-pub mod landing_page;
+pub mod front_router;

@@ -1,9 +1,8 @@
-use axum::routing::get;
 use axum::Router;
 use shuttle_common::SecretStore;
 
 use crate::libs::env::init_env;
-use crate::libs::front::landing_page::landing_page;
+use crate::libs::front::front_router::front_routes;
 use crate::libs::routers::auth::auth_routes;
 use crate::libs::routers::connected::routes_connected;
 use crate::libs::routers::fallback::fallback;
@@ -12,7 +11,7 @@ pub async fn main_router(secrets: SecretStore) -> Router {
     let env_variables = init_env(secrets).await;
 
     Router::new()
-        .route("/", get(landing_page))
+        .merge(front_routes())
         .nest("/connect", auth_routes(env_variables.clone()))
         .nest("/api", routes_connected(env_variables))
         .fallback(fallback)
