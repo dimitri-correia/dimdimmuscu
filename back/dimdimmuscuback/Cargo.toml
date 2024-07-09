@@ -16,7 +16,7 @@ libsql = "0.4.0"
 # Session
 jsonwebtoken = "9.3.0"
 # Async
-tokio = "1.37.0"
+tokio = "1.38.0"
 # Json
 serde = { version = "1.0.204", features = ["derive"] }
 serde_json = "1.0.120"
@@ -34,4 +34,4 @@ redact = { version = "0.1.10", features = ["serde"] }
 
 [dev-dependencies]
 axum-test = "15.3.0"
-toml = "0.8.12"
+toml = "0.8.14"
