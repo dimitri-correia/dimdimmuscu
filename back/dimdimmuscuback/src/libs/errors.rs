@@ -1,2 +1,3 @@
-pub mod auth;
-pub mod env;
+pub mod auth_errors;
+pub mod env_errors;
+pub mod users_errors;

@@ -11,7 +11,7 @@ use crate::libs::db::structs::users_auth::{UserForCreate, UserForDelete, UserFor
 use crate::libs::env::EnvVariables;
 use crate::libs::routers::fallback::fallback;
 
-pub fn auth_routes(env_variables: EnvVariables) -> Router {
+pub(super) fn auth_routes(env_variables: EnvVariables) -> Router {
     Router::new()
         .route("/signup", post(api_signup_handler))
         .route("/login", post(api_login_handler))
@@ -25,23 +25,23 @@ async fn api_signup_handler(
     State(env_variables): State<EnvVariables>,
     Json(user): Json<UserForCreate>,
 ) -> impl IntoResponse {
-    info!("Trying signup for {}", user.username);
-    if let Some(creation) = user
-        .add_new_user_in_db(&env_variables.db_connection)
-        .await
-        .err()
-    {
-        return creation.into_response();
-    };
-
-    // we choose to not give a cookie here but to force authentication with /login endpoint
-    (StatusCode::CREATED, "User creation worked".to_string()).into_response()
+    info!("Trying user creation for {}", &user.username);
+    match user.add_new_user_in_db(&env_variables.db_connection).await {
+        Ok(id) => {
+            info!("User {} created", &user.username);
+            get_token(&env_variables, id, StatusCode::CREATED)
+                .await
+                .into_response()
+        }
+        Err(err) => err.into_response(),
+    }
 }
 
 async fn api_login_handler(
     State(env_variables): State<EnvVariables>,
     Json(user_for_login): Json<UserForLogin>,
 ) -> impl IntoResponse {
+    info!("Trying user connection for {}", &user_for_login.username);
     let profile_id = match user_for_login
         .authenticate(&env_variables.db_connection)
         .await
@@ -50,8 +50,19 @@ async fn api_login_handler(
         Err(auth_error) => return auth_error.into_response(),
     };
 
-    match SessionTokenValue::create(profile_id, &env_variables).await {
-        Ok(token) => (StatusCode::OK, token.get()).into_response(),
+    info!("User {} connected", &user_for_login.username);
+    get_token(&env_variables, profile_id, StatusCode::OK)
+        .await
+        .into_response()
+}
+
+async fn get_token(
+    env_variables: &EnvVariables,
+    profile_id: String,
+    code: StatusCode,
+) -> impl IntoResponse {
+    match SessionTokenValue::create(profile_id, env_variables).await {
+        Ok(token) => (code, token.get()).into_response(),
         Err(err) => err.into_response(),
     }
 }
@@ -64,11 +75,11 @@ async fn api_logoff_handler(
         .clear_session(env_variables.db_connection)
         .await
     {
-        Ok(profile_name) => (
-            StatusCode::OK,
-            format!("User {} logged off successfully", profile_name).to_string(),
-        )
-            .into_response(),
+        Ok(profile_name) => {
+            let txt = format!("User {} logged off successfully", profile_name);
+            info!("{}", txt);
+            (StatusCode::OK, txt).into_response()
+        }
         Err(e) => e.into_response(),
     }
 }
@@ -81,11 +92,11 @@ async fn api_delete_user_handler(
         .delete_user(env_variables.db_connection)
         .await
     {
-        Ok(profile_name) => (
-            StatusCode::OK,
-            format!("User {} deleted successfully", profile_name).to_string(),
-        )
-            .into_response(),
+        Ok(profile_name) => {
+            let txt = format!("User {} deleted successfully", profile_name);
+            info!("{}", txt);
+            (StatusCode::OK, txt).into_response()
+        }
         Err(error) => error.into_response(),
     }
 }
