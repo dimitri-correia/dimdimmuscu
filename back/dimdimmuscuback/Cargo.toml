@@ -34,4 +34,4 @@ redact = { version = "0.1.10", features = ["serde"] }
 
 [dev-dependencies]
 axum-test = "15.3.0"
-toml = "0.8.12"
+toml = "0.8.15"
