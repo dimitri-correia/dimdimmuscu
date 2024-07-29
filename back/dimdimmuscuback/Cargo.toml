@@ -8,7 +8,7 @@ edition = "2021"
 axum = "0.7.5"
 axum-extra = { version = "0.9.3", features = ["typed-header"] }
 # Shuttle
-shuttle-axum = "0.46.0"
+shuttle-axum = "0.47.0"
 shuttle-runtime = "0.46.0"
 shuttle-common = "0.46.0"
 # Database
