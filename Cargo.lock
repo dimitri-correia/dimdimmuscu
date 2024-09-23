@@ -1210,9 +1210,9 @@ dependencies = [
 
 [[package]]
 name = "libsql"
-version = "0.4.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "007e45366a683bc61d5a6e4c05a4b91100c96ec04198d1d4529eb5a89b3c589f"
+checksum = "fe18646e4ef8db446bc3e3f5fb96131483203bc5f4998ff149f79a067530c01c"
 dependencies = [
  "anyhow",
  "async-stream",
@@ -1248,9 +1248,9 @@ dependencies = [
 
 [[package]]
 name = "libsql-ffi"
-version = "0.3.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "503716a5a09a73719e011957c363a69348b52818bd7679e4ee463099f23ffa89"
+checksum = "5f2a50a585a1184a43621a9133b7702ba5cb7a87ca5e704056b19d8005de6faf"
 dependencies = [
  "bindgen",
  "cc",
@@ -1270,9 +1270,9 @@ dependencies = [
 
 [[package]]
 name = "libsql-rusqlite"
-version = "0.31.0"
+version = "0.33.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11e74daae7edb0a3ab7d1568c6d0be43bb255f00b2b3b6d1b90ae7007a76c6f9"
+checksum = "ae65c66088dcd309abbd5617ae046abac2a2ee0a7fdada5127353bd68e0a27ea"
 dependencies = [
  "bitflags 2.4.2",
  "fallible-iterator 0.2.0",
@@ -1284,9 +1284,9 @@ dependencies = [
 
 [[package]]
 name = "libsql-sqlite3-parser"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "735c12460491141cf29496f258b30130f5830c7923eb373fc4d1c710c2d6d62c"
+checksum = "15a90128c708356af8f7d767c9ac2946692c9112b4f74f07b99a01a60680e413"
 dependencies = [
  "bitflags 2.4.2",
  "cc",
@@ -1297,15 +1297,14 @@ dependencies = [
  "phf",
  "phf_codegen",
  "phf_shared",
- "smallvec",
  "uncased",
 ]
 
 [[package]]
 name = "libsql-sys"
-version = "0.6.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "782109ea979be605ca908c2024cba05a11b32428198a2adb5ccb05b378169903"
+checksum = "5c05b61c226781d6f5e26e3e7364617f19c0c1d5332035802e9229d6024cec05"
 dependencies = [
  "bytes",
  "libsql-ffi",
@@ -1317,9 +1316,9 @@ dependencies = [
 
 [[package]]
 name = "libsql_replication"
-version = "0.4.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4fa2f887b42d9d966e4358d398dcba87bb229bc1f62f1229f983ce663fe264d7"
+checksum = "9cf40c4c2c01462da758272976de0a23d19b4e9c714db08efecf262d896655b5"
 dependencies = [
  "aes",
  "async-stream",
@@ -2666,17 +2665,12 @@ dependencies = [
  "percent-encoding",
  "pin-project",
  "prost",
- "rustls-native-certs",
- "rustls-pemfile",
- "rustls-pki-types",
  "tokio",
- "tokio-rustls",
  "tokio-stream",
  "tower",
  "tower-layer",
  "tower-service",
  "tracing",
- "webpki-roots",
 ]
 
 [[package]]
