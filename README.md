@@ -1,74 +1,58 @@
-# DimDimMuscu
+# Welcome to Loco :train:
 
-DimDimMuscu is a gym app developed using Rust for the BackEnd.
-It includes a variety of features to help gym-goers achieve their fitness goals.
+[Loco](https://loco.rs) is a web and API framework running on Rust.
 
-## Introduction
+This is the **SaaS starter** which includes a `User` model and authentication based on JWT.
+It also include configuration sections that help you pick either a frontend or a server-side template set up for your fullstack server.
 
-This app was developed as a personal project to learn more about rust / axum and to create a tool that would be
-useful for gym enthusiasts like I am. The app provides a range of features that can help users in their gym journey.
 
-## Technologies Used
+## Quick Start
 
-The app is built using Rust and axum for the server part, which allow me to write code that is both performant and
-secure.
+```sh
+cargo loco start
+```
 
-### Api calls
+```sh
+$ cargo loco start
+Finished dev [unoptimized + debuginfo] target(s) in 21.63s
+    Running `target/debug/myapp start`
 
-- /connect
-    - /signup
-    - /login
-    - /logoff
-    - /delete_user
-- /api
-    - /users
-        - /get_myself
-        - /update
-    - /muscles
-        - /get
-    - /exercises
+    :
+    :
+    :
 
-## Features
+controller/app_routes.rs:203: [Middleware] Adding log trace id
 
-TODO
+                      ▄     ▀
+                                 ▀  ▄
+                  ▄       ▀     ▄  ▄ ▄▀
+                                    ▄ ▀▄▄
+                        ▄     ▀    ▀  ▀▄▀█▄
+                                          ▀█▄
+▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄ ▀▀█
+ ██████  █████   ███ █████   ███ █████   ███ ▀█
+ ██████  █████   ███ █████   ▀▀▀ █████   ███ ▄█▄
+ ██████  █████   ███ █████       █████   ███ ████▄
+ ██████  █████   ███ █████   ▄▄▄ █████   ███ █████
+ ██████  █████   ███  ████   ███ █████   ███ ████▀
+   ▀▀▀██▄ ▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀ ██▀
+       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                https://loco.rs
 
-[still wip]
+environment: development
+   database: automigrate
+     logger: debug
+compilation: debug
+      modes: server
 
-- home page
-- weight tracker page
-- exercise list page
-- PR (personal record) page
-- Info page
+listening on localhost:5150
+```
 
-## Screenshots
+## Full Stack Serving
 
-[soon]
+You can check your [configuration](config/development.yaml) to pick either frontend setup or server-side rendered template, and activate the relevant configuration sections.
 
-<details>
-<summary>Show home screen</summary>
 
-<img src="screenshots/Home.png" width=200>
+## Getting help
 
-</details>
-
-## Next features
-
-- Calorie tracker page
-- Workout session page (gym)
-- Picture of evolution (once a month to track evolution)
-- Home workout
-- BMI calculator
-- Daily calorie need calculator
-- Cardio tracker page
-- Import values
-- Export/save periodically feature
-- Calendar
-
-To improve:
-
-- more tests
-- light/dark mode
-- language fr/en
-- charts for various pages (ex weight)
-- also track the % body fat
-- make the overall app more "beautiful" (improving style)
+Check out [a quick tour](https://loco.rs/docs/getting-started/tour/) or [the complete guide](https://loco.rs/docs/getting-started/guide/).
