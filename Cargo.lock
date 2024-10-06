@@ -1162,6 +1162,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "dimdimmuscu"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "chrono",
+ "fluent-templates",
+ "include_dir",
+ "insta",
+ "loco-rs",
+ "migration",
+ "rstest",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "unic-langid",
+ "uuid",
+ "validator",
+]
+
+[[package]]
 name = "dirs-next"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2290,6 +2315,8 @@ dependencies = [
 [[package]]
 name = "loco-rs"
 version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "92b58f8834452bee76b822ad42a9042c3d86367805d1cb4c8f3633c73bd4e73c"
 dependencies = [
  "argon2",
  "async-trait",
@@ -2339,31 +2366,6 @@ dependencies = [
  "tracing",
  "tracing-appender",
  "tracing-subscriber",
- "uuid",
- "validator",
-]
-
-[[package]]
-name = "dimdimmuscu"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "axum",
- "chrono",
- "fluent-templates",
- "include_dir",
- "insta",
- "loco-rs",
- "migration",
- "rstest",
- "sea-orm",
- "serde",
- "serde_json",
- "serial_test",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "unic-langid",
  "uuid",
  "validator",
 ]
