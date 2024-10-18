@@ -4,4 +4,5 @@ pub mod prelude;
 
 pub mod movements;
 pub mod muscles;
+pub mod sessions;
 pub mod users;

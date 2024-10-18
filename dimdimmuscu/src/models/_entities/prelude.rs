@@ -2,4 +2,5 @@
 
 pub use super::movements::Entity as Movements;
 pub use super::muscles::Entity as Muscles;
+pub use super::sessions::Entity as Sessions;
 pub use super::users::Entity as Users;
