@@ -5,3 +5,4 @@ pub mod muscle;
 pub mod movement;
 pub mod session;
 pub mod lift;
+pub mod set;

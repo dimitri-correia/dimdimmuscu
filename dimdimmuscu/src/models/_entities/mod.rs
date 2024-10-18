@@ -6,4 +6,5 @@ pub mod lifts;
 pub mod movements;
 pub mod muscles;
 pub mod sessions;
+pub mod sets;
 pub mod users;

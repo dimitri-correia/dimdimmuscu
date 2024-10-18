@@ -5,3 +5,4 @@ mod muscles;
 mod movements;
 mod sessions;
 mod lifts;
+mod sets;
