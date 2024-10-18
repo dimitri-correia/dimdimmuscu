@@ -7,6 +7,7 @@ mod m20241018_223143_update_users;
 mod m20241018_225603_muscles;
 mod m20241018_230450_movements;
 mod m20241018_231153_sessions;
+mod m20241018_231513_lifts;
 pub struct Migrator;
 
 #[async_trait::async_trait]
@@ -18,6 +19,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20241018_225603_muscles::Migration),
             Box::new(m20241018_230450_movements::Migration),
             Box::new(m20241018_231153_sessions::Migration),
+            Box::new(m20241018_231513_lifts::Migration),
         ]
     }
 }
