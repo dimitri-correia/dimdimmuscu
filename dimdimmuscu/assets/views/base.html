@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>{% block title %}{% endblock title %}</title>
+
+  <script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  {% block head %}
+
+  {% endblock head %}
+</head>
+
+<body class="prose p-10">
+  <div id="content">
+    {% block content %}
+    {% endblock content %}
+  </div>
+
+  {% block js %}
+
+  {% endblock js %}
+</body>
+
+</html>
