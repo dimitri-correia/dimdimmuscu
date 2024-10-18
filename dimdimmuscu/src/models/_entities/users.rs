@@ -22,8 +22,8 @@ pub struct Model {
     pub email_verification_token: Option<String>,
     pub email_verification_sent_at: Option<DateTimeWithTimeZone>,
     pub email_verified_at: Option<DateTimeWithTimeZone>,
-    pub birthdate: Option<Date>,
-    pub height_in_cm: Option<i32>,
+    pub birthdate: Date,
+    pub height_in_cm: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
