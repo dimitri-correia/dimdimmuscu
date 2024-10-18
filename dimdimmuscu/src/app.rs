@@ -47,6 +47,7 @@ impl Hooks for App {
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes()
+            .add_route(controllers::movement::routes())
             .add_route(controllers::muscle::routes())
             .add_route(controllers::auth::routes())
             .add_route(controllers::user::routes())
