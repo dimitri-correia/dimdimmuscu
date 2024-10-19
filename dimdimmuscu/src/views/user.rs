@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
 use crate::models::_entities::users;
@@ -7,6 +8,8 @@ pub struct CurrentResponse {
     pub pid: String,
     pub name: String,
     pub email: String,
+    pub birthdate: NaiveDate,
+    pub height_in_cm: i32,
 }
 
 impl CurrentResponse {
@@ -16,6 +19,8 @@ impl CurrentResponse {
             pid: user.pid.to_string(),
             name: user.name.clone(),
             email: user.email.clone(),
+            birthdate: user.birthdate.clone(),
+            height_in_cm: user.height_in_cm.clone(),
         }
     }
 }

@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use chrono::offset::Local;
+use chrono::NaiveDate;
 use loco_rs::{auth::jwt, hash, prelude::*};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -17,6 +18,8 @@ pub struct RegisterParams {
     pub email: String,
     pub password: String,
     pub name: String,
+    pub birthdate: NaiveDate,
+    pub height_in_cm: i32,
 }
 
 #[derive(Debug, Validate, Deserialize)]
@@ -25,6 +28,8 @@ pub struct Validator {
     pub name: String,
     #[validate(custom(function = "validation::is_valid_email"))]
     pub email: String,
+    #[validate(range(min = 120, max = 250, message = "is_valid_height"))]
+    pub height_in_cm: i32,
 }
 
 impl Validatable for super::_entities::users::ActiveModel {
@@ -32,6 +37,7 @@ impl Validatable for super::_entities::users::ActiveModel {
         Box::new(Validator {
             name: self.name.as_ref().to_owned(),
             email: self.email.as_ref().to_owned(),
+            height_in_cm: self.height_in_cm.as_ref().to_owned(),
         })
     }
 }
@@ -204,6 +210,8 @@ impl super::_entities::users::Model {
             email: ActiveValue::set(params.email.to_string()),
             password: ActiveValue::set(password_hash),
             name: ActiveValue::set(params.name.to_string()),
+            birthdate: ActiveValue::set(params.birthdate),
+            height_in_cm: ActiveValue::set(params.height_in_cm),
             ..Default::default()
         }
         .insert(&txn)
