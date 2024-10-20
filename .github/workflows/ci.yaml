@@ -27,6 +27,7 @@ jobs:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: rustfmt
       - name: Run cargo fmt
+	working-directory: ./dimdimmuscu
         uses: actions-rs/cargo@v1
         with:
           command: fmt
