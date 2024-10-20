@@ -1,6 +1,15 @@
-<html><body>
+{% extends "base.html" %}
 
-  {{ t(key="hello", lang="en-US") }}
-  
-</body></html>
-  
+{% block title %}
+DimDimMuscu
+{% endblock title %}
+
+{% block content %}
+  <h1>{{ t(key="hello", lang="en-US") }}</h1>
+
+  <br>
+
+  <h2>{{ t(key="i-have-an-account", lang="en-US") }}</h2> <a href="/auth/login">{{ t(key="login", lang="en-US") }}</a>
+  <h2>{{ t(key="i-dont-have-an-account", lang="en-US") }}</h2> <a href="/auth/register">{{ t(key="register", lang="en-US") }}</a>
+
+{% endblock content %}

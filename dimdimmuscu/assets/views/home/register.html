@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register - DimDimMuscu
+{% endblock title %}
+
+{% block content %}
+
+<div class="login-container">
+    <h1>Register</h1>
+    <form hx-post="/auth/register" hx-ext="submitjson">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+               <div class="form-group">
+               <label for="name">Name:</label>
+               <input type="text" id="name" name="name" required>
+               </div>
+               <div class="form-group">
+               <label for="birthdate">Birthdate:</label>
+               <input type="date" id="birthdate" name="birthdate" required>
+               </div>
+               <div class="form-group">
+               <label for="height_in_cm">Height in cm:</label>
+               <input type="number" id="height_in_cm" name="height_in_cm" required>
+               </div>
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+<script>
+     htmx.defineExtension('submitjson', {
+        onEvent: function (name, evt) {
+            if (name === "htmx:configRequest") {
+                evt.detail.headers['Content-Type'] = "application/json"
+            }
+        },
+        encodeParameters: function (xhr, parameters, elt) {
+            const json = {};
+            for (const [key, value] of Object.entries(parameters)) {
+                const inputType = elt.querySelector(`[name=${key}]`).type;
+                if (inputType === 'number') {
+                    json[key] = parseFloat(value);
+                } else if (inputType === 'checkbox') {
+                    json[key] = elt.querySelector(`[name=${key}]`).checked;
+                } else {
+                    json[key] = value;
+                }
+            }
+            return JSON.stringify(json);
+        }
+    })
+     </script>
+{% endblock content %}
