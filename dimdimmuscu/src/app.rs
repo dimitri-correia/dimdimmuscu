@@ -54,6 +54,7 @@ impl Hooks for App {
             .add_route(controllers::muscle::routes())
             .add_route(controllers::auth::routes())
             .add_route(controllers::user::routes())
+            .add_route(controllers::homepage::routes())
     }
 
     async fn connect_workers(ctx: &AppContext, queue: &Queue) -> Result<()> {

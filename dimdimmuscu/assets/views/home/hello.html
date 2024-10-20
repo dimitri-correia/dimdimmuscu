@@ -1,12 +1,15 @@
-<html><body>
-  <img src="/static/image.png" width="200"/>
-  <br/>
-  find this tera template at <code>assets/views/home/hello.html</code>: 
-  <br/>
-  <br/>
-  {{ t(key="hello-world", lang="en-US") }}, 
-  <br/>
-  {{ t(key="hello-world", lang="de-DE") }}
-  
-</body></html>
-  
+{% extends "base.html" %}
+
+{% block title %}
+DimDimMuscu
+{% endblock title %}
+
+{% block content %}
+  <h1>{{ t(key="hello", lang="en-US") }}</h1>
+
+  <br>
+
+  <h2>{{ t(key="i-have-an-account", lang="en-US") }}</h2> <a href="/auth/login">{{ t(key="login", lang="en-US") }}</a>
+  <h2>{{ t(key="i-dont-have-an-account", lang="en-US") }}</h2> <a href="/auth/register">{{ t(key="register", lang="en-US") }}</a>
+
+{% endblock content %}

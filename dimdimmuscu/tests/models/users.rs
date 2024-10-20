@@ -1,9 +1,10 @@
-use insta::assert_debug_snapshot;
-use loco_rs::{model::ModelError, testing};
+use chrono::NaiveDate;
 use dimdimmuscu::{
     app::App,
     models::users::{self, Model, RegisterParams},
 };
+use insta::assert_debug_snapshot;
+use loco_rs::{model::ModelError, testing};
 use sea_orm::{ActiveModelTrait, ActiveValue, IntoActiveModel};
 use serial_test::serial;
 
@@ -45,6 +46,8 @@ async fn can_create_with_password() {
         email: "test@framework.com".to_string(),
         password: "1234".to_string(),
         name: "framework".to_string(),
+        birthdate: NaiveDate::from_ymd_opt(1999, 5, 5).unwrap(),
+        height_in_cm: 182,
     };
     let res = Model::create_with_password(&boot.app_context.db, &params).await;
 
@@ -69,6 +72,8 @@ async fn handle_create_with_password_with_duplicate() {
             email: "user1@example.com".to_string(),
             password: "1234".to_string(),
             name: "framework".to_string(),
+            birthdate: NaiveDate::from_ymd_opt(1999, 5, 5).unwrap(),
+            height_in_cm: 182,
         },
     )
     .await;
