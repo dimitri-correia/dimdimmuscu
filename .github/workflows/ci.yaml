@@ -27,11 +27,8 @@ jobs:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: rustfmt
       - name: Run cargo fmt
+        run: cargo fmt --all -- --check
         working-directory: ./dimdimmuscu
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
 
   clippy:
     name: Run Clippy
