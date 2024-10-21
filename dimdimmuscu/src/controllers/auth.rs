@@ -1,5 +1,5 @@
 use axum::debug_handler;
-use loco_rs::{controller::middleware, prelude::*};
+use loco_rs::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -118,6 +118,21 @@ async fn reset(State(ctx): State<AppContext>, Json(params): Json<ResetParams>) -
         .await?;
 
     format::json(())
+}
+
+#[derive(Serialize)]
+struct LoginResponse {
+    user: users::Model,
+    token: String,
+}
+
+impl LoginResponse {
+    fn new(user: &users::Model, token: &str) -> Self {
+        Self {
+            user: user.clone(),
+            token: token.to_string(),
+        }
+    }
 }
 
 /// Creates a user login and returns a token
