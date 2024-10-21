@@ -14,14 +14,7 @@ pub struct Model {
     #[sea_orm(unique)]
     pub email: String,
     pub password: String,
-    #[sea_orm(unique)]
-    pub api_key: String,
     pub name: String,
-    pub reset_token: Option<String>,
-    pub reset_sent_at: Option<DateTimeWithTimeZone>,
-    pub email_verification_token: Option<String>,
-    pub email_verification_sent_at: Option<DateTimeWithTimeZone>,
-    pub email_verified_at: Option<DateTimeWithTimeZone>,
     pub birthdate: Date,
     pub height_in_cm: i32,
 }
