@@ -1,5 +1,5 @@
 use axum::debug_handler;
-use loco_rs::prelude::*;
+use loco_rs::{controller::middleware, prelude::*};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -8,7 +8,6 @@ use crate::{
         _entities::users,
         users::{LoginParams, RegisterParams},
     },
-    views::{self, auth::LoginResponse},
 };
 #[derive(Debug, Deserialize, Serialize)]
 pub struct VerifyParams {
@@ -52,13 +51,11 @@ async fn register(
         .set_email_verification_sent(&ctx.db)
         .await?;
 
-    AuthMailer::send_welcome(&ctx, &user).await?;
+    dbg!(&user);
+
+    // AuthMailer::send_welcome(&ctx, &user).await?;
 
     format::json(())
-}
-
-async fn register_page(ViewEngine(v): ViewEngine<TeraView>) -> Result<impl IntoResponse> {
-    views::homepage::register(v)
 }
 
 /// Verify register user. if the user not verified his email, he can't login to
@@ -143,17 +140,11 @@ async fn login(State(ctx): State<AppContext>, Json(params): Json<LoginParams>) -
     format::json(LoginResponse::new(&user, &token))
 }
 
-async fn login_page(ViewEngine(v): ViewEngine<TeraView>) -> Result<impl IntoResponse> {
-    views::homepage::login(v)
-}
-
 pub fn routes() -> Routes {
     Routes::new()
         .prefix("auth")
         .add("/login", post(login))
-        .add("/login", get(login_page))
         .add("/register", post(register))
-        .add("/register", get(register_page))
         .add("/verify", post(verify))
         .add("/forgot", post(forgot))
         .add("/reset", post(reset))
