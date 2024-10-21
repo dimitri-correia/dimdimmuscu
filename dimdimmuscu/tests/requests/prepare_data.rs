@@ -1,5 +1,6 @@
 use axum::http::{HeaderName, HeaderValue};
-use dimdimmuscu::models::users;
+use chrono::NaiveDate;
+use dimdimmuscu::models::users::{self, RegisterParams};
 use loco_rs::{app::AppContext, TestServer};
 
 const USER_EMAIL: &str = "test@loco.com";
@@ -11,17 +12,23 @@ pub struct LoggedInUser {
 }
 
 pub async fn init_user_login(request: &TestServer, ctx: &AppContext) -> LoggedInUser {
-    let register_payload = serde_json::json!({
-        "name": "loco",
-        "email": USER_EMAIL,
-        "password": USER_PASSWORD
-    });
+    let user: RegisterParams = RegisterParams {
+        name: "dim".to_string(),
+        email: USER_EMAIL.to_string(),
+        password: USER_PASSWORD.to_string(),
+        birthdate: NaiveDate::from_ymd_opt(1999, 5, 5).unwrap(),
+        height_in_cm: 182,
+    };
+
+    let register_payload = serde_json::json!(user);
 
     //Creating a new user
     request
         .post("/api/auth/register")
         .json(&register_payload)
         .await;
+
+    // the token is sent by email, so we need to get it from the database for the test
     let user = users::Model::find_by_email(&ctx.db, USER_EMAIL)
         .await
         .unwrap();

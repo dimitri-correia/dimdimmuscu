@@ -1,5 +1,3 @@
-use async_trait::async_trait;
-use chrono::offset::Local;
 use chrono::NaiveDate;
 use loco_rs::{auth::jwt, hash, prelude::*};
 use serde::{Deserialize, Serialize};
@@ -60,25 +58,6 @@ impl ActiveModelBehavior for super::_entities::users::ActiveModel {
     }
 }
 
-#[async_trait]
-impl Authenticable for super::_entities::users::Model {
-    async fn find_by_api_key(db: &DatabaseConnection, api_key: &str) -> ModelResult<Self> {
-        let user = users::Entity::find()
-            .filter(
-                model::query::condition()
-                    .eq(users::Column::ApiKey, api_key)
-                    .build(),
-            )
-            .one(db)
-            .await?;
-        user.ok_or_else(|| ModelError::EntityNotFound)
-    }
-
-    async fn find_by_claims_key(db: &DatabaseConnection, claims_key: &str) -> ModelResult<Self> {
-        Self::find_by_pid(db, claims_key).await
-    }
-}
-
 impl super::_entities::users::Model {
     /// finds a user by the provided email
     ///
@@ -97,43 +76,6 @@ impl super::_entities::users::Model {
         user.ok_or_else(|| ModelError::EntityNotFound)
     }
 
-    /// finds a user by the provided verification token
-    ///
-    /// # Errors
-    ///
-    /// When could not find user by the given token or DB query error
-    pub async fn find_by_verification_token(
-        db: &DatabaseConnection,
-        token: &str,
-    ) -> ModelResult<Self> {
-        let user = users::Entity::find()
-            .filter(
-                model::query::condition()
-                    .eq(users::Column::EmailVerificationToken, token)
-                    .build(),
-            )
-            .one(db)
-            .await?;
-        user.ok_or_else(|| ModelError::EntityNotFound)
-    }
-
-    /// finds a user by the provided reset token
-    ///
-    /// # Errors
-    ///
-    /// When could not find user by the given token or DB query error
-    pub async fn find_by_reset_token(db: &DatabaseConnection, token: &str) -> ModelResult<Self> {
-        let user = users::Entity::find()
-            .filter(
-                model::query::condition()
-                    .eq(users::Column::ResetToken, token)
-                    .build(),
-            )
-            .one(db)
-            .await?;
-        user.ok_or_else(|| ModelError::EntityNotFound)
-    }
-
     /// finds a user by the provided pid
     ///
     /// # Errors
@@ -145,23 +87,6 @@ impl super::_entities::users::Model {
             .filter(
                 model::query::condition()
                     .eq(users::Column::Pid, parse_uuid)
-                    .build(),
-            )
-            .one(db)
-            .await?;
-        user.ok_or_else(|| ModelError::EntityNotFound)
-    }
-
-    /// finds a user by the provided api key
-    ///
-    /// # Errors
-    ///
-    /// When could not find user by the given token or DB query error
-    pub async fn find_by_api_key(db: &DatabaseConnection, api_key: &str) -> ModelResult<Self> {
-        let user = users::Entity::find()
-            .filter(
-                model::query::condition()
-                    .eq(users::Column::ApiKey, api_key)
                     .build(),
             )
             .one(db)
@@ -229,78 +154,5 @@ impl super::_entities::users::Model {
     /// when could not convert user claims to jwt token
     pub fn generate_jwt(&self, secret: &str, expiration: &u64) -> ModelResult<String> {
         Ok(jwt::JWT::new(secret).generate_token(expiration, self.pid.to_string(), None)?)
-    }
-}
-
-impl super::_entities::users::ActiveModel {
-    /// Sets the email verification information for the user and
-    /// updates it in the database.
-    ///
-    /// This method is used to record the timestamp when the email verification
-    /// was sent and generate a unique verification token for the user.
-    ///
-    /// # Errors
-    ///
-    /// when has DB query error
-    pub async fn set_email_verification_sent(
-        mut self,
-        db: &DatabaseConnection,
-    ) -> ModelResult<Model> {
-        self.email_verification_sent_at = ActiveValue::set(Some(Local::now().into()));
-        self.email_verification_token = ActiveValue::Set(Some(Uuid::new_v4().to_string()));
-        Ok(self.update(db).await?)
-    }
-
-    /// Sets the information for a reset password request,
-    /// generates a unique reset password token, and updates it in the
-    /// database.
-    ///
-    /// This method records the timestamp when the reset password token is sent
-    /// and generates a unique token for the user.
-    ///
-    /// # Arguments
-    ///
-    /// # Errors
-    ///
-    /// when has DB query error
-    pub async fn set_forgot_password_sent(mut self, db: &DatabaseConnection) -> ModelResult<Model> {
-        self.reset_sent_at = ActiveValue::set(Some(Local::now().into()));
-        self.reset_token = ActiveValue::Set(Some(Uuid::new_v4().to_string()));
-        Ok(self.update(db).await?)
-    }
-
-    /// Records the verification time when a user verifies their
-    /// email and updates it in the database.
-    ///
-    /// This method sets the timestamp when the user successfully verifies their
-    /// email.
-    ///
-    /// # Errors
-    ///
-    /// when has DB query error
-    pub async fn verified(mut self, db: &DatabaseConnection) -> ModelResult<Model> {
-        self.email_verified_at = ActiveValue::set(Some(Local::now().into()));
-        Ok(self.update(db).await?)
-    }
-
-    /// Resets the current user password with a new password and
-    /// updates it in the database.
-    ///
-    /// This method hashes the provided password and sets it as the new password
-    /// for the user.
-    ///
-    /// # Errors
-    ///
-    /// when has DB query error or could not hashed the given password
-    pub async fn reset_password(
-        mut self,
-        db: &DatabaseConnection,
-        password: &str,
-    ) -> ModelResult<Model> {
-        self.password =
-            ActiveValue::set(hash::hash_password(password).map_err(|e| ModelError::Any(e.into()))?);
-        self.reset_token = ActiveValue::Set(None);
-        self.reset_sent_at = ActiveValue::Set(None);
-        Ok(self.update(db).await?)
     }
 }
