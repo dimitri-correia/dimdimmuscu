@@ -3,7 +3,6 @@ use loco_rs::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    mailers::auth::AuthMailer,
     models::{
         _entities::users,
         users::{LoginParams, RegisterParams},
@@ -35,7 +34,7 @@ async fn register(
 ) -> Result<Response> {
     let res = users::Model::create_with_password(&ctx.db, &params).await;
 
-    let user = match res {
+    match res {
         Ok(user) => user,
         Err(err) => {
             tracing::info!(
@@ -46,75 +45,6 @@ async fn register(
             return format::json(());
         }
     };
-
-    let user = user
-        .into_active_model()
-        .set_email_verification_sent(&ctx.db)
-        .await?;
-
-    AuthMailer::send_welcome(&ctx, &user).await?;
-
-    format::json(())
-}
-
-/// Verify register user. if the user not verified his email, he can't login to
-/// the system.
-#[debug_handler]
-async fn verify(
-    State(ctx): State<AppContext>,
-    Json(params): Json<VerifyParams>,
-) -> Result<Response> {
-    let user = users::Model::find_by_verification_token(&ctx.db, &params.token).await?;
-
-    if user.email_verified_at.is_some() {
-        tracing::info!(pid = user.pid.to_string(), "user already verified");
-    } else {
-        let active_model = user.into_active_model();
-        let user = active_model.verified(&ctx.db).await?;
-        tracing::info!(pid = user.pid.to_string(), "user verified");
-    }
-
-    format::json(())
-}
-
-/// In case the user forgot his password  this endpoints generate a forgot token
-/// and send email to the user. In case the email not found in our DB, we are
-/// returning a valid request for for security reasons (not exposing users DB
-/// list).
-#[debug_handler]
-async fn forgot(
-    State(ctx): State<AppContext>,
-    Json(params): Json<ForgotParams>,
-) -> Result<Response> {
-    let Ok(user) = users::Model::find_by_email(&ctx.db, &params.email).await else {
-        // we don't want to expose our users email. if the email is invalid we still
-        // returning success to the caller
-        return format::json(());
-    };
-
-    let user = user
-        .into_active_model()
-        .set_forgot_password_sent(&ctx.db)
-        .await?;
-
-    AuthMailer::forgot_password(&ctx, &user).await?;
-
-    format::json(())
-}
-
-/// reset user password by the given parameters
-#[debug_handler]
-async fn reset(State(ctx): State<AppContext>, Json(params): Json<ResetParams>) -> Result<Response> {
-    let Ok(user) = users::Model::find_by_reset_token(&ctx.db, &params.token).await else {
-        // we don't want to expose our users email. if the email is invalid we still
-        // returning success to the caller
-        tracing::info!("reset token not found");
-
-        return format::json(());
-    };
-    user.into_active_model()
-        .reset_password(&ctx.db, &params.password)
-        .await?;
 
     format::json(())
 }
@@ -143,8 +73,5 @@ pub fn routes() -> Routes {
     Routes::new()
         .prefix("auth")
         .add("/register", post(register))
-        .add("/verify", post(verify))
         .add("/login", post(login))
-        .add("/forgot", post(forgot))
-        .add("/reset", post(reset))
 }
