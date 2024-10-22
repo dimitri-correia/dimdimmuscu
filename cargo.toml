@@ -1,0 +1,3 @@
+[workspace]
+resolver = "2"
+members = ["dim-dim-muscu", "dim_dim_muscu_back"]
