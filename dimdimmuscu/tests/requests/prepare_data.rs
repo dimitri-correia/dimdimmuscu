@@ -1,6 +1,7 @@
 use axum::http::{HeaderName, HeaderValue};
+use chrono::NaiveDate;
+use dimdimmuscu::models::users::{self, RegisterParams};
 use loco_rs::{app::AppContext, TestServer};
-use dimdimmuscu::{models::users, views::auth::LoginResponse};
 
 const USER_EMAIL: &str = "test@loco.com";
 const USER_PASSWORD: &str = "1234";
@@ -11,27 +12,29 @@ pub struct LoggedInUser {
 }
 
 pub async fn init_user_login(request: &TestServer, ctx: &AppContext) -> LoggedInUser {
-    let register_payload = serde_json::json!({
-        "name": "loco",
-        "email": USER_EMAIL,
-        "password": USER_PASSWORD
-    });
+    let user_input: RegisterParams = RegisterParams {
+        name: "dim".to_string(),
+        email: USER_EMAIL.to_string(),
+        password: USER_PASSWORD.to_string(),
+        birthdate: NaiveDate::from_ymd_opt(1999, 5, 5).unwrap(),
+        height_in_cm: 182,
+    };
+
+    let register_payload = serde_json::json!(user_input);
 
     //Creating a new user
     request
         .post("/api/auth/register")
         .json(&register_payload)
         .await;
-    let user = users::Model::find_by_email(&ctx.db, USER_EMAIL)
+
+    //Check data in db
+    let user_db = users::Model::find_by_email(&ctx.db, USER_EMAIL)
         .await
         .unwrap();
+    assert_eq!(user_db, user_input);
 
-    let verify_payload = serde_json::json!({
-        "token": user.email_verification_token,
-    });
-
-    request.post("/api/auth/verify").json(&verify_payload).await;
-
+    //Logging in the user
     let response = request
         .post("/api/auth/login")
         .json(&serde_json::json!({

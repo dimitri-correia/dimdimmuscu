@@ -2,7 +2,7 @@ use std::path::Path;
 
 use async_trait::async_trait;
 use loco_rs::{
-    app::{AppContext, Hooks, Initializer},
+    app::{AppContext, Hooks},
     bgworker::{BackgroundWorker, Queue},
     boot::{create_app, BootResult, StartMode},
     controller::AppRoutes,
@@ -14,9 +14,7 @@ use loco_rs::{
 use migration::Migrator;
 use sea_orm::DatabaseConnection;
 
-use crate::{
-    controllers, initializers, models::_entities::users, tasks, workers::downloader::DownloadWorker,
-};
+use crate::{controllers, models::_entities::users, tasks, workers::downloader::DownloadWorker};
 
 pub struct App;
 #[async_trait]
@@ -39,22 +37,16 @@ impl Hooks for App {
         create_app::<Self, Migrator>(mode, environment).await
     }
 
-    async fn initializers(_ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
-        Ok(vec![Box::new(
-            initializers::view_engine::ViewEngineInitializer,
-        )])
-    }
-
     fn routes(_ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes()
-            .add_route(controllers::set::routes())
-            .add_route(controllers::lift::routes())
-            .add_route(controllers::session::routes())
-            .add_route(controllers::movement::routes())
-            .add_route(controllers::muscle::routes())
+            .prefix("api/v1/")
+            // .add_route(controllers::set::routes())
+            // .add_route(controllers::lift::routes())
+            // .add_route(controllers::session::routes())
+            // .add_route(controllers::movement::routes())
+            // .add_route(controllers::muscle::routes())
             .add_route(controllers::auth::routes())
             .add_route(controllers::user::routes())
-            .add_route(controllers::homepage::routes())
     }
 
     async fn connect_workers(ctx: &AppContext, queue: &Queue) -> Result<()> {

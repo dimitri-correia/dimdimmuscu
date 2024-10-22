@@ -1,29 +1,26 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::unnecessary_struct_initialization)]
 #![allow(clippy::unused_async)]
-use loco_rs::prelude::*;
-use serde::{Deserialize, Serialize};
-use sea_orm::{sea_query::Order, QueryOrder};
 use axum::debug_handler;
+use loco_rs::prelude::*;
+use sea_orm::{sea_query::Order, QueryOrder};
+use serde::{Deserialize, Serialize};
 
-use crate::{
-    models::_entities::sets::{ActiveModel, Column, Entity, Model},
-    views,
-};
+use crate::models::_entities::sets::{ActiveModel, Column, Entity, Model};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Params {
     pub set_number: i32,
     pub weight: i32,
     pub rep: i32,
-    }
+}
 
 impl Params {
     fn update(&self, item: &mut ActiveModel) {
-      item.set_number = Set(self.set_number.clone());
-      item.weight = Set(self.weight.clone());
-      item.rep = Set(self.rep.clone());
-      }
+        item.set_number = Set(self.set_number.clone());
+        item.weight = Set(self.weight.clone());
+        item.rep = Set(self.rep.clone());
+    }
 }
 
 async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
