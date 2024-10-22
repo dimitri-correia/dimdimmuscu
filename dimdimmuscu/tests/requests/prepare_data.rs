@@ -12,7 +12,7 @@ pub struct LoggedInUser {
 }
 
 pub async fn init_user_login(request: &TestServer, ctx: &AppContext) -> LoggedInUser {
-    let user: RegisterParams = RegisterParams {
+    let user_input: RegisterParams = RegisterParams {
         name: "dim".to_string(),
         email: USER_EMAIL.to_string(),
         password: USER_PASSWORD.to_string(),
@@ -20,7 +20,7 @@ pub async fn init_user_login(request: &TestServer, ctx: &AppContext) -> LoggedIn
         height_in_cm: 182,
     };
 
-    let register_payload = serde_json::json!(user);
+    let register_payload = serde_json::json!(user_input);
 
     //Creating a new user
     request
@@ -28,17 +28,13 @@ pub async fn init_user_login(request: &TestServer, ctx: &AppContext) -> LoggedIn
         .json(&register_payload)
         .await;
 
-    // the token is sent by email, so we need to get it from the database for the test
-    let user = users::Model::find_by_email(&ctx.db, USER_EMAIL)
+    //Check data in db
+    let user_db = users::Model::find_by_email(&ctx.db, USER_EMAIL)
         .await
         .unwrap();
+    assert_eq!(user_db, user_input);
 
-    let verify_payload = serde_json::json!({
-        "token": user.email_verification_token,
-    });
-
-    request.post("/api/auth/verify").json(&verify_payload).await;
-
+    //Logging in the user
     let response = request
         .post("/api/auth/login")
         .json(&serde_json::json!({
