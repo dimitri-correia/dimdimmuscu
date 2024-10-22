@@ -14,13 +14,6 @@ impl MigrationTrait for Migration {
             .col(string(Users::Password))
             .col(string(Users::ApiKey).unique_key())
             .col(string(Users::Name))
-            .col(string_null(Users::ResetToken))
-            .col(timestamp_with_time_zone_null(Users::ResetSentAt))
-            .col(string_null(Users::EmailVerificationToken))
-            .col(timestamp_with_time_zone_null(
-                Users::EmailVerificationSentAt,
-            ))
-            .col(timestamp_with_time_zone_null(Users::EmailVerifiedAt))
             .to_owned();
         manager.create_table(table).await?;
         Ok(())
@@ -42,9 +35,4 @@ pub enum Users {
     Name,
     Password,
     ApiKey,
-    ResetToken,
-    ResetSentAt,
-    EmailVerificationToken,
-    EmailVerificationSentAt,
-    EmailVerifiedAt,
 }
