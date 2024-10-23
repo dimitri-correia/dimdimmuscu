@@ -12,3 +12,8 @@ dioxus = { version = "0.5", features = ["web", "router"] }
 
 # Debug
 dioxus-logger = "0.5.1"
+
+dimdimmuscu_contract = { path = "../dimdimmuscu_contract" }
+
+serde = { workspace = true }
+serde_json = { workspace = true }

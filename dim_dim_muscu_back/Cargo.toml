@@ -9,11 +9,14 @@ default-run = "dim_dim_muscu_back-cli"
 
 [dependencies]
 
+dimdimmuscu_contract = { path = "../dimdimmuscu_contract" }
+
 loco-rs = { version = "0.11.1" }
 migration = { path = "migration" }
 
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+serde = { workspace = true }
+serde_json = { workspace = true }
+
 tokio = { version = "1.33.0", default-features = false }
 async-trait = "0.1.74"
 tracing = "0.1.40"
