@@ -1,23 +1,10 @@
 use async_trait::async_trait;
-use chrono::offset::Local;
+use dimdimmuscu_contract::auth::RegisterParams;
 use loco_rs::{auth::jwt, hash, prelude::*};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use uuid::Uuid;
 
 pub use super::_entities::users::{self, ActiveModel, Entity, Model};
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct LoginParams {
-    pub email: String,
-    pub password: String,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct RegisterParams {
-    pub email: String,
-    pub password: String,
-    pub name: String,
-}
 
 #[derive(Debug, Validate, Deserialize)]
 pub struct Validator {
